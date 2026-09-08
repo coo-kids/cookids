@@ -1,9 +1,8 @@
-import { CollectionOf, MinItems, Property, Required } from "@tsed/schema";
+import { s } from "@tsed/schema";
 import { ContentProductSchema } from "./ContentProductSchema";
 
-export class ContentCatalogSchema {
-  @Property()
-  @Required()
-  @CollectionOf(ContentProductSchema)
-  @MinItems(1) products!: ContentProductSchema[];
-}
+export const ContentCatalogSchema = s.object({
+  products: s.array(ContentProductSchema).minItems(1).required()
+});
+
+export type ContentCatalog = s.infer<typeof ContentCatalogSchema>;

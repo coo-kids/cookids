@@ -1,43 +1,14 @@
-import { MaxLength, Property, Required } from "@tsed/schema";
+import { s } from "@tsed/schema";
 
-export class SiteContentSchema {
-  @Property()
-  @Required()
-  @MaxLength(80)
-  brand!: string;
+export const SiteContentSchema = s.object({
+  brand: s.string().maxLength(80).required(),
+  intro: s.string().maxLength(500).required(),
+  heroTitle: s.string().maxLength(240).required(),
+  heroText: s.string().maxLength(500).required(),
+  catalogTitle: s.string().maxLength(160).required(),
+  cookiesNote: s.string().maxLength(300).required(),
+  orderTitle: s.string().maxLength(160).required(),
+  footer: s.string().maxLength(240).required()
+});
 
-  @Property()
-  @Required()
-  @MaxLength(500)
-  intro!: string;
-
-  @Property()
-  @Required()
-  @MaxLength(240)
-  heroTitle!: string;
-
-  @Property()
-  @Required()
-  @MaxLength(500)
-  heroText!: string;
-
-  @Property()
-  @Required()
-  @MaxLength(160)
-  catalogTitle!: string;
-
-  @Property()
-  @Required()
-  @MaxLength(300)
-  cookiesNote!: string;
-
-  @Property()
-  @Required()
-  @MaxLength(160)
-  orderTitle!: string;
-
-  @Property()
-  @Required()
-  @MaxLength(240)
-  footer!: string;
-}
+export type SiteContent = s.infer<typeof SiteContentSchema>;

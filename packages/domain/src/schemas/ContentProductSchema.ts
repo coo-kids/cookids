@@ -1,43 +1,14 @@
-import { Enum, MaxLength, Minimum, Property, Required } from "@tsed/schema";
+import { s } from "@tsed/schema";
 
-export class ContentProductSchema {
-  @Property()
-  @Required()
-  @MaxLength(80)
-  id!: string;
+export const ContentProductSchema = s.object({
+  id: s.string().maxLength(80).required(),
+  name: s.string().maxLength(120).required(),
+  description: s.string().maxLength(240).required(),
+  ingredients: s.string().maxLength(800).required(),
+  price: s.number().minimum(0.01).multipleOf(0.01).required(),
+  image: s.string().maxLength(200).required(),
+  category: s.string().enum("cookies", "other").required(),
+  unitLabel: s.string().maxLength(60).required()
+});
 
-  @Property()
-  @Required()
-  @MaxLength(120)
-  name!: string;
-
-  @Property()
-  @Required()
-  @MaxLength(240)
-  description!: string;
-
-  @Property()
-  @Required()
-  @MaxLength(800)
-  ingredients!: string;
-
-  @Property()
-  @Required()
-  @Minimum(0.01)
-  price!: number;
-
-  @Property()
-  @Required()
-  @MaxLength(200)
-  image!: string;
-
-  @Property()
-  @Required()
-  @Enum("cookies", "other")
-  category!: "cookies" | "other";
-
-  @Property()
-  @Required()
-  @MaxLength(60)
-  unitLabel!: string;
-}
+export type ContentProduct = s.infer<typeof ContentProductSchema>;

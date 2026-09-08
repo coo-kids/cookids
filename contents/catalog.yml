@@ -3,7 +3,7 @@ products:
     name: Cookie café & noix
     description: Café, chocolat noir et noix.
     ingredients: Farine bio, beurre doux, cassonnade, œuf, sucre en poudre, chocolat noir, noix, café, levure chimique.
-    price: 1
+    price: 1.00
     image: /images/cookie-cafe-noix.jpg
     category: cookies
     unitLabel: à l'unité
@@ -11,7 +11,7 @@ products:
     name: Cookie pistache & cranberries
     description: Pistaches, cranberries et pâte de pistache.
     ingredients: Farine bio, beurre salé, cassonnade, sucre blanc, œuf, pistaches, cranberries, pâte de pistache, levure chimique.
-    price: 1
+    price: 1.00
     image: /images/cookie-pistache-cranberries.jpg
     category: cookies
     unitLabel: à l'unité
@@ -19,7 +19,7 @@ products:
     name: Cookie pécan & chocolat
     description: Chocolat noir, noix de pécan et fleur de sel.
     ingredients: Farine bio, chocolat noir, cassonnade, beurre doux, noix de pécan, œuf, levure chimique, fleur de sel.
-    price: 1
+    price: 1.00
     image: /images/cookie-pecan-chocolat.jpg
     category: cookies
     unitLabel: à l'unité
@@ -27,7 +27,7 @@ products:
     name: Cookie au chocolat noir
     description: Un grand classique au chocolat noir et à la vanille.
     ingredients: Farine bio, chocolat noir, beurre, cassonnade, sucre blanc, œuf, levure chimique, bicarbonate de soude, sel, gousse de vanille.
-    price: 1
+    price: 1.00
     image: /images/cookie-chocolat-noir.jpg
     category: cookies
     unitLabel: à l'unité
@@ -35,7 +35,7 @@ products:
     name: Cookie triple noisette
     description: Noisettes, purée de noisette et chocolat noir.
     ingredients: Farine bio, chocolat noir, beurre demi-sel, noisette, œuf, cassonnade, sucre en poudre, purée de noisette, levure chimique.
-    price: 1
+    price: 1.00
     image: /images/cookie-triple-noisette.jpg
     category: cookies
     unitLabel: à l'unité
@@ -43,7 +43,7 @@ products:
     name: Cookie chocolat & sésame
     description: Chocolat noir, sésame blanc et miel français.
     ingredients: Farine bio, chocolat noir, beurre demi-sel, cassonnade, œuf, graines de sésame blanc, miel français.
-    price: 1
+    price: 1.00
     image: /images/cookie-chocolat-sesame.jpg
     category: cookies
     unitLabel: à l'unité
@@ -51,7 +51,7 @@ products:
     name: Financiers aux amandes
     description: Moelleux aux amandes et à la vanille, vendus par 10.
     ingredients: Blancs d'œuf, beurre doux, sucre glace, amandes, farine bio, gousse de vanille.
-    price: 5
+    price: 5.00
     image: /images/financiers-amandes.jpg
     category: other
     unitLabel: le lot de 10
