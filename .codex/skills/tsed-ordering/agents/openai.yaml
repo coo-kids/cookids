@@ -1,0 +1,3 @@
+interface:
+  display_name: Ts.ED ordering
+  short_description: Validation, mapping and DI contracts

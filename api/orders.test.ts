@@ -1,0 +1,59 @@
+import { expect, test } from "bun:test";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
+import handler from "./orders";
+
+type CapturedResponse = {
+  statusCode?: number;
+  payload?: unknown;
+  response: VercelResponse;
+};
+
+function createCapturedResponse(): CapturedResponse {
+  const captured: CapturedResponse = {} as CapturedResponse;
+  captured.response = {
+    status(statusCode: number) {
+      captured.statusCode = statusCode;
+      return this;
+    },
+    json(payload: unknown) {
+      captured.payload = payload;
+      return this;
+    }
+  } as VercelResponse;
+  return captured;
+}
+
+test("POST /api/orders retourne une commande sérialisée", async () => {
+  const captured = createCapturedResponse();
+  await handler({
+    method: "POST",
+    body: {
+      name: "Camille Dupont",
+      email: "camille@example.com",
+      items: [{ productId: "cookie-cafe-noix", quantity: 2 }]
+    }
+  } as VercelRequest, captured.response);
+
+  expect(captured.statusCode).toBe(201);
+  expect(captured.payload).toMatchObject({
+    order: {
+      totalCents: 200
+    }
+  });
+});
+
+test("POST /api/orders sérialise les exceptions Ts.ED", async () => {
+  const captured = createCapturedResponse();
+  await handler({
+    method: "POST",
+    body: { name: "Camille", email: "invalide", items: [] }
+  } as VercelRequest, captured.response);
+
+  expect(captured.statusCode).toBe(400);
+  expect(captured.payload).toEqual({
+    error: {
+      code: "INVALID_ORDER",
+      message: "La commande n'est pas valide."
+    }
+  });
+});

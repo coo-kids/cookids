@@ -1,0 +1,24 @@
+import { Exception } from "@tsed/exceptions";
+
+function getErrorCode(error: Exception): string {
+  return typeof error.code === "string" ? error.code : "HTTP_ERROR";
+}
+
+export function createErrorResponse(error: unknown): Response {
+  if (error instanceof Exception) {
+    return Response.json({
+      error: {
+        code: getErrorCode(error),
+        message: error.message
+      }
+    }, { status: error.status });
+  }
+
+  console.error("Order processing failed", error);
+  return Response.json({
+    error: {
+      code: "ORDER_PROCESSING_FAILED",
+      message: "La commande n'a pas pu être enregistrée."
+    }
+  }, { status: 500 });
+}

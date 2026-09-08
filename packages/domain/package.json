@@ -1,0 +1,21 @@
+{
+  "name": "@cookids/domain",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./models/CartItem": "./src/models/CartItem.ts",
+    "./models/Product": "./src/models/Product.ts",
+    "./content/ContentValidationService": "./src/services/ContentValidationService.ts",
+    "./utils/formatEuro": "./src/utils/formatEuro.ts"
+  },
+  "dependencies": {
+    "@tsed/ajv": "^8.38.4",
+    "@tsed/di": "^8.38.4",
+    "@tsed/exceptions": "^8.38.4",
+    "@tsed/json-mapper": "^8.38.4",
+    "@tsed/schema": "^8.38.4",
+    "ajv": "^8.17.1",
+    "reflect-metadata": "^0.2.2"
+  }
+}

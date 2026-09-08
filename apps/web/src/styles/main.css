@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cookids-ink: #2f211b;
+  --color-cookids-cream: #fff9f0;
+  --color-cookids-coral: #d96843;
+  --color-cookids-gold: #f5c75a;
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { @apply bg-cookids-cream text-cookids-ink; font-family: Georgia, "Times New Roman", serif; }
+  button, input, textarea { font: inherit; }
+  button { cursor: pointer; }
+  button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible { @apply outline-3 outline-cookids-coral outline-offset-3; }
+}

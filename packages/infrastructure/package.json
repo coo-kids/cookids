@@ -1,0 +1,17 @@
+{
+  "name": "@cookids/infrastructure",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.ts",
+    "./http/defineHandler": "./http/defineHandler.ts"
+  },
+  "dependencies": {
+    "@cookids/domain": "workspace:*",
+    "@tsed/di": "^8.18.0",
+    "@tsed/exceptions": "^8.38.4",
+    "@vercel/node": "^5.3.0",
+    "dotenv-flow": "^4.1.0",
+    "yaml": "^2.7.0"
+  }
+}
