@@ -22,14 +22,19 @@ export class OrderService {
   async create(input: unknown): Promise<Order> {
     const orderInput = deserialize<CreateOrder>(input, { type: CreateOrder });
     try {
-      await this.ajvService.validate<CreateOrder>(orderInput, { type: CreateOrder });
+      await this.ajvService.validate<CreateOrder>(orderInput, {
+        type: CreateOrder,
+      });
     } catch {
       throw new OrderValidationError();
     }
     const catalog = await this.catalogProvider.getProducts();
     const quantities = new Map<string, number>();
     for (const item of orderInput.items) {
-      quantities.set(item.productId, (quantities.get(item.productId) ?? 0) + item.quantity);
+      quantities.set(
+        item.productId,
+        (quantities.get(item.productId) ?? 0) + item.quantity,
+      );
     }
 
     const items = [...quantities].map(([productId, quantity]) => {
@@ -43,9 +48,9 @@ export class OrderService {
       return {
         productId: product.id,
         productName: product.name,
-        unitPriceCents: product.priceCents,
+        unitprice: product.price,
         quantity,
-        totalCents: product.priceCents * quantity
+        totalCents: product.price * quantity,
       };
     });
 
@@ -55,12 +60,12 @@ export class OrderService {
       customer: {
         name: orderInput.name.trim(),
         email: orderInput.email.trim().toLowerCase(),
-        phone: orderInput.phone?.trim() || undefined
+        phone: orderInput.phone?.trim() || undefined,
       },
       comment: orderInput.comment?.trim() || undefined,
       items,
       totalCents: items.reduce((total, item) => total + item.totalCents, 0),
-      status: "new"
+      status: "new",
     };
 
     await this.orderRepository.save(order);

@@ -36,7 +36,7 @@ describe("Product", () => {
             "minLength": 1,
             "type": "string",
           },
-          "priceCents": {
+          "price": {
             "minimum": 1,
             "multipleOf": 1,
             "type": "integer",
@@ -51,7 +51,7 @@ describe("Product", () => {
           "name",
           "description",
           "ingredients",
-          "priceCents",
+          "price",
           "image",
           "category",
           "unitLabel",

@@ -21,7 +21,7 @@ export class Product {
   @Required()
   @Integer()
   @Minimum(1)
-  priceCents!: number;
+  price!: number;
 
   @Property()
   @Required()

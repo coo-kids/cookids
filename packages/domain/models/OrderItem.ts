@@ -13,7 +13,7 @@ export class OrderItem {
   @Required()
   @Integer()
   @Minimum(0)
-  unitPriceCents!: number;
+  unitprice!: number;
 
   @Property()
   @Required()

@@ -52,7 +52,7 @@ describe("Order", () => {
                 "multipleOf": 1,
                 "type": "integer",
               },
-              "unitPriceCents": {
+              "unitprice": {
                 "minimum": 0,
                 "multipleOf": 1,
                 "type": "integer",
@@ -61,7 +61,7 @@ describe("Order", () => {
             "required": [
               "productId",
               "productName",
-              "unitPriceCents",
+              "unitprice",
               "quantity",
               "totalCents",
             ],

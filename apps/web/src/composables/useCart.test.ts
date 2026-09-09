@@ -17,8 +17,15 @@ describe("useCart", () => {
 
     expect(cart.count.value).toBe(2);
     expect(cart.quantityFor(product.id)).toBe(2);
-    expect(cart.enrichedItems.value).toEqual([{ product, productId: product.id, quantity: 2, totalCents: product.priceCents * 2 }]);
-    expect(cart.totalCents.value).toBe(product.priceCents * 2);
+    expect(cart.enrichedItems.value).toEqual([
+      {
+        product,
+        productId: product.id,
+        quantity: 2,
+        totalCents: product.price * 2,
+      },
+    ]);
+    expect(cart.totalCents.value).toBe(product.price * 2);
   });
 
   it("borne les quantités et retire un article à zéro", () => {
