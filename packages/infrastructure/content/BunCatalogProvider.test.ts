@@ -32,7 +32,7 @@ const catalogSource = JSON.stringify({
 describe("BunCatalogProvider", () => {
   afterEach(() => vi.unstubAllGlobals());
 
-  it("valide le catalogue, convertit les prix en centimes et le met en cache", async () => {
+  it("valide le catalogue en euros et le met en cache", async () => {
     const file = vi.fn(() => ({
       text: vi.fn().mockResolvedValue(catalogSource),
     }));
@@ -45,7 +45,7 @@ describe("BunCatalogProvider", () => {
     ]);
 
     expect(first).toEqual([
-      { ...JSON.parse(catalogSource).products[0], price: 250 },
+      JSON.parse(catalogSource).products[0],
     ]);
     expect(second).toBe(first);
     expect(file).toHaveBeenCalledTimes(1);

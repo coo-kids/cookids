@@ -28,9 +28,6 @@ export class BunCatalogProvider extends CatalogProvider {
       type: ContentCatalogSchema,
     });
 
-    return validatedCatalog.products.map((product) => ({
-      ...product,
-      price: Math.round(product.price * 100),
-    }));
+    return validatedCatalog.products;
   }
 }

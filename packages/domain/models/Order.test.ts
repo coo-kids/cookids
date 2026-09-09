@@ -51,23 +51,21 @@ describe("Order", () => {
                 "multipleOf": 1,
                 "type": "integer",
               },
-              "totalCents": {
+              "total": {
                 "minimum": 0,
-                "multipleOf": 1,
-                "type": "integer",
+                "type": "number",
               },
-              "unitprice": {
+              "unitPrice": {
                 "minimum": 0,
-                "multipleOf": 1,
-                "type": "integer",
+                "type": "number",
               },
             },
             "required": [
               "productId",
               "productName",
-              "unitprice",
+              "unitPrice",
               "quantity",
-              "totalCents",
+              "total",
             ],
             "type": "object",
           },
@@ -85,8 +83,7 @@ describe("Order", () => {
             "type": "string",
           },
           "id": {
-            "minLength": 1,
-            "type": "string",
+            "type": "number",
           },
           "items": {
             "items": {
@@ -104,17 +101,16 @@ describe("Order", () => {
           "targetDeliveryDate": {
             "type": "string",
           },
-          "totalPrice": {
+          "total": {
             "minimum": 0,
             "type": "number",
           },
         },
         "required": [
-          "id",
           "createdAt",
           "customer",
           "items",
-          "totalPrice",
+          "total",
           "deliveryLocation",
           "status",
         ],

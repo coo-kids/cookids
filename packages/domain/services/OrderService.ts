@@ -7,9 +7,8 @@ import { CreateOrder } from "../dto/CreateOrder.js";
 import { OrderValidationError } from "../errors/OrderValidationError.js";
 import { UnknownProductError } from "../errors/UnknownProductError.js";
 import { MailService } from "../mail/MailService.js";
-import type { Order } from "../models/Order.js";
+import { Order } from "../models/Order.js";
 import { OrderRepository } from "../repositories/OrderRepository.js";
-import { createOrderId } from "../utils/createOrderId.js";
 import { findProduct } from "../utils/findProduct.js";
 
 @Injectable()
@@ -48,14 +47,13 @@ export class OrderService {
       return {
         productId: product.id,
         productName: product.name,
-        unitprice: product.price,
+        unitPrice: product.price,
         quantity,
-        totalCents: product.price * quantity,
+        total: product.price * quantity,
       };
     });
 
-    const order: Order = {
-      id: createOrderId(),
+    const order = deserialize<Order>({
       createdAt: new Date(),
       customer: {
         firstName: orderInput.firstName.trim(),
@@ -64,13 +62,14 @@ export class OrderService {
         phoneNumber: orderInput.phoneNumber?.trim() || undefined
       },
       items,
-      totalPrice: items.reduce((total, item) => total + item.totalCents, 0) / 100,
+      total: items.reduce((total, item) => total + item.total, 0),
       deliveryLocation: orderInput.deliveryLocation.trim(),
       targetDeliveryDate: orderInput.targetDeliveryDate,
       status: "new"
-    };
+    }, { type: Order, useAlias: false });
 
-    await this.orderRepository.save(order);
+    const ticket = await this.orderRepository.save(order);
+    order.id = ticket.id;
     await this.mailService.sendOrderConfirmation(order);
     return order;
   }

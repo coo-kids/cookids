@@ -14,9 +14,10 @@ class TestOrderRepository extends OrderRepository {
   readonly orders: Order[] = [];
   shouldFail = false;
 
-  async save(order: Order): Promise<void> {
+  async save(order: Order): Promise<{ id: number }> {
     if (this.shouldFail) throw new Error("repository failed");
     this.orders.push(order);
+    return { id: 42 };
   }
 }
 
@@ -38,7 +39,7 @@ class TestCatalogProvider extends CatalogProvider {
         name: "Cookie café & noix",
         description: "",
         ingredients: [],
-        price: 100,
+        price: 1,
         image: "/images/cookie-cafe-noix.jpg",
         category: "cookies",
         unitLabel: "à l'unité",
@@ -48,7 +49,7 @@ class TestCatalogProvider extends CatalogProvider {
         name: "Financiers aux amandes",
         description: "",
         ingredients: [],
-        price: 500,
+        price: 5,
         image: "/images/financiers-amandes.jpg",
         category: "other",
         unitLabel: "le lot de 10",
@@ -89,8 +90,8 @@ describe("OrderService", () => {
     const { service, repository, mailService } = await createFixture();
     const order = await service.create(validOrder);
 
-    expect(order.totalPrice).toBe(7);
-    expect(order.id).toMatch(/^CK-\d{8}-[A-F0-9]{4}$/);
+    expect(order.total).toBe(7);
+    expect(order.id).toBe(42);
     expect(order.items).toHaveLength(2);
     expect(repository.orders).toHaveLength(1);
     expect(mailService.orders).toHaveLength(1);

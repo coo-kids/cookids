@@ -23,12 +23,12 @@ function returnToCatalog(): void { checkoutRoute.closeCheckout(); }
 <template>
   <div class="[--app-header-height:5rem]">
     <AppHeader :cart-count="cart.count.value" :is-cart-open="cart.isCartOpen.value" @toggle-cart="toggleCart" />
-    <CheckoutPage v-if="checkoutRoute.isCheckout.value" :items="cart.enrichedItems.value" :total-cents="cart.totalCents.value" @change-quantity="cart.setQuantity" @success="handleOrderSuccess" @back-to-catalog="returnToCatalog" />
+    <CheckoutPage v-if="checkoutRoute.isCheckout.value" :items="cart.enrichedItems.value" :total="cart.total.value" @change-quantity="cart.setQuantity" @success="handleOrderSuccess" @back-to-catalog="returnToCatalog" />
     <main v-else>
       <HeroSection />
       <ProductGrid :quantities="quantities" @change-quantity="cart.setQuantity" />
     </main>
-    <CartDrawer v-if="!checkoutRoute.isCheckout.value" :is-open="cart.isCartOpen.value" :items="cart.enrichedItems.value" :total-cents="cart.totalCents.value" @close="closeCart" @change-quantity="cart.setQuantity" @checkout="openCheckout" />
+    <CartDrawer v-if="!checkoutRoute.isCheckout.value" :is-open="cart.isCartOpen.value" :items="cart.enrichedItems.value" :total="cart.total.value" @close="closeCart" @change-quantity="cart.setQuantity" @checkout="openCheckout" />
     <AppFooter v-if="!checkoutRoute.isCheckout.value" />
   </div>
 </template>

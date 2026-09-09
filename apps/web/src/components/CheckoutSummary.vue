@@ -6,7 +6,7 @@ import QuantitySelector from "./QuantitySelector.vue";
 withDefaults(
   defineProps<{
     items: EnrichedCartItem[];
-    totalCents: number;
+    total: number;
     editable?: boolean;
   }>(),
   {
@@ -58,7 +58,7 @@ defineEmits<{ changeQuantity: [productId: string, quantity: number] }>();
             <template v-else>{{ item.quantity }}</template>
           </td>
           <td class="px-4 py-3 text-right font-bold">
-            {{ formatEuro(item.totalCents) }}
+            {{ formatEuro(item.total) }}
           </td>
         </tr>
       </tbody>
@@ -66,7 +66,7 @@ defineEmits<{ changeQuantity: [productId: string, quantity: number] }>();
         <tr>
           <td class="px-4 py-4 font-bold" colspan="2">Total</td>
           <td class="px-4 py-4 text-right text-lg font-bold text-cookids-coral">
-            {{ formatEuro(totalCents) }}
+            {{ formatEuro(total) }}
           </td>
         </tr>
       </tfoot>

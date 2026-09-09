@@ -13,12 +13,12 @@ export function useCart() {
     items.value.flatMap((item) => {
       const product = catalog.find((entry) => entry.id === item.productId);
       return product
-        ? [{ ...item, product, totalCents: product.price * item.quantity }]
+        ? [{ ...item, product, total: product.price * item.quantity }]
         : [];
     }),
   );
-  const totalCents = computed(() =>
-    enrichedItems.value.reduce((total, item) => total + item.totalCents, 0),
+  const total = computed(() =>
+    enrichedItems.value.reduce((amount, item) => amount + item.total, 0),
   );
 
   function setQuantity(productId: string, quantity: number): void {
@@ -50,7 +50,7 @@ export function useCart() {
   return {
     count,
     enrichedItems,
-    totalCents,
+    total,
     isCartOpen,
     setQuantity,
     quantityFor,

@@ -4,6 +4,7 @@ import { injector } from "@tsed/di";
 const issueCreate = vi.fn().mockResolvedValue({ data: { node_id: "issue-node-id", number: 42 } });
 const graphql = vi.fn()
   .mockResolvedValueOnce({})
+  .mockResolvedValueOnce({})
   .mockResolvedValueOnce({ addProjectV2ItemById: { item: { id: "project-item-id" } } })
   .mockResolvedValueOnce({});
 
@@ -18,7 +19,7 @@ describe("GitHubOrderRepository", () => {
   beforeEach(() => {
     issueCreate.mockClear();
     graphql.mockClear();
-    graphql.mockResolvedValueOnce({}).mockResolvedValueOnce({ addProjectV2ItemById: { item: { id: "project-item-id" } } }).mockResolvedValueOnce({});
+    graphql.mockResolvedValueOnce({}).mockResolvedValueOnce({}).mockResolvedValueOnce({ addProjectV2ItemById: { item: { id: "project-item-id" } } }).mockResolvedValueOnce({});
     injector().settings.set("envs", {
       GITHUB_TOKEN: "test-token",
       GITHUB_COMMANDS_OWNER: "coo-kids",
@@ -27,6 +28,8 @@ describe("GitHubOrderRepository", () => {
       GITHUB_COMMANDS_PROJECT_ID: "project-id",
       GITHUB_STATUS_FIELD_ID: "status-field-id",
       GITHUB_STATUS_PENDING_OPTION_ID: "pending-option-id"
+      ,GITHUB_COMMANDS_ISSUE_TYPE_ID: "commands-type-id"
+      ,GITHUB_LOCATION_ROSA_PARKS_OPTION_ID: "rosa-parks-option-id"
     });
   });
 
@@ -35,12 +38,11 @@ describe("GitHubOrderRepository", () => {
     const repository = new GitHubOrderRepository();
 
     await repository.save({
-      id: "CK-20260909-ABCD",
       createdAt: new Date(),
       customer: { firstName: "Camille", email: "camille@example.com" },
       deliveryLocation: "rosa-parks",
-      items: [{ productId: "cookie", productName: "Cookie", unitPriceCents: 350, quantity: 2, totalCents: 700 }],
-      totalPrice: 7,
+      items: [{ productId: "cookie", productName: "Cookie", unitPrice: 3.5, quantity: 2, total: 7 }],
+      total: 7,
       status: "new"
     });
 
@@ -51,8 +53,9 @@ describe("GitHubOrderRepository", () => {
       title: "Commande - Camille - 7,00 €",
       body: expect.stringContaining("**Total : 7.00 €**")
     }));
-    expect(graphql).toHaveBeenNthCalledWith(1, expect.stringContaining("setIssueFieldValue"), expect.objectContaining({ issueId: "issue-node-id" }));
-    expect(graphql).toHaveBeenNthCalledWith(2, expect.stringContaining("addProjectV2ItemById"), { projectId: "project-id", contentId: "issue-node-id" });
-    expect(graphql).toHaveBeenNthCalledWith(3, expect.stringContaining("updateProjectV2ItemFieldValue"), expect.objectContaining({ optionId: "pending-option-id" }));
+    expect(graphql).toHaveBeenNthCalledWith(1, expect.stringContaining("updateIssueIssueType"), expect.objectContaining({ issueId: "issue-node-id" }));
+    expect(graphql).toHaveBeenNthCalledWith(2, expect.stringContaining("setIssueFieldValue"), expect.objectContaining({ issueId: "issue-node-id" }));
+    expect(graphql).toHaveBeenNthCalledWith(3, expect.stringContaining("addProjectV2ItemById"), { projectId: "project-id", contentId: "issue-node-id" });
+    expect(graphql).toHaveBeenNthCalledWith(4, expect.stringContaining("updateProjectV2ItemFieldValue"), expect.objectContaining({ optionId: "pending-option-id" }));
   });
 });

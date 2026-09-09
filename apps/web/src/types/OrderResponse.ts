@@ -1,10 +1,10 @@
 export interface OrderResponse {
-  id: string;
-  totalPrice: number;
+  id?: number;
+  total: number;
   deliveryLocation: string;
   items: Array<{
     productName: string;
     quantity: number;
-    totalCents: number;
+    total: number;
   }>;
 }

@@ -4,7 +4,4 @@ import { validateCatalog } from "./validateContent";
 
 const contentCatalog: ContentCatalog = await validateCatalog(catalogSource);
 
-export const catalog: Product[] = contentCatalog.products.map((product) => ({
-  ...product,
-  price: Math.round(product.price * 100),
-}));
+export const catalog: Product[] = contentCatalog.products;

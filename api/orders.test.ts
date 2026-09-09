@@ -51,7 +51,7 @@ describe('orders', () => {
     expect(captured.statusCode).toBe(201);
     expect(captured.payload).toMatchObject({
       order: {
-        totalPrice: 2
+        total: 2
       }
     });
   });

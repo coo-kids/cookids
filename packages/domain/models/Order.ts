@@ -4,8 +4,7 @@ import { OrderItem } from "./OrderItem.js";
 
 export class Order {
   @Property()
-  @Required()
-  id!: string;
+  id?: number;
 
   @Property()
   @Required()
@@ -23,7 +22,7 @@ export class Order {
   @Property()
   @Required()
   @Minimum(0)
-  totalPrice!: number;
+  total!: number;
 
   @Property()
   @Property()
