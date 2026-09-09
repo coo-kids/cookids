@@ -6,9 +6,8 @@ import { serialize } from "@tsed/json-mapper";
 export default defineHandler({
   method: "POST",
   async handler(request) {
-    const order = await inject(OrderService).create(request.body);
+    const order = await inject<OrderService>(OrderService).create(request.body);
 
     return Response.json({ order: serialize(order) }, { status: 201 });
   }
 });
-
