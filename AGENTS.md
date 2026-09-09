@@ -35,6 +35,7 @@ Utiliser Bun depuis la racine : `bun install`, `bun run dev`, `bun run build`, `
 - Pour les tests avec doubles Ts.ED, utiliser `DITest.invoke()` ; ne pas instancier un service dont les dépendances reposent sur `inject()`.
 - Les tests sont co-localisés avec le code testé.
 - Chaque suite de tests utilise `describe`, et chaque cas de test utilise `it`.
+- Chaque modèle et schéma Ts.ED possède un test de `compile(...)` validé par `toMatchInlineSnapshot()`.
 
 ## Frontend
 
