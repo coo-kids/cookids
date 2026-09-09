@@ -1,4 +1,4 @@
-import { Enum, Integer, Minimum, Property, Required } from "@tsed/schema";
+import { Enum, Minimum, Property, Required } from "@tsed/schema";
 
 export class ProductIngredient {
   @Property()
@@ -29,7 +29,6 @@ export class Product {
 
   @Property()
   @Required()
-  @Integer()
   @Minimum(1)
   price!: number;
 

@@ -29,13 +29,19 @@ describe("CreateOrder", () => {
           },
         },
         "properties": {
-          "comment": {
-            "maxLength": 600,
+          "deliveryLocation": {
+            "maxLength": 80,
+            "minLength": 1,
             "type": "string",
           },
           "email": {
             "format": "email",
             "maxLength": 254,
+            "minLength": 1,
+            "type": "string",
+          },
+          "firstName": {
+            "maxLength": 100,
             "minLength": 1,
             "type": "string",
           },
@@ -46,19 +52,22 @@ describe("CreateOrder", () => {
             "minItems": 1,
             "type": "array",
           },
-          "name": {
+          "lastName": {
             "maxLength": 100,
-            "minLength": 1,
             "type": "string",
           },
-          "phone": {
+          "phoneNumber": {
             "maxLength": 30,
+            "type": "string",
+          },
+          "targetDeliveryDate": {
             "type": "string",
           },
         },
         "required": [
-          "name",
+          "firstName",
           "email",
+          "deliveryLocation",
           "items",
         ],
         "type": "object",

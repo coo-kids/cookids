@@ -58,8 +58,7 @@ describe("Product", () => {
           },
           "price": {
             "minimum": 1,
-            "multipleOf": 1,
-            "type": "integer",
+            "type": "number",
           },
           "unitLabel": {
             "minLength": 1,

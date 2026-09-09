@@ -1,15 +1,15 @@
 import "@tsed/ajv";
 import { AjvService } from "@tsed/ajv";
 import { inject, Injectable } from "@tsed/di";
-import { deserialize } from "@tsed/json-mapper";
+import { deserialize, serialize } from "@tsed/json-mapper";
 import { CatalogProvider } from "../catalog/CatalogProvider.js";
+import { SiteContentProvider } from "../content/SiteContentProvider.js";
 import { CreateOrder } from "../dto/CreateOrder.js";
 import { OrderValidationError } from "../errors/OrderValidationError.js";
 import { UnknownProductError } from "../errors/UnknownProductError.js";
 import { MailService } from "../mail/MailService.js";
-import type { Order } from "../models/Order.js";
+import { Order } from "../models/Order.js";
 import { OrderRepository } from "../repositories/OrderRepository.js";
-import { createOrderId } from "../utils/createOrderId.js";
 import { findProduct } from "../utils/findProduct.js";
 
 @Injectable()
@@ -18,17 +18,25 @@ export class OrderService {
   private readonly mailService = inject<MailService>(MailService);
   private readonly ajvService = inject<AjvService>(AjvService);
   private readonly catalogProvider = inject<CatalogProvider>(CatalogProvider);
+  private readonly siteContentProvider = inject<SiteContentProvider>(SiteContentProvider);
 
   async create(input: unknown): Promise<Order> {
     const orderInput = deserialize<CreateOrder>(input, { type: CreateOrder });
     try {
-      await this.ajvService.validate<CreateOrder>(orderInput, {
+      await this.ajvService.validate<CreateOrder>(serialize(orderInput), {
         type: CreateOrder,
       });
     } catch {
       throw new OrderValidationError();
     }
     const catalog = await this.catalogProvider.getProducts();
+    const { deliveryLocations: locations } = await this.siteContentProvider.getSiteContent();
+    const deliveryLocation = locations.find((location) => location.id === orderInput.deliveryLocation);
+    if (!deliveryLocation) throw new OrderValidationError("Le lieu de livraison n'est pas valide.");
+    const deliveryDate = orderInput.targetDeliveryDate?.toISOString().slice(0, 10);
+    if (deliveryLocation.fixedDeliveryDates.length > 0 && (!deliveryDate || !deliveryLocation.fixedDeliveryDates.includes(deliveryDate))) {
+      throw new OrderValidationError("La date de livraison n'est pas disponible pour ce lieu.");
+    }
     const quantities = new Map<string, number>();
     for (const item of orderInput.items) {
       quantities.set(
@@ -48,27 +56,29 @@ export class OrderService {
       return {
         productId: product.id,
         productName: product.name,
-        unitprice: product.price,
+        unitPrice: product.price,
         quantity,
-        totalCents: product.price * quantity,
+        total: product.price * quantity,
       };
     });
 
-    const order: Order = {
-      id: createOrderId(),
+    const order = deserialize<Order>({
       createdAt: new Date(),
       customer: {
-        name: orderInput.name.trim(),
+        firstName: orderInput.firstName.trim(),
+        lastName: orderInput.lastName?.trim() || undefined,
         email: orderInput.email.trim().toLowerCase(),
-        phone: orderInput.phone?.trim() || undefined,
+        phoneNumber: orderInput.phoneNumber?.trim() || undefined
       },
-      comment: orderInput.comment?.trim() || undefined,
       items,
-      totalCents: items.reduce((total, item) => total + item.totalCents, 0),
-      status: "new",
-    };
+      total: items.reduce((total, item) => total + item.total, 0),
+      deliveryLocation: deliveryLocation.id,
+      targetDeliveryDate: orderInput.targetDeliveryDate,
+      status: "new"
+    }, { type: Order, useAlias: false });
 
-    await this.orderRepository.save(order);
+    const ticket = await this.orderRepository.save(order);
+    order.id = ticket.id;
     await this.mailService.sendOrderConfirmation(order);
     return order;
   }

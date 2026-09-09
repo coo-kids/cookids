@@ -22,10 +22,10 @@ describe("useCart", () => {
         product,
         productId: product.id,
         quantity: 2,
-        totalCents: product.price * 2,
+        total: product.price * 2,
       },
     ]);
-    expect(cart.totalCents.value).toBe(product.price * 2);
+    expect(cart.total.value).toBe(product.price * 2);
   });
 
   it("borne les quantités et retire un article à zéro", () => {

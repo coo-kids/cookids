@@ -11,9 +11,8 @@ export class OrderItem {
 
   @Property()
   @Required()
-  @Integer()
   @Minimum(0)
-  unitprice!: number;
+  unitPrice!: number;
 
   @Property()
   @Required()
@@ -23,7 +22,6 @@ export class OrderItem {
 
   @Property()
   @Required()
-  @Integer()
   @Minimum(0)
-  totalCents!: number;
+  total!: number;
 }

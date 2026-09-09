@@ -3,7 +3,7 @@ import type { Product } from "@cookids/domain/models/Product";
 import { formatEuro } from "@cookids/domain/utils/formatEuro";
 import QuantitySelector from "./QuantitySelector.vue";
 
-defineProps<{ product: Product; quantity: number; totalCents: number }>();
+defineProps<{ product: Product; quantity: number; total: number }>();
 defineEmits<{ changeQuantity: [quantity: number] }>();
 </script>
 
@@ -13,7 +13,7 @@ defineEmits<{ changeQuantity: [quantity: number] }>();
     <div class="min-w-0 flex-1">
       <div class="flex items-start justify-between gap-3">
         <h3 class="m-0 text-xl leading-tight">{{ product.name }}</h3>
-        <p class="m-0 shrink-0 font-bold">{{ formatEuro(totalCents) }}</p>
+        <p class="m-0 shrink-0 font-bold">{{ formatEuro(total) }}</p>
       </div>
       <div class="mt-3 flex justify-end">
         <QuantitySelector :quantity="quantity" @change="$emit('changeQuantity', $event)" />

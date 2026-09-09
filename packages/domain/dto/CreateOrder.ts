@@ -5,7 +5,11 @@ export class CreateOrder {
   @Property()
   @Required()
   @MaxLength(100)
-  name!: string;
+  firstName!: string;
+
+  @Property()
+  @MaxLength(100)
+  lastName?: string;
 
   @Property()
   @Required()
@@ -15,11 +19,15 @@ export class CreateOrder {
 
   @Property()
   @MaxLength(30)
-  phone?: string;
+  phoneNumber?: string;
 
   @Property()
-  @MaxLength(600)
-  comment?: string;
+  @Required()
+  @MaxLength(80)
+  deliveryLocation!: string;
+
+  @Property(Date)
+  targetDeliveryDate?: Date;
 
   @Property()
   @Required()

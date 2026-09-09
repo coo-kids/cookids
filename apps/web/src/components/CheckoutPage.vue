@@ -9,7 +9,7 @@ import CheckoutStepper from "./CheckoutStepper.vue";
 import OrderForm from "./OrderForm.vue";
 import OrderSuccess from "./OrderSuccess.vue";
 
-defineProps<{ items: EnrichedCartItem[]; totalCents: number }>();
+defineProps<{ items: EnrichedCartItem[]; total: number }>();
 const emit = defineEmits<{ backToCatalog: []; changeQuantity: [productId: string, quantity: number]; success: [] }>();
 const isFormVisible = ref(false);
 const order = ref<OrderResponse | null>(null);
@@ -49,7 +49,7 @@ function handleSuccess(orderResult: OrderResponse): void {
         <template v-else>
           <CheckoutSummary
             :items="items"
-            :total-cents="totalCents"
+            :total="total"
             :editable="!isFormVisible"
             @change-quantity="changeQuantity"
           />

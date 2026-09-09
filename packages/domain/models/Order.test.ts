@@ -16,18 +16,22 @@ describe("Order", () => {
                 "minLength": 1,
                 "type": "string",
               },
-              "name": {
+              "firstName": {
                 "maxLength": 100,
                 "minLength": 1,
                 "type": "string",
               },
-              "phone": {
+              "lastName": {
+                "maxLength": 100,
+                "type": "string",
+              },
+              "phoneNumber": {
                 "maxLength": 30,
                 "type": "string",
               },
             },
             "required": [
-              "name",
+              "firstName",
               "email",
             ],
             "type": "object",
@@ -47,31 +51,26 @@ describe("Order", () => {
                 "multipleOf": 1,
                 "type": "integer",
               },
-              "totalCents": {
+              "total": {
                 "minimum": 0,
-                "multipleOf": 1,
-                "type": "integer",
+                "type": "number",
               },
-              "unitprice": {
+              "unitPrice": {
                 "minimum": 0,
-                "multipleOf": 1,
-                "type": "integer",
+                "type": "number",
               },
             },
             "required": [
               "productId",
               "productName",
-              "unitprice",
+              "unitPrice",
               "quantity",
-              "totalCents",
+              "total",
             ],
             "type": "object",
           },
         },
         "properties": {
-          "comment": {
-            "type": "string",
-          },
           "createdAt": {
             "minLength": 1,
             "type": "string",
@@ -79,9 +78,12 @@ describe("Order", () => {
           "customer": {
             "$ref": "#/definitions/OrderCustomer",
           },
-          "id": {
+          "deliveryLocation": {
             "minLength": 1,
             "type": "string",
+          },
+          "id": {
+            "type": "number",
           },
           "items": {
             "items": {
@@ -96,18 +98,20 @@ describe("Order", () => {
             "minLength": 1,
             "type": "string",
           },
-          "totalCents": {
+          "targetDeliveryDate": {
+            "type": "string",
+          },
+          "total": {
             "minimum": 0,
-            "multipleOf": 1,
-            "type": "integer",
+            "type": "number",
           },
         },
         "required": [
-          "id",
           "createdAt",
           "customer",
           "items",
-          "totalCents",
+          "total",
+          "deliveryLocation",
           "status",
         ],
         "type": "object",

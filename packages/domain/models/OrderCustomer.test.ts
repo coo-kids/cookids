@@ -14,18 +14,22 @@ describe("OrderCustomer", () => {
             "minLength": 1,
             "type": "string",
           },
-          "name": {
+          "firstName": {
             "maxLength": 100,
             "minLength": 1,
             "type": "string",
           },
-          "phone": {
+          "lastName": {
+            "maxLength": 100,
+            "type": "string",
+          },
+          "phoneNumber": {
             "maxLength": 30,
             "type": "string",
           },
         },
         "required": [
-          "name",
+          "firstName",
           "email",
         ],
         "type": "object",

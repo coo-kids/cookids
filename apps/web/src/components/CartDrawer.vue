@@ -5,7 +5,7 @@ import type { EnrichedCartItem } from "../types/EnrichedCartItem";
 import AppButton from "./AppButton.vue";
 import CartItemRow from "./CartItem.vue";
 
-defineProps<{ isOpen: boolean; items: EnrichedCartItem[]; totalCents: number }>();
+defineProps<{ isOpen: boolean; items: EnrichedCartItem[]; total: number }>();
 defineEmits<{ close: []; changeQuantity: [productId: string, quantity: number]; checkout: [] }>();
 </script>
 
@@ -19,7 +19,7 @@ defineEmits<{ close: []; changeQuantity: [productId: string, quantity: number]; 
       <p v-if="items.length === 0" class="text-[#695149]">Votre panier est encore vide.</p>
       <template v-else>
         <ul class="list-none p-0"><CartItemRow v-for="item in items" :key="item.productId" v-bind="item" @change-quantity="$emit('changeQuantity', item.productId, $event)" /></ul>
-        <p class="flex justify-between border-t border-[#eadace] py-4 text-[1.2rem]"><span>Total</span><strong>{{ formatEuro(totalCents) }}</strong></p>
+        <p class="flex justify-between border-t border-[#eadace] py-4 text-[1.2rem]"><span>Total</span><strong>{{ formatEuro(total) }}</strong></p>
         <AppButton class="w-full" @click="$emit('checkout')">Passer la commande</AppButton>
       </template>
     </aside>
