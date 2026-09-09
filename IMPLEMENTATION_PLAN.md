@@ -2,174 +2,171 @@
 
 ## Décision de cadrage
 
-La première livraison couvre une verticale locale complète : catalogue statique, panier Vue, formulaire, `POST /api/orders`, validation Ts.ED, calcul serveur, services Fake, tests Bun et build Vite. Google Sheets, Resend et les contenus/photos définitifs restent hors de cette livraison, derrière des abstractions déjà stables.
+Le site Cookids reste une SPA Vue servie par Vercel. À chaque commande valide, l’API `POST /api/orders` calcule le panier côté serveur puis crée une issue dans le dépôt dédié [coo-kids/cookids-commands](https://github.com/coo-kids/cookids-commands). Cette issue devient la source de vérité opérationnelle : elle est affectée à `syline`, ajoutée au projet GitHub « Commands tracking », typée « Commands » et placée dans « Commande en attente de validation ».
 
-Le site est une vente privée diffusée par bouche-à-oreille. La V1 ne gère donc ni livraison, ni retrait structuré, ni date limite, ni créneaux : une commande contient uniquement les coordonnées prévues et un commentaire libre. Ces règles pourront être ajoutées plus tard comme champs de contenu et de commande, sans modifier le calcul métier actuel.
+Le navigateur ne transmet jamais un prix, un total, un libellé produit ou une configuration GitHub. Il transmet les coordonnées, le lieu, la date souhaitée et les lignes `{ productId, quantity }`. `OrderService` résout les produits, recalcule le total et applique les règles de livraison avant toute écriture distante. Le numéro GitHub de l’issue créée (`issue.number`) est la référence de suivi communiquée au client ; l’identifiant interne `CK-…` peut rester technique mais n’est pas la référence client.
 
-Le dépôt est actuellement vierge de code applicatif. Les fichiers `.idea/` existants ne sont pas concernés.
+Google Sheets sort du périmètre de cette livraison. GitHub est le suivi opérationnel et Resend reste le canal des emails transactionnels : confirmation après création réussie, puis notifications d’étape dans une phase ultérieure. Les ports `OrderRepository` et `MailService` sont conservés afin d’isoler le domaine de GitHub et Resend, et de rendre les tests unitaires déterministes.
 
 ## Architecture cible
 
 ```text
-apps/web (Vue 3 + Vite SPA) ── POST /api/orders ── api/ (Vercel Function)
-          │                                         │
-          └── contents/ + packages/domain + packages/infrastructure ──┘
-                                                    │
-                              FakeOrderRepository + FakeMailService
+apps/web (Vue + Vite)
+  └── POST /api/orders ── api/orders.ts (adaptateur Vercel)
+                              └── OrderService (domaine)
+                                  ├── CatalogProvider ← contents/catalog.yml
+                                  ├── DeliveryConfiguration ← contents/site.yml
+                                  └── OrderRepository ← GitHubOrderRepository
+                                  ├── MailService ← ResendMailService
+                                  └── issue cookids-commands → récupère `issue.number`
+                                        └── projet « Commands tracking » → email Resend de confirmation
 ```
 
 Principes non négociables :
 
-- le navigateur transmet seulement `productId` et `quantity` ;
-- `OrderService` est l’unique endroit qui résout produits, prix et total ;
-- la Function reste un adaptateur HTTP ;
-- le domaine ne dépend ni de Vercel, ni de Google, ni de Resend ;
-- les variables sensibles restent exclusivement dans l’environnement Vercel.
-- les responsabilités sont séparées : une Function HTTP adapte la requête, un service orchestre le métier, un repository persiste et un service de mail délivre ;
-- aucun utilitaire réutilisable ne reste inline dans un composant, une Function ou un service : il possède un fichier nommé dans le dossier adapté ;
-- chaque classe Ts.ED injectable, modèle, DTO, erreur métier et implémentation d’adaptateur dispose de son propre fichier ; les fichiers d’index éventuels ne font que réexporter.
-- éviter toute duplication de règles métier, de validation, de calcul de prix, de formatage métier et de lecture de configuration : une source de vérité est extraite dès qu’un comportement est partagé ;
-- appliquer ce principe sans abstraction prématurée : deux lignes de rendu très localisées ne justifient pas à elles seules un composant, un helper ou une hiérarchie supplémentaire.
+- le calcul des prix, le total, les libellés du panier et la validation de la date sont exclusivement côté serveur ;
+- `api/orders.ts` reste un adaptateur HTTP fin ; `OrderService` orchestre le métier et `GitHubOrderRepository` persiste une commande déjà normalisée ;
+- le domaine ne dépend ni de Vercel ni de GitHub ;
+- le token GitHub et les identifiants techniques sont des secrets Vercel, jamais des variables `VITE_` ;
+- `contents/catalog.yml` et `contents/site.yml` restent les sources éditables uniques ; aucun lieu ou créneau ne doit être dupliqué dans un composant ou dans l’adaptateur GitHub ;
+- chaque classe injectable, modèle, DTO, erreur métier et adaptateur réutilisable possède son fichier propre ;
+- les exceptions contrôlées sont traduites en JSON public par `defineHandler` ; les services ne construisent pas de `Response`.
 
-### Convention de placement des fichiers
+## Données de commande et règles de livraison
+
+### Entrée HTTP et modèle métier
+
+Faire évoluer `CreateOrder`, `OrderCustomer` et `Order` autour des champs suivants :
+
+| Champ API / domaine | Obligatoire | Destination GitHub |
+| --- | --- | --- |
+| `lastName` | non | champ « Last name » |
+| `firstName` | oui | champ « First name » |
+| `email` | oui, email valide | champ « Email » |
+| `phoneNumber` | non | champ « Phone number » |
+| `deliveryLocation` | oui | champ « Location delivery » |
+| `targetDeliveryDate` | à confirmer | champ date « Target date » |
+| `items` | oui, non vide | description Markdown |
+| `totalCents` calculé | — | champ « Total price » |
+| `githubIssueNumber` généré par GitHub | — | référence de suivi dans la réponse API et l’email |
+
+Les noms entre guillemets sont les noms visibles sur le projet d’après la configuration fournie ; leur résolution technique se fait par ID GitHub, jamais par saisie navigateur. `totalCents` est converti une seule fois, dans l’adaptateur GitHub, au format monétaire attendu par « Total price ».
+
+`contents/site.yml` devient la source de vérité de :
+
+```yaml
+deliveryLocations:
+  - id: rosa-parks
+    label: Rosa Parks
+    fixedDeliveryDates: [] # dates ISO YYYY-MM-DD éditables à renseigner
+  - id: saint-lazare
+    label: Saint-Lazare
+    fixedDeliveryDates: []
+```
+
+Le schéma `SiteContentSchema` valide des identifiants uniques, des libellés, des dates ISO valides et l’absence de dates dupliquées. Le frontend consomme la même configuration pour sa liste déroulante et ses dates proposées ; le backend la relit via un provider Bun typé et refuse toute valeur hors configuration.
+
+Règle métier : pour `rosa-parks` et `saint-lazare`, la date saisie doit appartenir à `fixedDeliveryDates`. Le plan prévoit un `InvalidTargetDeliveryDateError` traduit en `400 INVALID_TARGET_DELIVERY_DATE`. Le comportement pour les autres lieux reste à confirmer avant implémentation.
+
+## Convention de placement
 
 ```text
 packages/domain/src/
-├── models/             # un fichier par modèle et par classe métier
-├── dto/                # un fichier par DTO Ts.ED
-├── services/           # OrderService.ts uniquement pour OrderService
-├── repositories/       # contrats de persistance
-├── mail/               # contrats de messagerie
-├── errors/             # une erreur par fichier si elle porte un comportement/contrat propre
-├── utils/              # fonctions pures, réutilisables, une par fichier
-└── catalog.ts
+├── dto/CreateOrder.ts
+├── dto/CreateOrderItem.ts
+├── errors/InvalidTargetDeliveryDateError.ts
+├── errors/OrderValidationError.ts
+├── models/Order.ts
+├── models/OrderCustomer.ts
+├── repositories/OrderRepository.ts
+├── services/OrderService.ts
+└── utils/
+
+packages/infrastructure/src/
+├── config/GitHubOrderRepositorySettings.ts
+├── content/BunSiteContentProvider.ts
+├── github/GitHubClient.ts
+├── github/GitHubProjectMetadataResolver.ts
+├── github/formatOrderIssueBody.ts
+└── repositories/GitHubOrderRepository.ts
 
 api/
-├── orders.ts            # Function Vercel
-└── _orders.test.ts      # test co-localisé, ignoré par Vercel
+├── orders.ts
+└── orders.test.ts
 ```
 
-Les fonctions locales très courtes qui ne servent qu’à rendre un composant peuvent rester privées ; dès qu’une fonction est réutilisée ou encode une règle métier, elle est extraite dans le module approprié. Cette règle évite l’éparpillement sans imposer artificiellement un fichier pour une simple expression de rendu.
+Un seul module formate le corps Markdown de l’issue afin que les tests verrouillent le rendu envoyé à GitHub.
 
-Exemples de sources de vérité prévues : `catalog.yml` et son loader typé pour les produits/prix, les DTO pour les contraintes de l’entrée HTTP, `OrderService` pour la normalisation et les totaux, et le module de configuration pour le chargement dotenv-flow. Les composants Vue consomment ces éléments ; ils ne les recodent pas.
+## Phase 1 — Contrat, contenu et domaine
 
-## Contenu et assets éditables
+1. Remplacer les anciens champs `name` et `phone` par `firstName`, `lastName` et `phoneNumber` dans les DTO, modèles, réponses API et tests. Décider explicitement du devenir du champ libre `comment`, absent du nouveau brief.
+2. Ajouter `deliveryLocation` (identifiant de configuration) et `targetDeliveryDate` au DTO et au modèle. Désérialiser avec `@tsed/json-mapper`, puis valider avec `@tsed/ajv` : prénom, email, longueurs maximales, panier non vide et quantités entières bornées.
+3. Étendre `site.yml` et `SiteContentSchema` avec les lieux et dates fixes ; les charger côté Vite et via un provider Bun backend typé.
+4. Faire dépendre `OrderService` de la configuration de livraison. Il rejette les lieux inconnus et les dates non autorisées, consolide les lignes si nécessaire, refuse les produits inconnus et recalcule complètement les montants.
+5. Conserver `OrderRepository.save(order)` comme frontière de persistance et `MailService.sendOrderConfirmation(order)` comme frontière de messagerie. Garder leurs doubles pour les tests isolés.
+6. Ajouter les erreurs contrôlées : `INVALID_ORDER` (400), `UNKNOWN_PRODUCT` (400), `INVALID_DELIVERY_LOCATION` (400), `INVALID_TARGET_DELIVERY_DATE` (400), `ORDER_PROCESSING_FAILED` (500 sans détail interne) et, si nécessaire, `ORDER_CONFIRMATION_FAILED` (500 sans détail interne).
 
-Le contenu ne sera pas dispersé dans les composants Vue ni dans un package technique. Créer le dossier racine `contents/` comme point d’édition unique, avec une structure lisible pour une développeuse :
+Critères d’acceptation : les tests du domaine couvrent la normalisation des coordonnées, les lieux inconnus, chaque date fixe invalide/valide, les produits inconnus, les quantités invalides et l’impossibilité d’influencer le prix depuis le navigateur.
 
-```text
-contents/
-├── catalog.yml          # produits : id, nom, description, prix, catégorie, image, disponibilité
-└── site.yml             # marque, hero, textes d’interface, coordonnées, mentions de commande
+## Phase 2 — Repository GitHub et sécurité
 
-apps/web/public/images/  # seules les images optimisées et publiées
+1. Créer `GitHubOrderRepository`, implémentation de `OrderRepository`, fondée sur l’API GitHub (client officiel ou appels HTTP encapsulés). Elle reçoit seulement un `Order` normalisé et retourne la référence créée, dont `githubIssueNumber`.
+2. Créer l’issue dans `coo-kids/cookids-commands` avec un titre déterministe, par défaut `Commande <id> — <firstName> <lastName>` (à valider), l’assignee `syline`, le type « Commands » et le corps Markdown ci-dessous.
+3. Ajouter l’issue au projet « Commands tracking », puis définir : « First name », « Last name », « Email », « Phone number », « Location delivery », « Target date », « Total price » et le statut « Commande en attente de validation ». Les node IDs du projet, des champs, des options et du type sont résolus au démarrage/déploiement et validés explicitement ; aucune valeur magique n’est mise dans le code métier.
+4. Centraliser `GITHUB_TOKEN`, `GITHUB_OWNER`, `GITHUB_COMMANDS_REPOSITORY`, `GITHUB_COMMANDS_PROJECT_ID`, ainsi que les ID de champ/type/option si ces derniers sont configurés. Fournir seulement des valeurs fictives dans `.env.example`.
+5. Créer un GitHub App ou fine-grained PAT dédié, limité au dépôt `cookids-commands` et au projet d’organisation nécessaire, avec les droits minimaux de création d’issues, affectation, lecture/écriture du projet et modification de ses champs. Le stocker seulement dans Vercel (Development, Preview, Production).
+6. En cas d’échec GitHub, ne pas confirmer la commande au client : logger sans données personnelles ni token, retourner `500 ORDER_PROCESSING_FAILED`. Préparer le repository pour accepter ultérieurement une clé d’idempotence HTTP ; ne pas créer de retry automatique ici.
+
+Le corps d’issue est rendu exclusivement en Markdown et inclut les lignes du panier et le total calculé :
+
+```md
+## Commande CK-YYYYMMDD-XXXX
+
+| Produit | Quantité | Prix unitaire | Sous-total |
+| --- | ---: | ---: | ---: |
+| Cookie chocolat | 2 | 3,50 € | 7,00 € |
+
+**Total : 7,00 €**
 ```
 
-- Le YAML est le format source éditable ; Vite le charge côté SPA et un adaptateur Bun le charge côté backend.
-- `catalog.yml` nourrit à la fois l’interface et le catalogue métier serveur : prix, noms et disponibilités n’existent qu’à un seul endroit.
-- `site.yml` porte le texte affiché, évitant les chaînes métier ou éditoriales codées dans les composants. Les libellés purement techniques/accessibilité peuvent rester proches du composant lorsqu’ils ne sont pas du contenu administré.
-- Les emails transactionnels et messages d’erreurs API ne sont pas externalisés en YAML dans cette version : ils restent versionnés dans leurs modules backend respectifs afin de préserver leurs contrats techniques.
-- Une validation de contenu est exécutée au test/build par schémas Ts.ED + AJV : IDs uniques, prix positifs, catégories valides, chemins image locaux existants et champs obligatoires. Une modification invalide échoue avant déploiement.
-- Les images actuelles sont réutilisables avec autorisation. Elles seront versionnées, optimisées pour le web et référencées par chemin ; une amélioration ou variante via génération IA sera ajoutée dans une phase ultérieure, après validation humaine de chaque visuel. Aucune génération n’est incluse dans la première milestone.
+Critères d’acceptation : avec un dépôt/projet de test, une commande crée une unique issue affectée à `syline`, de type « Commands », liée à « Commands tracking », avec tous les champs attendus, le statut initial et un corps Markdown conforme. Les tests unitaires emploient un faux client GitHub ; un test d’intégration protégé par variables d’environnement est exécuté uniquement contre le projet de test.
 
-## Phase préalable — Contexte agentique et documentation de framework
+## Phase 2 bis — Confirmation et suivi email via Resend
 
-Avant d’écrire le code applicatif, générer les instructions et skills versionnés dans le dépôt afin que tout agent intervenant sur Cookids applique les mêmes conventions.
+1. Conserver le port `MailService` et créer `ResendMailService` dans l’infrastructure backend. Son unique responsabilité initiale est `sendOrderConfirmation(order)`.
+2. Après la persistance GitHub réussie et la récupération de `issue.number`, `OrderService` déclenche l’email de confirmation vers l’adresse normalisée du client. L’email comprend explicitement le numéro GitHub de suivi, le récapitulatif Markdown/HTML du panier, le total calculé et les informations de livraison utiles ; il ne contient aucun autre identifiant GitHub interne.
+3. Configurer `RESEND_API_KEY` et `RESEND_FROM` dans Vercel, avec une adresse d’expéditeur/domaine vérifié. Ajouter les clés fictives correspondantes dans `.env.example`, sans secret.
+4. Tester le rendu, le destinataire et les erreurs avec un double `MailService`, puis réaliser un test d’intégration vers une adresse de test autorisée.
+5. Préparer, sans l’implémenter dans cette livraison, le déclenchement d’emails d’étape depuis les changements de statut GitHub. Cette évolution nécessitera un webhook GitHub vérifié, une correspondance statut → modèle Resend et une stratégie d’idempotence afin de ne jamais envoyer deux fois le même message.
 
-1. Créer un `AGENTS.md` racine, concis, couvrant : commandes Bun autorisées, structure des workspaces, règles de dépendances, sécurité des secrets, vérifications obligatoires et limites de chaque milestone.
-2. Créer des skills locaux sous `.codex/skills/`, un par technologie effectivement employée : Bun/workspaces, Vue/Vite, Vercel Functions, et Ts.ED DI/Schema. Ajouter ceux de Google Sheets et Resend seulement au moment de leurs intégrations.
-3. Pour chaque framework, télécharger son `llms.txt` officiel et le conserver comme référence sourcée du skill (par exemple `references/<framework>.llms.txt`), plutôt que de recopier une documentation figée dans le `SKILL.md`.
-4. Écrire un `SKILL.md` court qui explique quand le skill s’applique, les conventions propres au projet et quand consulter la référence installée. Ne pas transformer les skills en copie exhaustive de la documentation officielle.
-5. Vérifier chaque skill (frontmatter, noms et absence de placeholders) puis documenter dans `AGENTS.md` comment les maintenir lorsque les dépendances montent de version.
+Règle de cohérence initiale : formulaire valide → issue GitHub créée et configurée → récupération de `issue.number` → envoi Resend. Si l’email échoue après la création GitHub, l’API retourne une erreur contrôlée et journalise l’incident sans donnée personnelle ; elle ne prétend pas au client que la confirmation a été délivrée. La reprise manuelle ou automatisée de l’envoi est une étape distincte à décider.
 
-Critères d’acceptation : le dépôt contient uniquement les skills justifiés par les dépendances retenues, leurs sources officielles sont traçables, et un agent peut comprendre comment développer, tester et déployer sans deviner les conventions locales.
+Critères d’acceptation : aucune confirmation n’est envoyée sans issue GitHub créée ; une commande complète entraîne une seule confirmation Resend avec le numéro GitHub exact et le total serveur exact ; les erreurs Resend ne divulguent pas de détail technique au client.
 
-## Phase 0 — Socle du monorepo
+## Phase 3 — Adaptateur Vercel et interface
 
-1. Créer le workspace Bun `apps/web`, les packages `packages/domain` et `packages/infrastructure`, les Functions racine `api/`, plus le dossier métier racine `contents/`.
-2. Ajouter les scripts racine : `dev`, `build`, `test`, et les scripts délégués des workspaces.
-3. Configurer TypeScript partagé avec les alias de workspace nécessaires, sans couplage frontend/backend superflu.
-4. Installer seulement les dépendances utiles à la milestone 1 : Vue, Vite, Tailwind CSS, TypeScript, `@tsed/di`, `@tsed/schema`, `@tsed/ajv`, `@tsed/json-mapper`, un parseur YAML léger et leurs prérequis de métadonnées/validation compatibles.
-5. Ajouter `vercel.json`, les protections no-index (balises HTML, `robots.txt`, header `X-Robots-Tag`) et une configuration dotenv-flow.
-6. Installer `dotenv-flow` dans les packages qui chargent la configuration locale et centraliser ce chargement dans un module backend. Les tests chargent explicitement l’environnement `test` ; le frontend ne reçoit que des variables préfixées `VITE_`, jamais de secrets.
-7. Versionner `.env.example`, `.env.development.example`, `.env.test.example` et `.env.production.example` sans valeur secrète ; ignorer les vrais `.env`, `.env.local`, `.env.*.local` et fichiers équivalents de dotenv-flow.
-8. Faire correspondre les variables Vercel aux environnements Development, Preview et Production : dotenv-flow sert au développement et aux tests locaux, tandis que Vercel injecte les valeurs réelles en hébergement.
-9. Établir la structure de dossiers ci-dessus avant les premières classes : pas de `utils.ts` fourre-tout, pas de classe injectable ou de modèle partagé dans un fichier agrégateur.
+1. Brancher `GitHubOrderRepository` et `ResendMailService` dans `packages/infrastructure/config/index.ts` pour les environnements configurés. Garder des doubles uniquement pour les tests isolés, jamais comme comportement de production.
+2. Adapter `api/orders.ts` pour sérialiser la commande normalisée, avec `githubIssueNumber` comme référence de suivi, et projeter toutes les erreurs contrôlées. La réponse `201` ne contient pas de node ID, URL privée, token ou autre donnée GitHub interne.
+3. Mettre à jour `OrderForm` : prénom requis, nom/téléphone facultatifs, email requis, liste déroulante alimentée par `site.yml` et sélection de date adaptée au lieu. Afficher une erreur utile avant envoi lorsque la date n’est pas sélectionnable ; le backend reste l’autorité.
+4. Conserver le panier, l’état de soumission, la prévention du double-submit, l’accessibilité et le vidage du panier uniquement après `201`.
 
-Critères d’acceptation : `bun install`, `bun run build` et `bun test` sont exécutables depuis la racine ; l’environnement local est sélectionné de façon déterministe par dotenv-flow, aucun secret réel n’est versionné et aucun secret backend ne peut entrer dans le bundle Vite.
+Critères d’acceptation : le parcours catalogue → panier → coordonnées/livraison → succès crée exactement une issue GitHub complète. Une requête invalide retourne une erreur exploitable et aucun ticket partiellement configuré n’est considéré comme une commande confirmée.
 
-## Phase 1 — Domaine et contrat de commande
+## Phase 4 — Vérification et livraison
 
-1. Définir dans `packages/domain` : `Product`, `CartItem`, `OrderItem`, `Order`, les schémas de contenu et le port de catalogue. Le catalogue partagé provient de `contents/catalog.yml`, chargé par Vite côté SPA et par l’infrastructure Bun côté backend.
-2. Créer les DTO `CreateOrder` / `CreateOrderItem` avec les décorateurs Ts.ED, les désérialiser avec `@tsed/json-mapper` puis les valider avec `@tsed/ajv` : nom requis, email valide, quantités entières entre 1 et une limite explicite, panier non vide, tailles maximales des champs libres.
-3. Ajouter les abstractions `OrderRepository` et `MailService` ainsi que les implémentations en mémoire Fake.
-4. Implémenter `OrderService` : validation défensive complémentaire, consolidation des lignes du panier si besoin, rejet des produits inconnus, recalcul complet des montants, génération d’un identifiant `CK-YYYYMMDD-XXXX`, persistance puis confirmation.
-5. Définir des erreurs métier contrôlées et leur projection HTTP : `INVALID_ORDER` (400), `UNKNOWN_PRODUCT` (400) et `ORDER_PROCESSING_FAILED` (500, sans détail interne).
+1. Compléter les tests de schémas Ts.ED (`compile(...).toMatchInlineSnapshot()`), du domaine, du formateur Markdown, du repository GitHub simulé, du mailer Resend simulé et de la Function.
+2. Lancer `bun run test` puis `bun run build` à la racine.
+3. Faire une recette sur un projet GitHub de test et une adresse Resend de test : permissions du token, assignee, type, projet, statut, valeurs des champs, total monétaire, description, destinataire et absence de données sensibles dans les logs.
+4. Configurer les secrets Vercel pour Development, Preview et Production ; vérifier que le token GitHub et la clé Resend ne sont jamais exposés dans le bundle Vite.
+5. Mettre à jour le README : démarrage local, variables requises, création du projet GitHub de test et procédure de rotation du token.
 
-Décision à tester : si l’enregistrement réussit mais que l’email échoue, retourner une erreur contrôlée et logger l’incident ; ne jamais prétendre au client que la commande a été entièrement confirmée. L’idempotence/réessai pourra être ajouté ultérieurement au niveau HTTP sans modifier le service métier.
+## Décisions à confirmer avant implémentation
 
-Critères d’acceptation : tests unitaires Bun du service couvrant tous les cas du brief, sans réseau, Vercel, Google ni Resend.
-
-## Phase 2 — Adaptateur Vercel
-
-1. Créer `api/orders.ts` avec une Function minimale qui lit le JSON, obtient le graphe DI Ts.ED et appelle `OrderService`.
-2. Centraliser le branchement Fake dans une composition root backend : la Function ne connaît pas les détails de repository/mail.
-3. Sérialiser le modèle de sortie avec `@tsed/json-mapper`, transformer les exceptions connues en JSON cohérent et logguer les erreurs non prévues côté serveur.
-4. Ajouter les tests de l’adaptateur nécessaires pour le statut `201`, les erreurs de validation et l’absence de fuite de détails internes.
-
-Critères d’acceptation : une requête locale valide reçoit `201` et un récapitulatif de commande normalisé ; les données tarifaires envoyées par le client ne peuvent pas influencer le total.
-
-## Phase 3 — SPA de commande
-
-1. Mettre en place l’ossature Vue : `AppHeader`, hero, grille catalogue, footer et styles globaux chauds/crème.
-2. Créer `useCart.ts` avec un état réactif minimal : ajout/retrait, quantité bornée, total issu du catalogue, compteur et vidage après succès. Aucun Pinia à ce stade.
-3. Implémenter `ProductGrid`, `ProductCard`, `QuantitySelector`, bouton panier, drawer et lignes panier ; viser 3/2/1 colonnes desktop/tablette/mobile.
-4. Implémenter `OrderForm` avec validation ergonomique, état de soumission, prévention du double-submit et affichage des erreurs API.
-5. Implémenter `OrderSuccess` avec identifiant et récapitulatif retournés par le serveur, puis vider le panier uniquement après réponse `201`.
-6. Garantir les fondamentaux a11y : labels associés, focus visible, navigation clavier du drawer, contrastes, zones tactiles et annonces de statut.
-
-Critères d’acceptation : le parcours catalogue → panier → formulaire → succès fonctionne sur mobile et desktop, avec états loading/error/success explicites.
-
-## Phase 4 — Vérification de la milestone 1
-
-1. Écrire/compléter les tests du domaine : commande valide, total, plusieurs produits, produit inconnu, quantité zéro/négative/trop élevée, panier vide, email invalide, format d’ID, appels repository/mail et propagation des échecs.
-2. Lancer `bun test` et `bun run build` à la racine.
-3. Vérifier manuellement le parcours en développement, le responsive et les en-têtes no-index.
-4. Documenter le démarrage local et le fonctionnement Fake dans le README.
-
-Sortie : une preview Vercel peut être déployée sans dépendance Google/Resend, avec une commande confirmée de manière simulée.
-
-## Phase 5 — Intégrations après stabilisation
-
-### Google Sheets
-
-1. Ajouter `GoogleSheetsOrderRepository` dans l’infrastructure backend seulement.
-2. Utiliser un service account et les variables `GOOGLE_CLIENT_EMAIL`, `GOOGLE_PRIVATE_KEY`, `GOOGLE_SHEET_ID`.
-3. Écrire une ligne dans `Orders` et une par article dans `OrderItems` ; tester sur une feuille de test dédiée.
-4. Remplacer le binding Fake par le binding Google uniquement dans l’environnement configuré.
-
-### Resend
-
-1. Ajouter `ResendMailService` avec `RESEND_API_KEY`, `RESEND_FROM` et éventuellement `ORDER_NOTIFICATION_EMAIL`.
-2. Générer un email transactionnel lisible depuis le modèle `Order` normalisé.
-3. Tester l’envoi vers une adresse de test, puis le basculement de configuration.
-
-## Phase 6 — Contenu, design et livraison production
-
-1. Inventorier le site de référence : produits, descriptions, prix, conditions de commande, coordonnées, textes et photos réutilisables.
-2. Renseigner `catalog.yml` et `site.yml`, puis placer les photos optimisées (`webp`) dans `apps/web/public/images` ; supprimer les données d’exemple.
-3. Affiner la direction artistique pâtisserie/fait maison et les micro-animations, sans nuire aux performances.
-4. Configurer les secrets Vercel, preview puis production ; vérifier les logs Function et la non-indexation effective.
-5. Effectuer une recette : commande réelle, écriture Sheets, email client, email organisateur, erreurs et affichage mobile.
-6. Créer le dépôt GitHub et le projet Vercel, puis les connecter. Définir `main` comme branche de production : chaque push fusionné sur `main` déclenche automatiquement le build puis le déploiement production. Les autres branches et pull requests reçoivent une Preview Deployment isolée.
-7. Protéger `main` dans GitHub : pull request obligatoire, vérifications `bun test` et `bun run build` requises avant merge. Les variables de production sont limitées à Vercel Production ; les valeurs de test/preview sont définies dans leurs environnements Vercel respectifs.
-
-Critères d’acceptation : un commit intégré à `main` est automatiquement publié sur le domaine de production Vercel après succès du build ; aucune publication production ne dépend d’une commande manuelle locale.
-
-## Points à décider avant les intégrations réelles
-
-- Liste finale des produits, prix, disponibilité et limite de quantité par produit/commande.
-- Nom et adresse d’expéditeur Resend vérifiés, plus l’adresse de notification organisateur.
-- Structure du Google Sheet cible et partage avec le compte de service.
-- Texte légal/confidentialité adapté puisque nom, email et téléphone sont collectés.
-- L’inventaire définitif des produits, prix et textes du site existant avant import dans les YAML. Les images sont autorisées à la réutilisation.
+- `targetDeliveryDate` est-il obligatoire pour tous les lieux ? Si non, pour lesquels et quelle valeur doit être envoyée au champ GitHub lorsqu’il est absent ?
+- Pour les lieux autres que Rosa Parks et Saint-Lazare : la date est-elle libre, facultative, ou encadrée par une autre règle ?
+- La liste complète des lieux doit-elle être définie immédiatement dans `site.yml` ? Quels sont leurs identifiants et libellés exacts ?
+- Le champ libre historique « Un mot pour Syline ? » doit-il être supprimé, conservé dans l’issue, ou déplacé dans un champ GitHub ?
+- Confirmez-vous les noms exacts des champs GitHub visibles (« First name », « Last name », « Location delivery », etc.), le nom exact de l’option de statut et le format souhaité du titre d’issue ?
+- Le projet « Commands tracking » est-il un GitHub Project d’organisation `coo-kids` et acceptez-vous un GitHub App/jeton finement restreint dédié à son écriture ?
+- Quelle adresse/domaine d’expédition Resend est validé, et quel contenu exact doit figurer dans l’email de confirmation ?
+- Les emails d’étape doivent-ils être déclenchés automatiquement dès la première version, et quels statuts GitHub doivent envoyer quel message ?
