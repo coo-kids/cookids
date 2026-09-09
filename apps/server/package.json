@@ -1,5 +1,5 @@
 {
-  "name": "@cookids/infrastructure",
+  "name": "@cookids/server",
   "private": true,
   "type": "module",
   "exports": {

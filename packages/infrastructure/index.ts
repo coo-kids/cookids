@@ -1,3 +1,3 @@
 import "./config/index.js";
 
-export * from "./http/defineHandler.js";
+export * from "./http/defineFetchHandler.js";
