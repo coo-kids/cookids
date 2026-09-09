@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { Order } from "@cookids/domain";
 import { FakeOrderRepository } from "./FakeOrderRepository.js";
+import type { Order } from "@cookids/domain/models/Order.js";
 
 describe("FakeOrderRepository", () => {
   it("conserve les commandes sauvegardées", async () => {

@@ -6,7 +6,7 @@ L’application comprend une vitrine Vue, un panier, un tunnel de commande et un
 
 ## Stack
 
-- [Bun](https://bun.sh/) et workspaces pour le monorepo
+- [Node.js](https://nodejs.org/) et [pnpm](https://pnpm.io/) workspaces pour le monorepo
 - Vue 3, Vite et Tailwind CSS pour la SPA
 - Vercel Functions pour l’API HTTP
 - Ts.ED, AJV et `@tsed/json-mapper` pour le domaine et la validation
@@ -14,11 +14,11 @@ L’application comprend une vitrine Vue, un panier, un tunnel de commande et un
 
 ## Démarrer en local
 
-Prérequis : Bun (la CI de déploiement utilise Bun 1.4.0).
+Prérequis : Node.js 22 ou supérieur et pnpm 11 (la CI utilise Node.js 24).
 
 ```sh
-bun install
-bun run dev
+pnpm install
+pnpm run dev
 ```
 
 Vite affiche l’URL locale une fois le serveur démarré.
@@ -27,12 +27,12 @@ Vite affiche l’URL locale une fois le serveur démarré.
 
 | Commande                | Rôle                                  |
 |-------------------------|---------------------------------------|
-| `bun run dev`           | Démarre la SPA en développement.      |
-| `bun run typecheck`     | Vérifie les types TypeScript et Vue.  |
-| `bun run test`          | Exécute l’ensemble des tests Vitest.  |
-| `bun run test:watch`    | Lance les tests en mode surveillance. |
-| `bun run test:coverage` | Génère le rapport de couverture.      |
-| `bun run build`         | Produit la SPA dans `apps/web/dist`.  |
+| `pnpm run dev`           | Démarre la SPA en développement.      |
+| `pnpm run typecheck`     | Vérifie les types TypeScript et Vue.  |
+| `pnpm run test`          | Exécute l’ensemble des tests Vitest.  |
+| `pnpm run test:watch`    | Lance les tests en mode surveillance. |
+| `pnpm run test:coverage` | Génère le rapport de couverture.      |
+| `pnpm run build`         | Produit la SPA dans `packages/web/dist`.  |
 
 ## Architecture
 
@@ -44,7 +44,7 @@ packages/domain/           Modèles, DTO, validation, règles métier et ports
 packages/infrastructure/   Chargement YAML, configuration et adaptateurs techniques
 ```
 
-Les fichiers `contents/catalog.yml` et `contents/site.yml` sont les sources de vérité du catalogue et des textes. Ils sont validés à leur chargement dans la SPA comme dans l’infrastructure backend. Les images référencées par le catalogue sont dans `apps/web/public/images/`.
+Les fichiers `contents/catalog.yml` et `contents/site.yml` sont les sources de vérité du catalogue et des textes. Ils sont validés à leur chargement dans la SPA comme dans l’infrastructure backend. Les images référencées par le catalogue sont dans `packages/web/public/images/`.
 
 ## Commandes
 
@@ -85,9 +85,9 @@ Copiez `.env.example` vers `.env.local` pour votre environnement local, sans jam
 
 Le dépôt est configuré pour Vercel :
 
-- installation : `bunx bun@1.4.0 install --frozen-lockfile` ;
-- build : `bun run build` ;
-- sortie SPA : `apps/web/dist` ;
+- installation : `pnpm install --frozen-lockfile` ;
+- build : `pnpm run build` ;
+- sortie SPA : `packages/web/dist` ;
 - API : `api/orders.ts`, servie sous `POST /api/orders`.
 
 Importez le dépôt dans Vercel en conservant la racine du projet, puis configurez les secrets de production dans les variables d’environnement Vercel. La configuration détaillée est disponible dans [DEPLOYMENT.md](DEPLOYMENT.md).
@@ -97,8 +97,8 @@ Importez le dépôt dans Vercel en conservant la racine du projet, puis configur
 Avant toute proposition de changement fonctionnel, exécutez :
 
 ```sh
-bun run test
-bun run build
+pnpm run test
+pnpm run build
 ```
 
 Les conventions de contribution et les règles d’architecture sont décrites dans [AGENTS.md](AGENTS.md).

@@ -20,7 +20,7 @@ Les éléments suivants existent déjà et constituent la base à faire évoluer
 - [ ] Nouveaux champs `firstName`, `lastName`, `phoneNumber`, `deliveryLocation` et `targetDeliveryDate` : le code utilise encore `name`, `phone` et `comment`.
 - [ ] Repository GitHub, projet « Commands tracking », numéro d’issue de suivi et client GitHub configuré.
 - [ ] `ResendMailService` réel et email de confirmation contenant le numéro d’issue.
-- [x] Vérifications de la base : le 9 septembre 2026, `bun run test` passe (21 fichiers, 32 tests) et `bun run build` passe. Le build signale seulement un avertissement non bloquant pour un bundle JavaScript supérieur à 500 kB.
+- [x] Vérifications de la base : le 9 septembre 2026, la suite de tests et le build passent. Le build signale seulement un avertissement non bloquant pour un bundle JavaScript supérieur à 500 kB.
 
 ## Architecture cible
 
@@ -78,7 +78,7 @@ deliveryLocations:
     fixedDeliveryDates: []
 ```
 
-Le schéma `SiteContentSchema` valide des identifiants uniques, des libellés, des dates ISO valides et l’absence de dates dupliquées. Le frontend consomme la même configuration pour sa liste déroulante et ses dates proposées ; le backend la relit via un provider Bun typé et refuse toute valeur hors configuration.
+Le schéma `SiteContentSchema` valide des identifiants uniques, des libellés, des dates ISO valides et l’absence de dates dupliquées. Le frontend consomme la même configuration pour sa liste déroulante et ses dates proposées ; le backend la relit via un provider Node.js typé et refuse toute valeur hors configuration.
 
 Règle métier : pour `rosa-parks` et `saint-lazare`, la date saisie doit appartenir à `fixedDeliveryDates`. Le plan prévoit un `InvalidTargetDeliveryDateError` traduit en `400 INVALID_TARGET_DELIVERY_DATE`. Pour tous les autres lieux, la date reste libre et est sélectionnée au moyen d’un datepicker.
 
@@ -115,7 +115,7 @@ Un seul module formate le corps Markdown de l’issue afin que les tests verroui
 
 - [ ] Remplacer les anciens champs `name` et `phone` par `firstName`, `lastName` et `phoneNumber` dans les DTO, modèles, réponses API et tests. Remplacer aussi `totalCents` par `totalPrice` (`EUR`, non en centimes). Décider explicitement du devenir du champ libre `comment`, absent du nouveau brief.
 - [ ] Ajouter `deliveryLocation` (identifiant de configuration) et `targetDeliveryDate` au DTO et au modèle. Désérialiser avec `@tsed/json-mapper`, puis valider avec `@tsed/ajv` : prénom, email, longueurs maximales, panier non vide et quantités entières bornées.
-- [ ] Étendre `site.yml` et `SiteContentSchema` avec les lieux et dates fixes ; les charger côté Vite et via un provider Bun backend typé.
+- [ ] Étendre `site.yml` et `SiteContentSchema` avec les lieux et dates fixes ; les charger côté Vite et via un provider Node.js backend typé.
 - [ ] Faire dépendre `OrderService` de la configuration de livraison. Il rejette les lieux inconnus et les dates non autorisées, consolide les lignes si nécessaire, refuse les produits inconnus et recalcule complètement les montants.
 - [x] Conserver `OrderRepository.save(order)` comme frontière de persistance et `MailService.sendOrderConfirmation(order)` comme frontière de messagerie. Des doubles existent déjà pour les tests isolés.
 - [ ] Ajouter les erreurs contrôlées : `INVALID_ORDER` (400), `UNKNOWN_PRODUCT` (400), `INVALID_DELIVERY_LOCATION` (400), `INVALID_TARGET_DELIVERY_DATE` (400), `ORDER_PROCESSING_FAILED` (500 sans détail interne) et, si nécessaire, `ORDER_CONFIRMATION_FAILED` (500 sans détail interne).
@@ -170,7 +170,7 @@ Critères d’acceptation : le parcours catalogue → panier → coordonnées/li
 ## Phase 4 — Vérification et livraison
 
 - [ ] Compléter les tests de schémas Ts.ED (`compile(...).toMatchInlineSnapshot()`), du domaine, du formateur Markdown, du repository GitHub simulé, du mailer Resend simulé et de la Function.
-- [x] Lancer `bun run test` puis `bun run build` à la racine.
+- [x] Lancer `pnpm run test` puis `pnpm run build` à la racine.
 - [ ] Faire une recette sur un projet GitHub de test et une adresse Resend de test : permissions du token, assignee, type, projet, statut, valeurs des champs, total monétaire, description, destinataire et absence de données sensibles dans les logs.
 - [ ] Configurer les secrets Vercel pour Development, Preview et Production ; vérifier que le token GitHub et la clé Resend ne sont jamais exposés dans le bundle Vite.
 - [ ] Mettre à jour le README : démarrage local, variables requises, création du projet GitHub de test et procédure de rotation du token.

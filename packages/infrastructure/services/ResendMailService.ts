@@ -1,6 +1,7 @@
 import { constant, Injectable } from "@tsed/di";
-import { MailService, type Order } from "@cookids/domain";
 import { Resend } from "resend";
+import { MailService } from "@cookids/domain/mail/MailService.js";
+import type { Order } from "@cookids/domain/models/Order.js";
 
 @Injectable()
 export class ResendMailService extends MailService {

@@ -10,24 +10,26 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
-    "types": [
-      "bun",
-      "node"
-    ],
+    "types": ["node"],
     "paths": {
-      "@cookids/domain": [
-        "./packages/domain/index.ts"
+      "@cookids/domain/*": [
+        "./packages/domain/*"
       ],
-      "@cookids/infrastructure": [
-        "./packages/infrastructure/index.ts"
+      "@cookids/infrastructure/*": [
+        "./packages/infrastructure/*"
+      ],
+      "@cookids/server/*": [
+        "./packages/server/*"
       ]
     }
   },
   "include": [
+    "server.ts",
     "packages/**/*.ts",
     "api/**/*.ts",
-    "apps/web/src/**/*.ts",
-    "apps/web/src/**/*.vue",
+    "packages/server/**/*.ts",
+    "packages/web/src/**/*.ts",
+    "packages/web/src/**/*.vue",
     "**/vite.config.ts",
     "**/vitest.config.ts"
   ],

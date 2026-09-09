@@ -1,13 +1,5 @@
-import { defineHandler } from "@cookids/infrastructure";
-import { inject } from "@tsed/di";
-import { OrderService } from "@cookids/domain";
-import { serialize } from "@tsed/json-mapper";
+import handler from "../packages/server/handlers/orders/handler.js";
 
-export default defineHandler({
-  method: "POST",
-  async handler(request) {
-    const order = await inject<OrderService>(OrderService).create(request.body);
-
-    return Response.json({ order: serialize(order) }, { status: 201 });
-  }
-});
+export default {
+  fetch: handler
+};

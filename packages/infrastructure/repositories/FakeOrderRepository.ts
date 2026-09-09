@@ -1,4 +1,5 @@
-import { type Order, OrderRepository } from "@cookids/domain";
+import type { Order } from "@cookids/domain/models/Order.js";
+import { OrderRepository } from "@cookids/domain/repositories/OrderRepository.js";
 
 export class FakeOrderRepository extends OrderRepository {
   readonly savedOrders: Order[] = [];

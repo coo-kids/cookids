@@ -4,3 +4,8 @@ coverage/
 .vercel/
 .env.local
 .env.*.local
+.vercel
+.env*
+.idea
+public
+!packages/web/public

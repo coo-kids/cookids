@@ -1,12 +1,15 @@
 import { injector } from "@tsed/di";
 import { loadEnvironment } from "./loadEnvironment.js";
-import { CatalogProvider, MailService, OrderRepository, SiteContentProvider } from "@cookids/domain";
-import { BunSiteContentProvider } from "../content/BunSiteContentProvider.js";
-import { BunCatalogProvider } from "../content/BunCatalogProvider.js";
+import { NodeSiteContentProvider } from "../content/NodeSiteContentProvider.js";
+import { NodeCatalogProvider } from "../content/NodeCatalogProvider.js";
 import { GitHubOrderRepository } from "../repositories/GitHubOrderRepository.js";
 import { FakeOrderRepository } from "../repositories/FakeOrderRepository.js";
 import { FakeMailService } from "../services/FakeMailService.js";
 import { ResendMailService } from "../services/ResendMailService.js";
+import { CatalogProvider } from "@cookids/domain/catalog/CatalogProvider.js";
+import { SiteContentProvider } from "@cookids/domain/content/SiteContentProvider.js";
+import { OrderRepository } from "@cookids/domain/repositories/OrderRepository.js";
+import { MailService } from "@cookids/domain/mail/MailService.js";
 
 injector().settings.set({
   envs: loadEnvironment(),
@@ -14,11 +17,11 @@ injector().settings.set({
   imports: [
     {
       token: CatalogProvider,
-      useClass: BunCatalogProvider
+      useClass: NodeCatalogProvider
     },
     {
       token: SiteContentProvider,
-      useClass: BunSiteContentProvider
+      useClass: NodeSiteContentProvider
     },
     {
       token: OrderRepository,
