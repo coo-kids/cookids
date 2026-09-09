@@ -1,6 +1,7 @@
 export interface OrderResponse {
   id: string;
-  totalCents: number;
+  totalPrice: number;
+  deliveryLocation: string;
   items: Array<{
     productName: string;
     quantity: number;

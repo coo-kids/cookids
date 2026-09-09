@@ -41,7 +41,8 @@ describe('orders', () => {
     await handler({
       method: "POST",
       body: {
-        name: "Camille Dupont",
+        firstName: "Camille",
+        deliveryLocation: "rosa-parks",
         email: "camille@example.com",
         items: [{ productId: "cookie-cafe-noix", quantity: 2 }]
       }
@@ -50,7 +51,7 @@ describe('orders', () => {
     expect(captured.statusCode).toBe(201);
     expect(captured.payload).toMatchObject({
       order: {
-        totalCents: 200
+        totalPrice: 2
       }
     });
   });
@@ -59,7 +60,7 @@ describe('orders', () => {
     const captured = createCapturedResponse();
     await handler({
       method: "POST",
-      body: { name: "Camille", email: "invalide", items: [] }
+      body: { firstName: "Camille", email: "invalide", deliveryLocation: "rosa-parks", items: [] }
     } as VercelRequest, captured.response);
 
     expect(captured.statusCode).toBe(400);

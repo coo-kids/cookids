@@ -13,7 +13,7 @@ defineEmits<{ close: [] }>();
     <ul class="list-none p-0">
       <li v-for="item in order.items" :key="item.productName" class="flex justify-between gap-4 py-[.6rem]"><span>{{ item.quantity }} × {{ item.productName }}</span><strong>{{ formatEuro(item.totalCents) }}</strong></li>
     </ul>
-    <p class="flex justify-between border-t border-[#eadace] py-4 text-[1.2rem]"><span>Total</span><strong>{{ formatEuro(order.totalCents) }}</strong></p>
+    <p class="flex justify-between border-t border-[#eadace] py-4 text-[1.2rem]"><span>Total</span><strong>{{ formatEuro(order.totalPrice * 100) }}</strong></p>
     <p class="font-sans text-[.9rem] text-[#695149]">Commande : {{ order.id }}</p>
     <button class="w-full rounded-full bg-cookids-coral px-[1.35rem] py-[.9rem] font-bold text-white transition-colors hover:bg-[#bd4f2f]" type="button" @click="$emit('close')">Retour au catalogue</button>
   </section>

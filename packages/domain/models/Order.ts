@@ -1,4 +1,4 @@
-import { CollectionOf, Enum, Integer, Minimum, Property, Required } from "@tsed/schema";
+import { CollectionOf, Enum, Minimum, Property, Required } from "@tsed/schema";
 import { OrderCustomer } from "./OrderCustomer.js";
 import { OrderItem } from "./OrderItem.js";
 
@@ -22,12 +22,16 @@ export class Order {
 
   @Property()
   @Required()
-  @Integer()
   @Minimum(0)
-  totalCents!: number;
+  totalPrice!: number;
 
   @Property()
-  comment?: string;
+  @Property()
+  @Required()
+  deliveryLocation!: string;
+
+  @Property(Date)
+  targetDeliveryDate?: Date;
 
   @Property()
   @Required()

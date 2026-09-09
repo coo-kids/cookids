@@ -74,14 +74,12 @@ async function createFixture(): Promise<{
 }
 
 const validOrder = {
-  name: "Camille Dupont",
+  firstName: "Camille",
+  lastName: "Dupont",
   email: "camille@example.com",
-  phone: "0600000000",
-  comment: "Merci !",
-  items: [
-    { productId: "cookie-cafe-noix", quantity: 2 },
-    { productId: "financiers-amandes", quantity: 1 },
-  ],
+  phoneNumber: "0600000000",
+  deliveryLocation: "rosa-parks",
+  items: [{ productId: "cookie-cafe-noix", quantity: 2 }, { productId: "financiers-amandes", quantity: 1 }]
 };
 
 describe("OrderService", () => {
@@ -91,7 +89,7 @@ describe("OrderService", () => {
     const { service, repository, mailService } = await createFixture();
     const order = await service.create(validOrder);
 
-    expect(order.totalCents).toBe(700);
+    expect(order.totalPrice).toBe(7);
     expect(order.id).toMatch(/^CK-\d{8}-[A-F0-9]{4}$/);
     expect(order.items).toHaveLength(2);
     expect(repository.orders).toHaveLength(1);

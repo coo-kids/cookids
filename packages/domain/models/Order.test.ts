@@ -16,18 +16,22 @@ describe("Order", () => {
                 "minLength": 1,
                 "type": "string",
               },
-              "name": {
+              "firstName": {
                 "maxLength": 100,
                 "minLength": 1,
                 "type": "string",
               },
-              "phone": {
+              "lastName": {
+                "maxLength": 100,
+                "type": "string",
+              },
+              "phoneNumber": {
                 "maxLength": 30,
                 "type": "string",
               },
             },
             "required": [
-              "name",
+              "firstName",
               "email",
             ],
             "type": "object",
@@ -69,15 +73,16 @@ describe("Order", () => {
           },
         },
         "properties": {
-          "comment": {
-            "type": "string",
-          },
           "createdAt": {
             "minLength": 1,
             "type": "string",
           },
           "customer": {
             "$ref": "#/definitions/OrderCustomer",
+          },
+          "deliveryLocation": {
+            "minLength": 1,
+            "type": "string",
           },
           "id": {
             "minLength": 1,
@@ -96,10 +101,12 @@ describe("Order", () => {
             "minLength": 1,
             "type": "string",
           },
-          "totalCents": {
+          "targetDeliveryDate": {
+            "type": "string",
+          },
+          "totalPrice": {
             "minimum": 0,
-            "multipleOf": 1,
-            "type": "integer",
+            "type": "number",
           },
         },
         "required": [
@@ -107,7 +114,8 @@ describe("Order", () => {
           "createdAt",
           "customer",
           "items",
-          "totalCents",
+          "totalPrice",
+          "deliveryLocation",
           "status",
         ],
         "type": "object",

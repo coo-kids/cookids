@@ -4,7 +4,11 @@ export class OrderCustomer {
   @Property()
   @Required()
   @MaxLength(100)
-  name!: string;
+  firstName!: string;
+
+  @Property()
+  @MaxLength(100)
+  lastName?: string;
 
   @Property()
   @Required()
@@ -14,5 +18,5 @@ export class OrderCustomer {
 
   @Property()
   @MaxLength(30)
-  phone?: string;
+  phoneNumber?: string;
 }

@@ -2,6 +2,7 @@ import { injector } from "@tsed/di";
 import { loadEnvironment } from "./loadEnvironment.js";
 import { CatalogProvider, MailService, OrderRepository } from "@cookids/domain";
 import { BunCatalogProvider } from "../content/BunCatalogProvider.js";
+import { GitHubOrderRepository } from "../repositories/GitHubOrderRepository.js";
 import { FakeOrderRepository } from "../repositories/FakeOrderRepository.js";
 import { FakeMailService } from "../services/FakeMailService.js";
 
@@ -15,7 +16,7 @@ injector().settings.set({
     },
     {
       token: OrderRepository,
-      useClass: FakeOrderRepository
+      useClass: process.env.NODE_ENV === "test" ? FakeOrderRepository : GitHubOrderRepository
     },
     {
       token: MailService,

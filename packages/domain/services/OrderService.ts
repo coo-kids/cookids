@@ -58,14 +58,16 @@ export class OrderService {
       id: createOrderId(),
       createdAt: new Date(),
       customer: {
-        name: orderInput.name.trim(),
+        firstName: orderInput.firstName.trim(),
+        lastName: orderInput.lastName?.trim() || undefined,
         email: orderInput.email.trim().toLowerCase(),
-        phone: orderInput.phone?.trim() || undefined,
+        phoneNumber: orderInput.phoneNumber?.trim() || undefined
       },
-      comment: orderInput.comment?.trim() || undefined,
       items,
-      totalCents: items.reduce((total, item) => total + item.totalCents, 0),
-      status: "new",
+      totalPrice: items.reduce((total, item) => total + item.totalCents, 0) / 100,
+      deliveryLocation: orderInput.deliveryLocation.trim(),
+      targetDeliveryDate: orderInput.targetDeliveryDate,
+      status: "new"
     };
 
     await this.orderRepository.save(order);
