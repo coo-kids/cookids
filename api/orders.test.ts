@@ -42,7 +42,7 @@ describe('orders', () => {
       method: "POST",
       body: {
         firstName: "Camille",
-        deliveryLocation: "rosa-parks",
+        deliveryLocation: "le-perreux-sur-marne",
         email: "camille@example.com",
         items: [{ productId: "cookie-cafe-noix", quantity: 2 }]
       }

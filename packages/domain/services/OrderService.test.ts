@@ -4,6 +4,7 @@ import { AjvService } from "@tsed/ajv";
 import { afterEach, describe, expect, it } from "vitest";
 import { DITest } from "@tsed/di";
 import { CatalogProvider } from "../catalog/CatalogProvider.js";
+import { SiteContentProvider } from "../content/SiteContentProvider.js";
 import { MailService } from "../mail/MailService.js";
 import type { Product } from "../models/Product.js";
 import type { Order } from "../models/Order.js";
@@ -58,6 +59,14 @@ class TestCatalogProvider extends CatalogProvider {
   }
 }
 
+let fixedDeliveryDates: string[] = [];
+
+class TestSiteContentProvider extends SiteContentProvider {
+  async getSiteContent() {
+    return { deliveryLocations: [{ id: "rosa-parks", label: "Rosa Parks", fixedDeliveryDates }] } as never;
+  }
+}
+
 async function createFixture(): Promise<{
   service: OrderService;
   repository: TestOrderRepository;
@@ -70,6 +79,7 @@ async function createFixture(): Promise<{
     { token: MailService, use: mailService },
     { token: AjvService, use: new AjvService() },
     { token: CatalogProvider, use: new TestCatalogProvider() },
+    { token: SiteContentProvider, use: new TestSiteContentProvider() },
   ]);
   return { service, repository, mailService };
 }
@@ -84,7 +94,7 @@ const validOrder = {
 };
 
 describe("OrderService", () => {
-  afterEach(() => DITest.reset());
+  afterEach(() => { DITest.reset(); fixedDeliveryDates = []; });
 
   it("crée une commande normalisée et recalcule son total", async () => {
     const { service, repository, mailService } = await createFixture();
@@ -133,6 +143,25 @@ describe("OrderService", () => {
         items: [{ productId: "inconnu", quantity: 1 }],
       }),
     ).rejects.toThrow("n'existe pas");
+  });
+
+  it("rejette une date absente lorsqu'un lieu impose des dates fixes", async () => {
+    fixedDeliveryDates = ["2026-09-19"];
+    const { service } = await createFixture();
+    await expect(service.create(validOrder)).rejects.toThrow("La date de livraison n'est pas disponible pour ce lieu.");
+  });
+
+  it("accepte une date fixe autorisée", async () => {
+    fixedDeliveryDates = ["2026-09-19"];
+    const { service } = await createFixture();
+    const order = await service.create({ ...validOrder, targetDeliveryDate: new Date("2026-09-19T00:00:00.000Z") });
+    expect(order.targetDeliveryDate?.toISOString()).toBe("2026-09-19T00:00:00.000Z");
+  });
+
+  it("rejette une date fixe non autorisée", async () => {
+    fixedDeliveryDates = ["2026-09-19"];
+    const { service } = await createFixture();
+    await expect(service.create({ ...validOrder, targetDeliveryDate: new Date("2026-09-20T00:00:00.000Z") })).rejects.toThrow("La date de livraison n'est pas disponible pour ce lieu.");
   });
 
   it("propage les défaillances du repository et du mail", async () => {

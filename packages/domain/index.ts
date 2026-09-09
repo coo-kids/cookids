@@ -1,4 +1,5 @@
 export * from "./catalog/CatalogProvider";
+export * from "./content/SiteContentProvider";
 export * from "./schemas/ContentCatalogSchema";
 export * from "./schemas/ContentProductSchema";
 export * from "./schemas/SiteContentSchema";
