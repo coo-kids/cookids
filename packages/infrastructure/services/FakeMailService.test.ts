@@ -5,7 +5,15 @@ import { FakeMailService } from "./FakeMailService.js";
 describe("FakeMailService", () => {
   it("conserve les confirmations envoyées", async () => {
     const mailService = new FakeMailService();
-    const order = { id: "CK-20260909-ABCD" } as Order;
+    const order: Order = {
+      id: 42,
+      createdAt: new Date(),
+      customer: { firstName: "Camille", email: "camille@example.com" },
+      deliveryLocation: "rosa-parks",
+      items: [],
+      total: 0,
+      status: "new"
+    };
 
     await mailService.sendOrderConfirmation(order);
 

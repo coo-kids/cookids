@@ -10,13 +10,13 @@ deliveryLocations:
   - id: rosa-parks
     label: Rosa Parks
     fixedDeliveryDates:
-      - 2026-09-19
-      - 2026-09-26
+      - "2026-09-19"
+      - "2026-09-26"
   - id: saint-lazare
     label: Saint-Lazare
     fixedDeliveryDates:
-      - 2026-09-20
-      - 2026-09-27
+      - "2026-09-20"
+      - "2026-09-27"
   - id: le-perreux-sur-marne
     label: Le Perreux-sur-Marne
     fixedDeliveryDates: []

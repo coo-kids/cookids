@@ -80,7 +80,7 @@ deliveryLocations:
 
 Le schéma `SiteContentSchema` valide des identifiants uniques, des libellés, des dates ISO valides et l’absence de dates dupliquées. Le frontend consomme la même configuration pour sa liste déroulante et ses dates proposées ; le backend la relit via un provider Bun typé et refuse toute valeur hors configuration.
 
-Règle métier : pour `rosa-parks` et `saint-lazare`, la date saisie doit appartenir à `fixedDeliveryDates`. Le plan prévoit un `InvalidTargetDeliveryDateError` traduit en `400 INVALID_TARGET_DELIVERY_DATE`. Le comportement pour les autres lieux reste à confirmer avant implémentation.
+Règle métier : pour `rosa-parks` et `saint-lazare`, la date saisie doit appartenir à `fixedDeliveryDates`. Le plan prévoit un `InvalidTargetDeliveryDateError` traduit en `400 INVALID_TARGET_DELIVERY_DATE`. Pour tous les autres lieux, la date reste libre et est sélectionnée au moyen d’un datepicker.
 
 ## Convention de placement
 
@@ -152,7 +152,7 @@ Critères d’acceptation : avec un dépôt/projet de test, une commande crée u
 - [ ] Après la persistance GitHub réussie et la récupération de `issue.number`, `OrderService` déclenche l’email de confirmation vers l’adresse normalisée du client. L’email comprend explicitement le numéro GitHub de suivi, le récapitulatif Markdown/HTML du panier, le total calculé et les informations de livraison utiles ; il ne contient aucun autre identifiant GitHub interne.
 - [ ] Configurer `RESEND_API_KEY` et `RESEND_FROM` dans Vercel, avec une adresse d’expéditeur/domaine vérifié. Ajouter les clés fictives correspondantes dans `.env.example`, sans secret.
 - [ ] Tester le rendu, le destinataire et les erreurs avec un double `MailService`, puis réaliser un test d’intégration vers une adresse de test autorisée.
-- [ ] Préparer, sans l’implémenter dans cette livraison, le déclenchement d’emails d’étape depuis les changements de statut GitHub. Cette évolution nécessitera un webhook GitHub vérifié, une correspondance statut → modèle Resend et une stratégie d’idempotence afin de ne jamais envoyer deux fois le même message.
+- [ ] Feature ultérieure — Déclencher les emails d’étape depuis les changements de statut GitHub. Elle nécessitera un webhook GitHub vérifié, une correspondance statut → modèle Resend et une stratégie d’idempotence afin de ne jamais envoyer deux fois le même message.
 
 Règle de cohérence initiale : formulaire valide → issue GitHub créée et configurée → récupération de `issue.number` → envoi Resend. Si l’email échoue après la création GitHub, l’API retourne une erreur contrôlée et journalise l’incident sans donnée personnelle ; elle ne prétend pas au client que la confirmation a été délivrée. La reprise manuelle ou automatisée de l’envoi est une étape distincte à décider.
 
@@ -178,10 +178,11 @@ Critères d’acceptation : le parcours catalogue → panier → coordonnées/li
 ## Décisions à confirmer avant implémentation
 
 - `targetDeliveryDate` est-il obligatoire pour tous les lieux ? Si non, pour lesquels et quelle valeur doit être envoyée au champ GitHub lorsqu’il est absent ?
-- Pour les lieux autres que Rosa Parks et Saint-Lazare : la date est-elle libre, facultative, ou encadrée par une autre règle ?
+- [x] Pour les lieux autres que Rosa Parks et Saint-Lazare : la date est libre et sélectionnée avec un datepicker.
 - La liste complète des lieux doit-elle être définie immédiatement dans `site.yml` ? Quels sont leurs identifiants et libellés exacts ?
 - Le champ libre historique « Un mot pour Syline ? » doit-il être supprimé, conservé dans l’issue, ou déplacé dans un champ GitHub ?
 - Confirmez-vous les noms exacts des champs GitHub visibles (« First name », « Last name », « Location delivery », etc.), le nom exact de l’option de statut et le format souhaité du titre d’issue ?
 - Le projet « Commands tracking » est-il un GitHub Project d’organisation `coo-kids` et acceptez-vous un GitHub App/jeton finement restreint dédié à son écriture ?
 - Quelle adresse/domaine d’expédition Resend est validé, et quel contenu exact doit figurer dans l’email de confirmation ?
-- Les emails d’étape doivent-ils être déclenchés automatiquement dès la première version, et quels statuts GitHub doivent envoyer quel message ?
+- [ ] Feature ultérieure — Définir les statuts GitHub qui déclenchent les emails d’étape, leurs modèles Resend et leur stratégie d’idempotence.
+- [ ] Ajouter les textes confidentialité/RGPD : finalité de collecte, durée de conservation, droits de la personne, contact et lien vers la politique applicable avant la soumission du formulaire.

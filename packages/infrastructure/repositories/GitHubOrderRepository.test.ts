@@ -27,9 +27,13 @@ describe("GitHubOrderRepository", () => {
       GITHUB_COMMANDS_REPOSITORY: "cookids-commands",
       GITHUB_COMMANDS_PROJECT_ID: "project-id",
       GITHUB_STATUS_FIELD_ID: "status-field-id",
-      GITHUB_STATUS_PENDING_OPTION_ID: "pending-option-id"
-      ,GITHUB_COMMANDS_ISSUE_TYPE_ID: "commands-type-id"
-      ,GITHUB_LOCATION_ROSA_PARKS_OPTION_ID: "rosa-parks-option-id"
+      GITHUB_STATUS_PENDING_OPTION_ID: "pending-option-id",
+      GITHUB_COMMANDS_ISSUE_TYPE_ID: "commands-type-id",
+      GITHUB_LOCATION_ROSA_PARKS_OPTION_ID: "rosa-parks-option-id",
+      GITHUB_FIELD_FIRST_NAME_ID: "first-name-field-id",
+      GITHUB_FIELD_EMAIL_ID: "email-field-id",
+      GITHUB_FIELD_DELIVERY_LOCATION_ID: "location-field-id",
+      GITHUB_FIELD_TOTAL_PRICE_ID: "total-field-id"
     });
   });
 
@@ -55,6 +59,14 @@ describe("GitHubOrderRepository", () => {
     }));
     expect(graphql).toHaveBeenNthCalledWith(1, expect.stringContaining("updateIssueIssueType"), expect.objectContaining({ issueId: "issue-node-id" }));
     expect(graphql).toHaveBeenNthCalledWith(2, expect.stringContaining("setIssueFieldValue"), expect.objectContaining({ issueId: "issue-node-id" }));
+    expect(graphql.mock.calls[1][1]).toMatchObject({
+      issueFields: expect.arrayContaining([
+        { fieldId: "first-name-field-id", textValue: "Camille" },
+        { fieldId: "email-field-id", textValue: "camille@example.com" },
+        { fieldId: "location-field-id", singleSelectOptionId: "rosa-parks-option-id" },
+        { fieldId: "total-field-id", numberValue: 7 }
+      ])
+    });
     expect(graphql).toHaveBeenNthCalledWith(3, expect.stringContaining("addProjectV2ItemById"), { projectId: "project-id", contentId: "issue-node-id" });
     expect(graphql).toHaveBeenNthCalledWith(4, expect.stringContaining("updateProjectV2ItemFieldValue"), expect.objectContaining({ optionId: "pending-option-id" }));
   });

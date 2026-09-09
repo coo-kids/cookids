@@ -5,7 +5,15 @@ import { FakeOrderRepository } from "./FakeOrderRepository.js";
 describe("FakeOrderRepository", () => {
   it("conserve les commandes sauvegardées", async () => {
     const repository = new FakeOrderRepository();
-    const order = { id: "CK-20260909-ABCD" } as Order;
+    const order: Order = {
+      id: 42,
+      createdAt: new Date(),
+      customer: { firstName: "Camille", email: "camille@example.com" },
+      deliveryLocation: "rosa-parks",
+      items: [],
+      total: 0,
+      status: "new"
+    };
 
     await repository.save(order);
 
