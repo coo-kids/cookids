@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
+    "target": "esnext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "strict": true,
@@ -8,6 +8,26 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true
-  }
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "paths": {
+      "@cookids/domain": [
+        "./packages/domain/index.ts"
+      ],
+      "@cookids/infrastructure": [
+        "./packages/infrastructure/index.ts"
+      ]
+    }
+  },
+  "include": [
+    "packages/**/*.ts",
+    "api/**/*.ts",
+    "apps/web/src/**/*.ts",
+    "apps/web/src/**/*.vue",
+    "**/vite.config.ts",
+    "**/vitest.config.ts"
+  ],
+  "exclude": [
+    "packages/*/node_modules"
+  ]
 }

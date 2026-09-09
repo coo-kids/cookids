@@ -1,12 +1,15 @@
-import { ContentValidationService } from "@cookids/domain/content/ContentValidationService";
-import type { ContentCatalog, SiteContent } from "@cookids/domain";
-
-const contentValidationService = new ContentValidationService();
+import {
+  type ContentCatalog,
+  ContentCatalogSchema,
+  type SiteContent,
+  SiteContentSchema
+} from "@cookids/domain";
+import { validate } from "@tsed/ajv";
 
 export function validateCatalog(content: unknown): Promise<ContentCatalog> {
-  return contentValidationService.validateCatalog(content);
+  return validate<ContentCatalog>(content, { type: ContentCatalogSchema });
 }
 
 export function validateSiteContent(content: unknown): Promise<SiteContent> {
-  return contentValidationService.validateSiteContent(content);
+  return validate<SiteContent>(content, { type: SiteContentSchema });
 }
