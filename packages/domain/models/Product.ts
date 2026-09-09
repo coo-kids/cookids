@@ -1,5 +1,15 @@
 import { Enum, Integer, Minimum, Property, Required } from "@tsed/schema";
 
+export class ProductIngredient {
+  @Property()
+  @Required()
+  label!: string;
+
+  @Property()
+  @Required()
+  is_allergen!: boolean;
+}
+
 export class Product {
   @Property()
   @Required()
@@ -13,9 +23,9 @@ export class Product {
   @Required()
   description!: string;
 
-  @Property()
+  @Property(() => ProductIngredient)
   @Required()
-  ingredients!: string;
+  ingredients!: ProductIngredient[];
 
   @Property()
   @Required()

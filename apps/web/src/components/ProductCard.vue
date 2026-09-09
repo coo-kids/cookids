@@ -16,16 +16,30 @@ defineEmits<{ changeQuantity: [quantity: number] }>();
       :src="product.image"
       :alt="product.name"
     />
+
     <div class="p-[1.2rem]">
       <div class="flex items-start justify-between gap-3">
         <h3 class="m-0 text-[1.35rem] leading-[1.1]">{{ product.name }}</h3>
-        <strong class="whitespace-nowrap text-[#b85131]">{{
-          formatEuro(product.price)
-        }}</strong>
+        <strong class="whitespace-nowrap text-[#b85131]">
+          {{ formatEuro(product.price) }}
+        </strong>
       </div>
-      <p class="min-h-10 leading-[1.35] text-[#695149]">
-        {{ product.description }}
+
+      <p class="mt-5 leading-[1.5] text-[#695149]">
+        <template
+          v-for="(ingredient, index) in product.ingredients"
+          :key="ingredient.label"
+        >
+          <strong v-if="ingredient.is_allergen" class="font-bold">
+            {{ ingredient.label }}
+          </strong>
+          <span v-else>
+            {{ ingredient.label }}
+          </span>
+          <span v-if="index < product.ingredients.length - 1">, </span>
+        </template>
       </p>
+
       <div class="mt-4 flex w-full items-center justify-between gap-4">
         <small>{{ product.unitLabel }}</small>
         <QuantitySelector
