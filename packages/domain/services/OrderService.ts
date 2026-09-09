@@ -14,10 +14,10 @@ import { findProduct } from "../utils/findProduct.js";
 
 @Injectable()
 export class OrderService {
-  private readonly orderRepository = inject(OrderRepository);
-  private readonly mailService = inject(MailService);
-  private readonly ajvService = inject(AjvService);
-  private readonly catalogProvider = inject(CatalogProvider);
+  private readonly orderRepository = inject<OrderRepository>(OrderRepository);
+  private readonly mailService = inject<MailService>(MailService);
+  private readonly ajvService = inject<AjvService>(AjvService);
+  private readonly catalogProvider = inject<CatalogProvider>(CatalogProvider);
 
   async create(input: unknown): Promise<Order> {
     const orderInput = deserialize<CreateOrder>(input, { type: CreateOrder });

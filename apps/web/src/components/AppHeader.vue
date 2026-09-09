@@ -12,7 +12,7 @@ const { isScrolled } = useScrollState();
   <header :class="['sticky top-0 z-30 h-[var(--app-header-height)] bg-cookids-cream/95 backdrop-blur-sm transition-shadow duration-200', isScrolled ? 'border-b border-stone-200/80 shadow-sm' : 'border-b border-transparent']">
     <div class="mx-auto flex h-full w-[calc(100%-2rem)] max-w-[1180px] items-center justify-between">
       <a href="#catalogue" aria-label="Cookids, voir le catalogue">
-        <img class="h-auto w-32" src="/logo.png" alt="Cookids">
+        <img class="h-auto w-32" src="/logo-optimized.webp" alt="Cookids">
       </a>
       <div class="relative">
         <AppButton :variant="isCartOpen ? 'dark' : 'neutral'" size="icon" aria-controls="cart-drawer" :aria-expanded="isCartOpen" :aria-label="isCartOpen ? 'Fermer le panier' : 'Ouvrir le panier'" @click="$emit('toggleCart')">
