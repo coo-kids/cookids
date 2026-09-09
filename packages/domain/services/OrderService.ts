@@ -2,15 +2,15 @@ import "@tsed/ajv";
 import { AjvService } from "@tsed/ajv";
 import { inject, Injectable } from "@tsed/di";
 import { deserialize } from "@tsed/json-mapper";
-import { CatalogProvider } from "../catalog/CatalogProvider";
-import { CreateOrder } from "../dto/CreateOrder";
-import { OrderValidationError } from "../errors/OrderValidationError";
-import { UnknownProductError } from "../errors/UnknownProductError";
-import { MailService } from "../mail/MailService";
-import type { Order } from "../models/Order";
-import { OrderRepository } from "../repositories/OrderRepository";
-import { createOrderId } from "../utils/createOrderId";
-import { findProduct } from "../utils/findProduct";
+import { CatalogProvider } from "../catalog/CatalogProvider.js";
+import { CreateOrder } from "../dto/CreateOrder.js";
+import { OrderValidationError } from "../errors/OrderValidationError.js";
+import { UnknownProductError } from "../errors/UnknownProductError.js";
+import { MailService } from "../mail/MailService.js";
+import type { Order } from "../models/Order.js";
+import { OrderRepository } from "../repositories/OrderRepository.js";
+import { createOrderId } from "../utils/createOrderId.js";
+import { findProduct } from "../utils/findProduct.js";
 
 @Injectable()
 export class OrderService {

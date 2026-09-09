@@ -1,5 +1,5 @@
 import { CollectionOf, Email, MaxLength, MinItems, Property, Required } from "@tsed/schema";
-import { CreateOrderItem } from "./CreateOrderItem";
+import { CreateOrderItem } from "./CreateOrderItem.js";
 
 export class CreateOrder {
   @Property()

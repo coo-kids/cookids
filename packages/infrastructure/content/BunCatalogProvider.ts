@@ -1,10 +1,10 @@
-import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { CatalogProvider, ContentValidationService, type Product } from "@cookids/domain";
 import { parse } from "yaml";
 
 declare const Bun: { file(path: string): { text(): Promise<string> } };
 
-const catalogPath = resolve(import.meta.dir, "../../../contents/catalog.yml");
+const catalogPath = fileURLToPath(new URL("../../../contents/catalog.yml", import.meta.url));
 
 export class BunCatalogProvider extends CatalogProvider {
   private productsPromise: Promise<Product[]> | undefined;

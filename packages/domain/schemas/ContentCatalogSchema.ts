@@ -1,5 +1,5 @@
 import { s } from "@tsed/schema";
-import { ContentProductSchema } from "./ContentProductSchema";
+import { ContentProductSchema } from "./ContentProductSchema.js";
 
 export const ContentCatalogSchema = s.object({
   products: s.array(ContentProductSchema).minItems(1).required()

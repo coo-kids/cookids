@@ -3,12 +3,12 @@ import "@tsed/ajv";
 import { AjvService } from "@tsed/ajv";
 import { afterEach, describe, expect, test } from "bun:test";
 import { DITest } from "@tsed/di";
-import { CatalogProvider } from "../catalog/CatalogProvider";
-import { MailService } from "../mail/MailService";
-import type { Product } from "../models/Product";
-import type { Order } from "../models/Order";
-import { OrderRepository } from "../repositories/OrderRepository";
-import { OrderService } from "./OrderService";
+import { CatalogProvider } from "../catalog/CatalogProvider.js";
+import { MailService } from "../mail/MailService.js";
+import type { Product } from "../models/Product.js";
+import type { Order } from "../models/Order.js";
+import { OrderRepository } from "../repositories/OrderRepository.js";
+import { OrderService } from "./OrderService.js";
 
 class TestOrderRepository extends OrderRepository {
   readonly orders: Order[] = [];
@@ -79,7 +79,7 @@ describe("OrderService", () => {
     [{ ...validOrder, items: [{ productId: "cookie-cafe-noix", quantity: 0 }] }],
     [{ ...validOrder, items: [{ productId: "cookie-cafe-noix", quantity: -1 }] }],
     [{ ...validOrder, items: [{ productId: "cookie-cafe-noix", quantity: 49 }] }]
-  ])("rejette une commande invalide", async (input) => {
+  ])("rejette une commande invalide", async (input: unknown) => {
     const { service } = await createFixture();
     await expect(service.create(input)).rejects.toThrow("La commande n'est pas valide.");
   });

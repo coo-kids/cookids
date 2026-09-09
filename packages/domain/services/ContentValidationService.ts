@@ -1,8 +1,8 @@
 import "@tsed/ajv";
 import { AjvService } from "@tsed/ajv";
 import { Injectable } from "@tsed/di";
-import { ContentCatalogSchema, type ContentCatalog } from "../schemas/ContentCatalogSchema";
-import { SiteContentSchema, type SiteContent } from "../schemas/SiteContentSchema";
+import { ContentCatalogSchema, type ContentCatalog } from "../schemas/ContentCatalogSchema.js";
+import { SiteContentSchema, type SiteContent } from "../schemas/SiteContentSchema.js";
 
 @Injectable()
 export class ContentValidationService {

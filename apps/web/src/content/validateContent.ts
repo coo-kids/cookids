@@ -1,4 +1,4 @@
-import { ContentValidationService } from "@cookids/domain/content/ContentValidationService";
+import { ContentValidationService } from "@cookids/domain/services/ContentValidationService";
 import type { ContentCatalog, SiteContent } from "@cookids/domain";
 
 const contentValidationService = new ContentValidationService();
