@@ -2,55 +2,177 @@ products:
   - id: cookie-cafe-noix
     name: Cookie café & noix
     description: Café, chocolat noir et noix.
-    ingredients: Farine bio, beurre doux, cassonnade, œuf, sucre en poudre, chocolat noir, noix, café, levure chimique.
+    ingredients:
+      - label: Farine bio
+        is_allergen: true
+      - label: Beurre doux
+        is_allergen: false
+      - label: Cassonnade
+        is_allergen: false
+      - label: Œuf
+        is_allergen: true
+      - label: Sucre en poudre
+        is_allergen: false
+      - label: Chocolat noir
+        is_allergen: false
+      - label: Noix
+        is_allergen: true
+      - label: Café
+        is_allergen: false
+      - label: Levure chimique
+        is_allergen: false
     price: 1.00
     image: /images/cookie-cafe-noix.jpg
     category: cookies
     unitLabel: à l'unité
+
   - id: cookie-pistache-cranberries
     name: Cookie pistache & cranberries
     description: Pistaches, cranberries et pâte de pistache.
-    ingredients: Farine bio, beurre salé, cassonnade, sucre blanc, œuf, pistaches, cranberries, pâte de pistache, levure chimique.
+    ingredients:
+      - label: Farine bio
+        is_allergen: true
+      - label: Beurre salé
+        is_allergen: false
+      - label: Cassonnade
+        is_allergen: false
+      - label: Sucre blanc
+        is_allergen: false
+      - label: Œuf
+        is_allergen: true
+      - label: Pistaches
+        is_allergen: true
+      - label: Cranberries
+        is_allergen: false
+      - label: Pâte de pistache
+        is_allergen: true
+      - label: Levure chimique
+        is_allergen: false
     price: 1.00
     image: /images/cookie-pistache-cranberries.jpg
     category: cookies
     unitLabel: à l'unité
+
   - id: cookie-pecan-chocolat
     name: Cookie pécan & chocolat
     description: Chocolat noir, noix de pécan et fleur de sel.
-    ingredients: Farine bio, chocolat noir, cassonnade, beurre doux, noix de pécan, œuf, levure chimique, fleur de sel.
+    ingredients:
+      - label: Farine bio
+        is_allergen: true
+      - label: Chocolat noir
+        is_allergen: false
+      - label: Cassonnade
+        is_allergen: false
+      - label: Beurre doux
+        is_allergen: false
+      - label: Noix de pécan
+        is_allergen: true
+      - label: Œuf
+        is_allergen: true
+      - label: Levure chimique
+        is_allergen: false
+      - label: Fleur de sel
+        is_allergen: false
     price: 1.00
     image: /images/cookie-pecan-chocolat.jpg
     category: cookies
     unitLabel: à l'unité
+
   - id: cookie-chocolat-noir
     name: Cookie au chocolat noir
     description: Un grand classique au chocolat noir et à la vanille.
-    ingredients: Farine bio, chocolat noir, beurre, cassonnade, sucre blanc, œuf, levure chimique, bicarbonate de soude, sel, gousse de vanille.
+    ingredients:
+      - label: Farine bio
+        is_allergen: true
+      - label: Chocolat noir
+        is_allergen: false
+      - label: Beurre
+        is_allergen: false
+      - label: Cassonnade
+        is_allergen: false
+      - label: Sucre blanc
+        is_allergen: false
+      - label: Œuf
+        is_allergen: true
+      - label: Levure chimique
+        is_allergen: false
+      - label: Bicarbonate de soude
+        is_allergen: false
+      - label: Sel
+        is_allergen: false
+      - label: Gousse de vanille
+        is_allergen: false
     price: 1.00
     image: /images/cookie-chocolat-noir.jpg
     category: cookies
     unitLabel: à l'unité
+
   - id: cookie-triple-noisette
     name: Cookie triple noisette
     description: Noisettes, purée de noisette et chocolat noir.
-    ingredients: Farine bio, chocolat noir, beurre demi-sel, noisette, œuf, cassonnade, sucre en poudre, purée de noisette, levure chimique.
+    ingredients:
+      - label: Farine bio
+        is_allergen: true
+      - label: Chocolat noir
+        is_allergen: false
+      - label: Beurre demi-sel
+        is_allergen: false
+      - label: Noisette
+        is_allergen: true
+      - label: Œuf
+        is_allergen: true
+      - label: Cassonnade
+        is_allergen: false
+      - label: Sucre en poudre
+        is_allergen: false
+      - label: Purée de noisette
+        is_allergen: true
+      - label: Levure chimique
+        is_allergen: false
     price: 1.00
     image: /images/cookie-triple-noisette.jpg
     category: cookies
     unitLabel: à l'unité
+
   - id: cookie-chocolat-sesame
     name: Cookie chocolat & sésame
     description: Chocolat noir, sésame blanc et miel français.
-    ingredients: Farine bio, chocolat noir, beurre demi-sel, cassonnade, œuf, graines de sésame blanc, miel français.
+    ingredients:
+      - label: Farine bio
+        is_allergen: true
+      - label: Chocolat noir
+        is_allergen: false
+      - label: Beurre demi-sel
+        is_allergen: false
+      - label: Cassonnade
+        is_allergen: false
+      - label: Œuf
+        is_allergen: true
+      - label: Graines de sésame blanc
+        is_allergen: true
+      - label: Miel français
+        is_allergen: false
     price: 1.00
     image: /images/cookie-chocolat-sesame.jpg
     category: cookies
     unitLabel: à l'unité
+
   - id: financiers-amandes
     name: Financiers aux amandes
     description: Moelleux aux amandes et à la vanille, vendus par 10.
-    ingredients: Blancs d'œuf, beurre doux, sucre glace, amandes, farine bio, gousse de vanille.
+    ingredients:
+      - label: Blancs d'œuf
+        is_allergen: true
+      - label: Beurre doux
+        is_allergen: false
+      - label: Sucre glace
+        is_allergen: false
+      - label: Amandes
+        is_allergen: true
+      - label: Farine bio
+        is_allergen: true
+      - label: Gousse de vanille
+        is_allergen: false
     price: 5.00
     image: /images/financiers-amandes.jpg
     category: other

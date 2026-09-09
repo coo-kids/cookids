@@ -7,6 +7,24 @@ describe("Product", () => {
   it("compile son modèle Ts.ED", () => {
     expect(compile(Product)).toMatchInlineSnapshot(`
       {
+        "definitions": {
+          "ProductIngredient": {
+            "properties": {
+              "is_allergen": {
+                "type": "boolean",
+              },
+              "label": {
+                "minLength": 1,
+                "type": "string",
+              },
+            },
+            "required": [
+              "label",
+              "is_allergen",
+            ],
+            "type": "object",
+          },
+        },
         "properties": {
           "category": {
             "enum": [
@@ -29,8 +47,10 @@ describe("Product", () => {
             "type": "string",
           },
           "ingredients": {
-            "minLength": 1,
-            "type": "string",
+            "items": {
+              "$ref": "#/definitions/ProductIngredient",
+            },
+            "type": "array",
           },
           "name": {
             "minLength": 1,

@@ -31,9 +31,24 @@ describe("ContentProductSchema", () => {
             "type": "string",
           },
           "ingredients": {
-            "maxLength": 800,
-            "minLength": 1,
-            "type": "string",
+            "items": {
+              "properties": {
+                "is_allergen": {
+                  "type": "boolean",
+                },
+                "label": {
+                  "maxLength": 120,
+                  "minLength": 1,
+                  "type": "string",
+                },
+              },
+              "required": [
+                "label",
+                "is_allergen",
+              ],
+              "type": "object",
+            },
+            "type": "array",
           },
           "name": {
             "maxLength": 120,

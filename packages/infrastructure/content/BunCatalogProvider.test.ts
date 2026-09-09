@@ -7,7 +7,20 @@ const catalogSource = JSON.stringify({
       id: "cookie-cafe-noix",
       name: "Cookie café & noix",
       description: "Moelleux",
-      ingredients: "Farine, café, noix",
+      ingredients: [
+        {
+          label: "Farine",
+          is_allergen: true,
+        },
+        {
+          label: "café",
+          is_allergen: false,
+        },
+        {
+          label: "noix",
+          is_allergen: true,
+        },
+      ],
       price: 2.5,
       image: "/images/cookie-cafe-noix.jpg",
       category: "cookies",
