@@ -2,7 +2,7 @@
 
 ## Chaîne CI/CD
 
-GitHub Actions vérifie chaque pull request et chaque push sur `main` au moyen de trois jobs parallèles : build de la SPA, vérification TypeScript de la SPA et de la Function, puis tests. Chaque job installe strictement les dépendances à partir de `bun.lock`.
+GitHub Actions vérifie chaque pull request et chaque push sur `main` au moyen de trois jobs parallèles : build de la SPA, vérification TypeScript de la SPA et de la Function, puis tests Vitest. Chaque job installe strictement les dépendances à partir de `bun.lock`.
 
 Une fois le dépôt GitHub connecté au projet Vercel, Vercel assure le CD :
 

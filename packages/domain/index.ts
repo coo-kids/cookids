@@ -13,5 +13,4 @@ export * from "./models/OrderItem";
 export * from "./models/Product";
 export * from "./repositories/OrderRepository";
 export * from "./services/OrderService";
-export * from "./services/ContentValidationService";
 export * from "./utils/formatEuro";

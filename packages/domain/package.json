@@ -6,7 +6,6 @@
     ".": "./index.ts",
     "./models/CartItem": "./models/CartItem.ts",
     "./models/Product": "./models/Product.ts",
-    "./services/ContentValidationService": "./services/ContentValidationService.ts",
     "./utils/formatEuro": "./utils/formatEuro.ts"
   },
   "dependencies": {

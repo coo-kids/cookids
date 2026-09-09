@@ -1,6 +1,12 @@
 import { fileURLToPath } from "node:url";
-import { CatalogProvider, ContentValidationService, type Product } from "@cookids/domain";
+import {
+  CatalogProvider,
+  type ContentCatalog,
+  ContentCatalogSchema,
+  type Product
+} from "@cookids/domain";
 import { parse } from "yaml";
+import { validate } from "@tsed/ajv";
 
 declare const Bun: { file(path: string): { text(): Promise<string> } };
 
@@ -8,7 +14,6 @@ const catalogPath = fileURLToPath(new URL("../../../contents/catalog.yml", impor
 
 export class BunCatalogProvider extends CatalogProvider {
   private productsPromise: Promise<Product[]> | undefined;
-  private readonly contentValidationService = new ContentValidationService();
 
   getProducts(): Promise<Product[]> {
     this.productsPromise ??= this.loadProducts();
@@ -16,8 +21,10 @@ export class BunCatalogProvider extends CatalogProvider {
   }
 
   private async loadProducts(): Promise<Product[]> {
-    const contentCatalog = await this.contentValidationService.validateCatalog(parse(await Bun.file(catalogPath).text()));
-    return contentCatalog.products.map((product) => ({
+    const contentCatalog = parse(await Bun.file(catalogPath).text());
+    const validatedCatalog = await validate<ContentCatalog>(contentCatalog, { type: ContentCatalogSchema });
+
+    return validatedCatalog.products.map((product) => ({
       ...product,
       priceCents: Math.round(product.price * 100)
     }));

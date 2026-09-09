@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@cookids/domain": "workspace:*",
+    "@tsed/ajv": "^8.38.4",
     "@tsed/di": "^8.38.4",
     "@tsed/exceptions": "^8.38.4",
     "@vercel/node": "^12.0.2",

@@ -2,14 +2,14 @@
 
 ## Commandes
 
-Utiliser Bun depuis la racine : `bun install`, `bun run dev`, `bun run build`, `bun test`.
+Utiliser Bun depuis la racine : `bun install`, `bun run dev`, `bun run build`, `bun run test`.
 
 ## Architecture
 
 - `contents/` contient les YAML métier éditables. Vite les charge côté SPA et l’infrastructure Bun les charge côté backend.
 - `packages/domain` contient les modèles, schémas, DTO, règles métier et ports, sans dépendance Vercel/Google/Resend.
 - `packages/infrastructure` contient les adaptateurs techniques, dont les loaders Bun des YAML métier.
-- `api/` contient les Functions Vercel et leurs tests co-localisés, préfixés par `_` pour ne pas être déployés comme routes.
+- `api/` contient les Functions Vercel et leurs tests co-localisés.
 - `apps/web` est la SPA Vue. Elle ne contient ni secret ni calcul de prix faisant autorité.
 - La couche de style de `apps/web` utilise Tailwind CSS via son plugin Vite ; privilégier les utilitaires et tokens Tailwind aux nouvelles règles CSS globales.
 - Le déploiement est automatique depuis `main` vers Vercel. La Function doit rester dans `api/`, car Vercel détecte ce dossier à la racine ; ne pas recréer `apps/api`.
@@ -33,7 +33,8 @@ Utiliser Bun depuis la racine : `bun install`, `bun run dev`, `bun run build`, `
 - Utiliser `inject(Service)` dans les propriétés des services Ts.ED. Ne pas construire de `InjectorService` ni enregistrer les providers à la main dans une factory.
 - Les erreurs HTTP contrôlées étendent les exceptions de `@tsed/exceptions`. `defineHandler` capture les exceptions et retourne le format JSON public ; les services ne fabriquent jamais eux-mêmes une `Response`.
 - Pour les tests avec doubles Ts.ED, utiliser `DITest.invoke()` ; ne pas instancier un service dont les dépendances reposent sur `inject()`.
-- Les tests sont co-localisés avec le code testé. Sous `api/`, ils commencent par `_` afin que Vercel ne les expose pas comme Functions.
+- Les tests sont co-localisés avec le code testé.
+- Chaque suite de tests utilise `describe`, et chaque cas de test utilise `it`.
 
 ## Frontend
 
@@ -43,4 +44,4 @@ Utiliser Bun depuis la racine : `bun install`, `bun run dev`, `bun run build`, `
 
 ## Vérification
 
-Après toute modification fonctionnelle, lancer `bun test` et `bun run build`.
+Après toute modification fonctionnelle, lancer `bun run test` et `bun run build`.

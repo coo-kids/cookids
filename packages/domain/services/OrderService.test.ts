@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import "@tsed/ajv";
 import { AjvService } from "@tsed/ajv";
-import { afterEach, describe, expect, test } from "bun:test";
+import { afterEach, describe, expect, it } from "vitest";
 import { DITest } from "@tsed/di";
 import { CatalogProvider } from "../catalog/CatalogProvider.js";
 import { MailService } from "../mail/MailService.js";
@@ -62,7 +62,7 @@ const validOrder = {
 describe("OrderService", () => {
   afterEach(() => DITest.reset());
 
-  test("crée une commande normalisée et recalcule son total", async () => {
+  it("crée une commande normalisée et recalcule son total", async () => {
     const { service, repository, mailService } = await createFixture();
     const order = await service.create(validOrder);
 
@@ -73,7 +73,7 @@ describe("OrderService", () => {
     expect(mailService.orders).toHaveLength(1);
   });
 
-  test.each([
+  it.each([
     [{ ...validOrder, items: [] }],
     [{ ...validOrder, email: "not-an-email" }],
     [{ ...validOrder, items: [{ productId: "cookie-cafe-noix", quantity: 0 }] }],
@@ -84,12 +84,12 @@ describe("OrderService", () => {
     await expect(service.create(input)).rejects.toThrow("La commande n'est pas valide.");
   });
 
-  test("rejette un produit inexistant", async () => {
+  it("rejette un produit inexistant", async () => {
     const { service } = await createFixture();
     await expect(service.create({ ...validOrder, items: [{ productId: "inconnu", quantity: 1 }] })).rejects.toThrow("n'existe pas");
   });
 
-  test("propage les défaillances du repository et du mail", async () => {
+  it("propage les défaillances du repository et du mail", async () => {
     const repositoryFailure = await createFixture();
     repositoryFailure.repository.shouldFail = true;
     await expect(repositoryFailure.service.create(validOrder)).rejects.toThrow("repository failed");

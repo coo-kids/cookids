@@ -1,4 +1,5 @@
-import { expect, test } from "bun:test";
+import { readFile } from "node:fs/promises";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import handler from "./orders";
 
@@ -22,38 +23,52 @@ function createCapturedResponse(): CapturedResponse {
   } as VercelResponse;
   return captured;
 }
-
-test("POST /api/orders retourne une commande sérialisée", async () => {
-  const captured = createCapturedResponse();
-  await handler({
-    method: "POST",
-    body: {
-      name: "Camille Dupont",
-      email: "camille@example.com",
-      items: [{ productId: "cookie-cafe-noix", quantity: 2 }]
-    }
-  } as VercelRequest, captured.response);
-
-  expect(captured.statusCode).toBe(201);
-  expect(captured.payload).toMatchObject({
-    order: {
-      totalCents: 200
-    }
+describe('orders', () => {
+  beforeAll(() => {
+    vi.stubGlobal("Bun", {
+      file(path: string) {
+        return { text: () => readFile(path, "utf8") };
+      }
+    });
   });
-});
 
-test("POST /api/orders sérialise les exceptions Ts.ED", async () => {
-  const captured = createCapturedResponse();
-  await handler({
-    method: "POST",
-    body: { name: "Camille", email: "invalide", items: [] }
-  } as VercelRequest, captured.response);
-
-  expect(captured.statusCode).toBe(400);
-  expect(captured.payload).toEqual({
-    error: {
-      code: "INVALID_ORDER",
-      message: "La commande n'est pas valide."
-    }
+  afterAll(() => {
+    vi.unstubAllGlobals();
   });
-});
+
+  it("POST /api/orders retourne une commande sérialisée", async () => {
+    const captured = createCapturedResponse();
+    await handler({
+      method: "POST",
+      body: {
+        name: "Camille Dupont",
+        email: "camille@example.com",
+        items: [{ productId: "cookie-cafe-noix", quantity: 2 }]
+      }
+    } as VercelRequest, captured.response);
+
+    expect(captured.statusCode).toBe(201);
+    expect(captured.payload).toMatchObject({
+      order: {
+        totalCents: 200
+      }
+    });
+  });
+
+  it("POST /api/orders sérialise les exceptions Ts.ED", async () => {
+    const captured = createCapturedResponse();
+    await handler({
+      method: "POST",
+      body: { name: "Camille", email: "invalide", items: [] }
+    } as VercelRequest, captured.response);
+
+    expect(captured.statusCode).toBe(400);
+    expect(captured.payload).toEqual({
+      error: {
+        code: "INVALID_ORDER",
+        message: "La commande n'est pas valide."
+      }
+    });
+  });
+
+})

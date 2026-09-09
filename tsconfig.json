@@ -9,7 +9,7 @@
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "types": ["bun"],
+    "allowImportingTsExtensions": true,
     "paths": {
       "@cookids/domain": [
         "./packages/domain/index.ts"
@@ -24,7 +24,8 @@
     "api/**/*.ts",
     "apps/web/src/**/*.ts",
     "apps/web/src/**/*.vue",
-    "**/vite.config.ts"
+    "**/vite.config.ts",
+    "**/vitest.config.ts"
   ],
   "exclude": [
     "packages/*/node_modules"
