@@ -1,15 +1,11 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import type { CartItem } from "@cookids/domain/models/CartItem";
+import type { OrderResponse } from "../types/OrderResponse";
+import AppButton from "./AppButton.vue";
 
 const props = defineProps<{ items: CartItem[] }>();
 const emit = defineEmits<{ success: [order: OrderResponse] }>();
-
-interface OrderResponse {
-  id: string;
-  totalCents: number;
-  items: Array<{ productName: string; quantity: number; totalCents: number }>;
-}
 
 const name = ref("");
 const email = ref("");
@@ -47,8 +43,8 @@ async function submitOrder(): Promise<void> {
     <label class="my-4 block font-sans text-[.92rem] font-bold">Téléphone <span class="text-[#80685d] font-normal">(facultatif)</span><input class="mt-[.4rem] block w-full rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 font-serif font-normal" v-model.trim="phone" maxlength="30" autocomplete="tel" /></label>
     <label class="my-4 block font-sans text-[.92rem] font-bold">Un mot pour Syline ? <span class="text-[#80685d] font-normal">(facultatif)</span><textarea class="mt-[.4rem] block w-full resize-y rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 font-serif font-normal" v-model.trim="comment" maxlength="600" rows="3" /></label>
     <p v-if="errorMessage" class="font-sans text-[.9rem] font-bold text-[#b3261e]" role="alert">{{ errorMessage }}</p>
-    <button class="w-full rounded-full bg-cookids-coral px-[1.35rem] py-[.9rem] text-base font-bold text-white transition-colors hover:bg-[#bd4f2f] disabled:cursor-wait disabled:opacity-55" type="submit" :disabled="isSubmitting || items.length === 0">
-      {{ isSubmitting ? "Envoi en cours…" : "Confirmer ma commande" }}
-    </button>
+    <AppButton class="w-full disabled:cursor-wait" type="submit" :disabled="isSubmitting || items.length === 0">
+      {{ isSubmitting ? "Envoi en cours…" : "Valider ma commande" }}
+    </AppButton>
   </form>
 </template>

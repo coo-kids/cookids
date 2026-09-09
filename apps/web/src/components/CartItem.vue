@@ -10,10 +10,14 @@ defineEmits<{ changeQuantity: [quantity: number] }>();
 <template>
   <li class="my-4 flex gap-4">
     <img class="size-20 rounded-xl object-cover" :src="product.image" alt="" />
-    <div>
-      <h3 class="mb-[.3rem] text-xl leading-tight">{{ product.name }}</h3>
-      <p class="mb-[.3rem]">{{ formatEuro(totalCents) }}</p>
-      <QuantitySelector :quantity="quantity" @change="$emit('changeQuantity', $event)" />
+    <div class="min-w-0 flex-1">
+      <div class="flex items-start justify-between gap-3">
+        <h3 class="m-0 text-xl leading-tight">{{ product.name }}</h3>
+        <p class="m-0 shrink-0 font-bold">{{ formatEuro(totalCents) }}</p>
+      </div>
+      <div class="mt-3 flex justify-end">
+        <QuantitySelector :quantity="quantity" @change="$emit('changeQuantity', $event)" />
+      </div>
     </div>
   </li>
 </template>
