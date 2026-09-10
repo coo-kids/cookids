@@ -1,7 +1,5 @@
 import { describe, expect, it } from "vitest";
-import orderRoutes from "./handler.js";
-
-const handleOrderRequest = orderRoutes["/orders"];
+import handleOrderRequest from "./handler.js";
 
 describe("handleOrderRequest", () => {
   it("crée une commande via POST /api/orders", async () => {

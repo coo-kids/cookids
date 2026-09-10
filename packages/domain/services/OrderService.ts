@@ -1,5 +1,5 @@
 import "@tsed/ajv";
-import { AjvService } from "@tsed/ajv";
+import { validate } from "@tsed/ajv";
 import { inject, Injectable } from "@tsed/di";
 import { deserialize, serialize } from "@tsed/json-mapper";
 import { CatalogProvider } from "../catalog/CatalogProvider.js";
@@ -16,32 +16,41 @@ import { findProduct } from "../utils/findProduct.js";
 export class OrderService {
   private readonly orderRepository = inject<OrderRepository>(OrderRepository);
   private readonly mailService = inject<MailService>(MailService);
-  private readonly ajvService = inject<AjvService>(AjvService);
   private readonly catalogProvider = inject<CatalogProvider>(CatalogProvider);
   private readonly siteContentProvider = inject<SiteContentProvider>(SiteContentProvider);
 
   async create(input: unknown): Promise<Order> {
     const orderInput = deserialize<CreateOrder>(input, { type: CreateOrder });
+
     try {
-      await this.ajvService.validate<CreateOrder>(serialize(orderInput), {
-        type: CreateOrder,
+      await validate<CreateOrder>(serialize(orderInput), {
+        type: CreateOrder
       });
     } catch {
       throw new OrderValidationError();
     }
+
     const catalog = await this.catalogProvider.getProducts();
     const { deliveryLocations: locations } = await this.siteContentProvider.getSiteContent();
+
     const deliveryLocation = locations.find((location) => location.id === orderInput.deliveryLocation);
-    if (!deliveryLocation) throw new OrderValidationError("Le lieu de livraison n'est pas valide.");
+
+    if (!deliveryLocation) {
+      throw new OrderValidationError("Le lieu de livraison n'est pas valide.");
+    }
+
     const deliveryDate = orderInput.targetDeliveryDate?.toISOString().slice(0, 10);
+
     if (deliveryLocation.fixedDeliveryDates.length > 0 && (!deliveryDate || !deliveryLocation.fixedDeliveryDates.includes(deliveryDate))) {
       throw new OrderValidationError("La date de livraison n'est pas disponible pour ce lieu.");
     }
+
     const quantities = new Map<string, number>();
+
     for (const item of orderInput.items) {
       quantities.set(
         item.productId,
-        (quantities.get(item.productId) ?? 0) + item.quantity,
+        (quantities.get(item.productId) ?? 0) + item.quantity
       );
     }
 
@@ -58,7 +67,7 @@ export class OrderService {
         productName: product.name,
         unitPrice: product.price,
         quantity,
-        total: product.price * quantity,
+        total: product.price * quantity
       };
     });
 
@@ -79,7 +88,9 @@ export class OrderService {
 
     const ticket = await this.orderRepository.save(order);
     order.id = ticket.id;
+
     await this.mailService.sendOrderConfirmation(order);
+
     return order;
   }
 }

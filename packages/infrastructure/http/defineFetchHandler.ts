@@ -1,3 +1,5 @@
+import "@cookids/infrastructure/config/index.js";
+
 import { DIContext, injector, runInContext } from "@tsed/di";
 import { createErrorResponse } from "./createErrorResponse.js";
 import { randomUUID } from "node:crypto";
