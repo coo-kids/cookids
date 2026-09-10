@@ -6,6 +6,7 @@ import { serialize } from "@tsed/json-mapper";
 
 export default defineFetchHandler({
   method: "POST",
+  path: "/orders",
   async handler(request) {
     const order = await inject<OrderService>(OrderService).create(await request.json());
 

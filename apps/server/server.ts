@@ -1,4 +1,5 @@
-import ordersHandler from "./handlers/orders.js";
+import ordersHandler from "./handlers/orders/handler.js";
+import healthHandler from "./handlers/health/handler.js";
 
 function notFound() {
   return Response.json(
@@ -15,9 +16,12 @@ export function createServer(opts?: Partial<Bun.Serve.Options<any>>){
   return Bun.serve({
     ...opts as any,
     routes: {
-      "/health": () => Response.json({ status: "OK" }),
-      "/orders": ordersHandler
+      ...healthHandler,
+      ...ordersHandler,
     },
+    // error(){
+    //
+    // },
     fetch: notFound,
   });
 }

@@ -1,32 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "bunVersion": "1.4.x",
-  "installCommand": "bun install --frozen-lockfile",
-  "buildCommand": "bun run build",
-  "outputDirectory": "apps/web/dist",
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/server.ts"
-    },
-    {
-      "source": "/((?!api).*\\.[a-zA-Z0-9]+)",
-      "destination": "/$1"
-    },
-    {
-      "source": "/((?!api).*)" ,
-      "destination": "/index.html"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
-        }
-      ]
-    }
-  ]
+  "bunVersion": "1.4.x"
 }

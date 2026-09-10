@@ -4,13 +4,14 @@ import { randomUUID } from "crypto";
 
 type DefineFetchHandlerOpts = {
   method: "GET" | "POST" | "PATCH" | "PUT";
+  path: string;
   handler(request: Request): Promise<Response> | Response;
 };
 
 export function defineFetchHandler(opts: DefineFetchHandlerOpts) {
   const initialization = injector().load();
 
-  return async function handler(request: Request): Promise<Response> {
+  async function handler(request: Request): Promise<Response> {
     await initialization;
 
 
@@ -58,4 +59,8 @@ export function defineFetchHandler(opts: DefineFetchHandlerOpts) {
 
     return result;
   };
+
+  return {
+    [opts.path]: handler
+  }
 }
