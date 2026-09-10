@@ -1,13 +1,13 @@
-import ordersHandler from "@cookids/server/handlers/orders/handler.js";
-import healthHandler from "@cookids/server/handlers/health/handler.js";
-import { serveStaticAsset } from "@cookids/infrastructure";
+// import ordersHandler from "@cookids/server/handlers/orders/handler.js";
+// import healthHandler from "@cookids/server/handlers/health/handler.js";
+// import { serveStaticAsset } from "@cookids/infrastructure";
 
 async function fetch(request: Request) {
-  const staticAsset = await serveStaticAsset(request);
+  // const staticAsset = await serveStaticAsset(request);
 
-  if (staticAsset) {
-    return staticAsset;
-  }
+  // if (staticAsset) {
+  //   return staticAsset;
+  // }
 
   return Response.json(
     {
@@ -21,8 +21,8 @@ async function fetch(request: Request) {
 
 Bun.serve({
   routes: {
-    ...healthHandler,
-    ...ordersHandler,
+    // ...healthHandler,
+    // ...ordersHandler,
   },
   fetch,
 });
