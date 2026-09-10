@@ -19,10 +19,14 @@
       ],
       "@cookids/infrastructure": [
         "./packages/infrastructure/index.ts"
+      ],
+      "@cookids/server/*": [
+        "./packages/server/*"
       ]
     }
   },
   "include": [
+    "server.ts",
     "packages/**/*.ts",
     "api/**/*.ts",
     "packages/server/**/*.ts",

@@ -2,7 +2,7 @@
   "name": "cookids",
   "private": true,
   "type": "module",
-  "workspaces": ["apps/*", "packages/*"],
+
   "scripts": {
     "typecheck": "vue-tsc --project ./tsconfig.json --noEmit",
     "build": "bun run --cwd packages/web build",
@@ -31,6 +31,7 @@
     "vitest": "^5.0.0",
     "vue-tsc": "^3.3.11"
   },
+  "workspaces": ["packages/*"],
   "engines": {
     "bun": "1.4.x"
   }
