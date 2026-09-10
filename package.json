@@ -2,7 +2,6 @@
   "name": "cookids",
   "private": true,
   "type": "module",
-
   "scripts": {
     "typecheck": "vue-tsc --project ./tsconfig.json --noEmit",
     "build": "bun run --cwd packages/web build",
@@ -34,5 +33,8 @@
   "workspaces": ["packages/*"],
   "engines": {
     "bun": "1.4.x"
+  },
+  "patchedDependencies": {
+    "universal-github-app-jwt@2.2.2": "patches/universal-github-app-jwt@2.2.2.patch"
   }
 }
