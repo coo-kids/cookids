@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [yaml(), vue(), tailwindcss()],
   build: {
     target: "esnext",
-    outDir: "../../public"
+    outDir: "dist"
   },
   resolve: {
     alias: {
