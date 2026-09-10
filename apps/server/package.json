@@ -11,6 +11,7 @@
     "@tsed/ajv": "^8.38.4",
     "@tsed/di": "^8.38.4",
     "@tsed/exceptions": "^8.38.4",
+    "@tsed/logger": "^8.0.5",
     "dotenv-flow": "^4.1.0",
     "octokit": "^5.0.5",
     "resend": "^6.27.0",
