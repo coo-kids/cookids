@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { injector } from "@tsed/di";
+import { OrderItem } from "@cookids/domain/models/OrderItem.js";
 
 const issueCreate = vi.fn().mockResolvedValue({ data: { node_id: "issue-node-id", number: 42 } });
 const octokitOptions = vi.fn();
@@ -57,7 +58,7 @@ describe("GitHubOrderRepository", () => {
       createdAt: new Date(),
       customer: { firstName: "Camille", email: "camille@example.com" },
       deliveryLocation: "rosa-parks-option-id",
-      items: [{ productId: "cookie", productName: "Cookie", unitPrice: 3.5, quantity: 2, total: 7 }],
+      items: [Object.assign(new OrderItem(), { productId: "cookie", productName: "Cookie", unitPrice: 3.5, quantity: 2 })],
       total: 7,
       status: "new"
     });

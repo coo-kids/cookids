@@ -5,7 +5,7 @@ import { OrderCustomer } from "./OrderCustomer.js";
 
 describe("OrderCustomer", () => {
   it("compile son modèle Ts.ED", () => {
-    expect(compile(OrderCustomer)).toMatchInlineSnapshot(`
+    expect(compile(OrderCustomer, { groups: ["response"] })).toMatchInlineSnapshot(`
       {
         "properties": {
           "email": {

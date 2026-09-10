@@ -5,6 +5,7 @@
   "dependencies": {
     "@tsed/ajv": "^8.38.4",
     "@tsed/di": "^8.38.4",
+    "@tsed/core": "^8.38.4",
     "@tsed/exceptions": "^8.38.4",
     "@tsed/json-mapper": "^8.38.4",
     "@tsed/schema": "^8.38.4",

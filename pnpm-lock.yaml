@@ -60,6 +60,9 @@ importers:
       '@tsed/ajv':
         specifier: ^8.38.4
         version: 8.38.4(@tsed/core@8.38.4)(@tsed/di@8.38.4(@tsed/core@8.38.4)(@tsed/hooks@8.38.4)(@tsed/logger@8.0.5))(@tsed/exceptions@8.38.4(@tsed/core@8.38.4))(@tsed/schema@8.38.4(@tsed/core@8.38.4)(@tsed/hooks@8.38.4)(@tsed/openspec@8.38.4))(ajv-errors@3.0.0(ajv@8.20.0))(ajv@8.20.0)
+      '@tsed/core':
+        specifier: ^8.38.4
+        version: 8.38.4
       '@tsed/di':
         specifier: ^8.38.4
         version: 8.38.4(@tsed/core@8.38.4)(@tsed/hooks@8.38.4)(@tsed/logger@8.0.5)

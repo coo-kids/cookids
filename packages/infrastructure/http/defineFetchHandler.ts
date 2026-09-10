@@ -55,7 +55,8 @@ export function defineFetchHandler(opts: DefineFetchHandlerOpts) {
         status_code: result.status,
         request_header: result.headers,
         response_headers: result.headers,
-        response_body: result.body
+        response_body: result.body,
+        error: ctx.error
       });
     }
 

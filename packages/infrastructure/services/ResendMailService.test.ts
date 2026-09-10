@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { injector } from "@tsed/di";
+import { OrderItem } from "@cookids/domain/models/OrderItem.js";
 
 const send = vi.fn().mockResolvedValue({ data: { id: "email-id" }, error: null });
 
@@ -18,7 +19,7 @@ describe("ResendMailService", () => {
       createdAt: new Date(),
       customer: { firstName: "Camille", email: "camille@example.com" },
       deliveryLocation: "rosa-parks",
-      items: [{ productId: "cookie", productName: "Cookie", unitPrice: 3.5, quantity: 2, total: 7 }],
+      items: [Object.assign(new OrderItem(), { productId: "cookie", productName: "Cookie", unitPrice: 3.5, quantity: 2 })],
       total: 7,
       status: "new"
     });

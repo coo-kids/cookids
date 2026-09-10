@@ -1,13 +1,12 @@
 import "reflect-metadata";
-import "@tsed/ajv";
-import { AjvService } from "@tsed/ajv";
 import { afterEach, describe, expect, it } from "vitest";
 import { DITest } from "@tsed/di";
+import { deserialize } from "@tsed/json-mapper";
 import { CatalogProvider } from "../catalog/CatalogProvider.js";
 import { DeliveryLocationProvider } from "../content/DeliveryLocationProvider.js";
 import { MailService } from "../mail/MailService.js";
 import type { Product } from "../models/Product.js";
-import type { Order } from "../models/Order.js";
+import { Order } from "../models/Order.js";
 import { OrderRepository } from "../repositories/OrderRepository.js";
 import { OrderService } from "./OrderService.js";
 
@@ -77,21 +76,33 @@ async function createFixture(): Promise<{
   const service = await DITest.invoke(OrderService, [
     { token: OrderRepository, use: repository },
     { token: MailService, use: mailService },
-    { token: AjvService, use: new AjvService() },
     { token: CatalogProvider, use: new TestCatalogProvider() },
     { token: DeliveryLocationProvider, use: new TestDeliveryLocationProvider() },
   ]);
   return { service, repository, mailService };
 }
 
-const validOrder = {
-  firstName: "Camille",
-  lastName: "Dupont",
-  email: "camille@example.com",
-  phoneNumber: "0600000000",
-  deliveryLocation: "rosa-parks",
-  items: [{ productId: "cookie-cafe-noix", quantity: 2 }, { productId: "financiers-amandes", quantity: 1 }]
-};
+function createOrderInput(overrides: {
+  items?: Array<{ productId: string; quantity: number }>;
+  targetDeliveryDate?: Date;
+} = {}): Order {
+  return deserialize<Order>({
+    customer: {
+      firstName: "Camille",
+      lastName: "Dupont",
+      email: "camille@example.com",
+      phoneNumber: "0600000000"
+    },
+    deliveryLocation: "rosa-parks",
+    items: overrides.items ?? [
+      { productId: "cookie-cafe-noix", quantity: 2 },
+      { productId: "financiers-amandes", quantity: 1 }
+    ],
+    targetDeliveryDate: overrides.targetDeliveryDate
+  }, { type: Order, groups: ["create"], strictGroups: true });
+}
+
+const validOrder = createOrderInput();
 
 describe("OrderService", () => {
   afterEach(() => { DITest.reset(); fixedDeliveryDates = []; });
@@ -107,41 +118,10 @@ describe("OrderService", () => {
     expect(mailService.orders).toHaveLength(1);
   });
 
-  it.each([
-    [{ ...validOrder, items: [] }],
-    [{ ...validOrder, email: "not-an-email" }],
-    [
-      {
-        ...validOrder,
-        items: [{ productId: "cookie-cafe-noix", quantity: 0 }],
-      },
-    ],
-    [
-      {
-        ...validOrder,
-        items: [{ productId: "cookie-cafe-noix", quantity: -1 }],
-      },
-    ],
-    [
-      {
-        ...validOrder,
-        items: [{ productId: "cookie-cafe-noix", quantity: 49 }],
-      },
-    ],
-  ])("rejette une commande invalide", async (input: unknown) => {
-    const { service } = await createFixture();
-    await expect(service.create(input)).rejects.toThrow(
-      "La commande n'est pas valide.",
-    );
-  });
-
   it("rejette un produit inexistant", async () => {
     const { service } = await createFixture();
     await expect(
-      service.create({
-        ...validOrder,
-        items: [{ productId: "inconnu", quantity: 1 }],
-      }),
+      service.create(createOrderInput({ items: [{ productId: "inconnu", quantity: 1 }] })),
     ).rejects.toThrow("n'existe pas");
   });
 
@@ -154,14 +134,14 @@ describe("OrderService", () => {
   it("accepte une date fixe autorisée", async () => {
     fixedDeliveryDates = ["2026-09-19"];
     const { service } = await createFixture();
-    const order = await service.create({ ...validOrder, targetDeliveryDate: new Date("2026-09-19T00:00:00.000Z") });
+    const order = await service.create(createOrderInput({ targetDeliveryDate: new Date("2026-09-19T00:00:00.000Z") }));
     expect(order.targetDeliveryDate?.toISOString()).toBe("2026-09-19T00:00:00.000Z");
   });
 
   it("rejette une date fixe non autorisée", async () => {
     fixedDeliveryDates = ["2026-09-19"];
     const { service } = await createFixture();
-    await expect(service.create({ ...validOrder, targetDeliveryDate: new Date("2026-09-20T00:00:00.000Z") })).rejects.toThrow("La date de livraison n'est pas disponible pour ce lieu.");
+    await expect(service.create(createOrderInput({ targetDeliveryDate: new Date("2026-09-20T00:00:00.000Z") }))).rejects.toThrow("La date de livraison n'est pas disponible pour ce lieu.");
   });
 
   it("propage les défaillances du repository et du mail", async () => {

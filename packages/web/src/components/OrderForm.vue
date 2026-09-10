@@ -27,7 +27,7 @@ async function submitOrder(): Promise<void> {
     const response = await fetch("/api/orders", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ firstName: firstName.value, lastName: lastName.value || undefined, email: email.value, phoneNumber: phoneNumber.value || undefined, deliveryLocation: deliveryLocation.value, targetDeliveryDate: targetDeliveryDate.value ? new Date(`${targetDeliveryDate.value}T00:00:00.000Z`).toISOString() : undefined, items: props.items })
+      body: JSON.stringify({ customer: { firstName: firstName.value, lastName: lastName.value || undefined, email: email.value, phoneNumber: phoneNumber.value || undefined }, deliveryLocation: deliveryLocation.value, targetDeliveryDate: targetDeliveryDate.value ? new Date(`${targetDeliveryDate.value}T00:00:00.000Z`).toISOString() : undefined, items: props.items.map(({ productId, quantity }) => ({ productId, quantity })) })
     });
     const payload = await response.json();
     if (!response.ok) throw new Error(payload.error?.message ?? "La commande n'a pas pu être envoyée.");

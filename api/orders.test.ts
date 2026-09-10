@@ -6,9 +6,8 @@ describe("ordersApi", () => {
     const response = await ordersApi.fetch(new Request("https://cookids.test/api/orders", {
       method: "POST",
       body: JSON.stringify({
-        firstName: "Camille",
+        customer: { firstName: "Camille", email: "camille@example.com" },
         deliveryLocation: "IFSSO_kgDOBOB43g",
-        email: "camille@example.com",
         items: [{ productId: "cookie-cafe-noix", quantity: 2 }]
       })
     }));

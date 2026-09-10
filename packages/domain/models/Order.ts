@@ -1,14 +1,16 @@
-import { CollectionOf, Enum, Minimum, Property, Required } from "@tsed/schema";
+import { CollectionOf, Enum, ForwardGroups, Groups, MaxLength, MinItems, Minimum, Property, Required } from "@tsed/schema";
 import { OrderCustomer } from "./OrderCustomer.js";
 import { OrderItem } from "./OrderItem.js";
 
 export class Order {
   @Property()
+  @Groups("!create")
   id?: number;
 
   @Property()
   @Required()
-  createdAt!: Date;
+  @Groups("!create")
+  createdAt: Date = new Date();
 
   @Property(OrderCustomer)
   @Required()
@@ -17,16 +19,21 @@ export class Order {
   @Property()
   @Required()
   @CollectionOf(OrderItem)
+  @MinItems(1)
+  @ForwardGroups()
   items!: OrderItem[];
 
   @Property()
   @Required()
   @Minimum(0)
-  total!: number;
+  @Groups("!create")
+  get total(): number {
+    return this.items.reduce((total, item) => total + item.total, 0)
+  }
 
   @Property()
-  @Property()
   @Required()
+  @MaxLength(120)
   deliveryLocation!: string;
 
   @Property(Date)
@@ -35,5 +42,6 @@ export class Order {
   @Property()
   @Required()
   @Enum("new")
-  status!: "new";
+  @Groups("!create")
+  status: "new" = "new";
 }

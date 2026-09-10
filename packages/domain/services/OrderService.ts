@@ -1,16 +1,10 @@
-import "@tsed/ajv";
-import { validate } from "@tsed/ajv";
 import { inject, Injectable } from "@tsed/di";
-import { deserialize, serialize } from "@tsed/json-mapper";
 import { CatalogProvider } from "../catalog/CatalogProvider.js";
 import { DeliveryLocationProvider } from "../content/DeliveryLocationProvider.js";
-import { CreateOrder } from "../dto/CreateOrder.js";
-import { OrderValidationError } from "../errors/OrderValidationError.js";
-import { UnknownProductError } from "../errors/UnknownProductError.js";
 import { MailService } from "../mail/MailService.js";
 import { Order } from "../models/Order.js";
 import { OrderRepository } from "../repositories/OrderRepository.js";
-import { findProduct } from "../utils/findProduct.js";
+import { OrderValidationError } from "@cookids/domain/errors/OrderValidationError.js";
 
 @Injectable()
 export class OrderService {
@@ -19,18 +13,20 @@ export class OrderService {
   private readonly catalogProvider = inject<CatalogProvider>(CatalogProvider);
   private readonly deliveryLocationProvider = inject<DeliveryLocationProvider>(DeliveryLocationProvider);
 
-  async create(input: unknown): Promise<Order> {
-    const orderInput = deserialize<CreateOrder>(input, { type: CreateOrder });
+  async create(orderInput: Order): Promise<Order> {
 
-    try {
-      await validate<CreateOrder>(serialize(orderInput), {
-        type: CreateOrder
-      });
-    } catch {
-      throw new OrderValidationError();
-    }
+    await this.checkLocation(orderInput);
+    await this.resolveProducts(orderInput);
 
-    const catalog = await this.catalogProvider.getProducts();
+    const ticket = await this.orderRepository.save(orderInput);
+    orderInput.id = ticket.id;
+
+    await this.mailService.sendOrderConfirmation(orderInput);
+
+    return orderInput;
+  }
+
+  protected async checkLocation(orderInput: Order) {
     const locations = await this.deliveryLocationProvider.getDeliveryLocations();
 
     const deliveryLocation = locations.find((location) => location.id === orderInput.deliveryLocation);
@@ -44,53 +40,19 @@ export class OrderService {
     if (deliveryLocation.fixedDeliveryDates.length > 0 && (!deliveryDate || !deliveryLocation.fixedDeliveryDates.includes(deliveryDate))) {
       throw new OrderValidationError("La date de livraison n'est pas disponible pour ce lieu.");
     }
+  }
 
-    const quantities = new Map<string, number>();
+  protected async resolveProducts(order: Order) {
+    const catalog = await this.catalogProvider.getProducts();
 
-    for (const item of orderInput.items) {
-      quantities.set(
-        item.productId,
-        (quantities.get(item.productId) ?? 0) + item.quantity
-      );
-    }
+    for (const item of order.items) {
+      const product = catalog.find((product) => product.id === item.productId);
 
-    const items = [...quantities].map(([productId, quantity]) => {
-      if (quantity > 48) {
-        throw new OrderValidationError();
-      }
-      const product = findProduct(catalog, productId);
       if (!product) {
-        throw new UnknownProductError();
+        throw new OrderValidationError("Un produit demandé n'existe pas.");
       }
-      return {
-        productId: product.id,
-        productName: product.name,
-        unitPrice: product.price,
-        quantity,
-        total: product.price * quantity
-      };
-    });
 
-    const order = deserialize<Order>({
-      createdAt: new Date(),
-      customer: {
-        firstName: orderInput.firstName.trim(),
-        lastName: orderInput.lastName?.trim() || undefined,
-        email: orderInput.email.trim().toLowerCase(),
-        phoneNumber: orderInput.phoneNumber?.trim() || undefined
-      },
-      items,
-      total: items.reduce((total, item) => total + item.total, 0),
-      deliveryLocation: deliveryLocation.id,
-      targetDeliveryDate: orderInput.targetDeliveryDate,
-      status: "new"
-    }, { type: Order, useAlias: false });
-
-    const ticket = await this.orderRepository.save(order);
-    order.id = ticket.id;
-
-    await this.mailService.sendOrderConfirmation(order);
-
-    return order;
+      item.setProduct(product);
+    }
   }
 }

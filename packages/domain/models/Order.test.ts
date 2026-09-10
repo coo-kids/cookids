@@ -5,7 +5,7 @@ import { Order } from "./Order.js";
 
 describe("Order", () => {
   it("compile son modèle Ts.ED", () => {
-    expect(compile(Order)).toMatchInlineSnapshot(`
+    expect(compile(Order, { groups: ["response"] })).toMatchInlineSnapshot(`
       {
         "definitions": {
           "OrderCustomer": {
@@ -36,7 +36,7 @@ describe("Order", () => {
             ],
             "type": "object",
           },
-          "OrderItem": {
+          "OrderItemResponse": {
             "properties": {
               "productId": {
                 "minLength": 1,
@@ -47,6 +47,7 @@ describe("Order", () => {
                 "type": "string",
               },
               "quantity": {
+                "maximum": 48,
                 "minimum": 1,
                 "multipleOf": 1,
                 "type": "integer",
@@ -79,6 +80,7 @@ describe("Order", () => {
             "$ref": "#/definitions/OrderCustomer",
           },
           "deliveryLocation": {
+            "maxLength": 120,
             "minLength": 1,
             "type": "string",
           },
@@ -87,8 +89,9 @@ describe("Order", () => {
           },
           "items": {
             "items": {
-              "$ref": "#/definitions/OrderItem",
+              "$ref": "#/definitions/OrderItemResponse",
             },
+            "minItems": 1,
             "type": "array",
           },
           "status": {

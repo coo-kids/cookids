@@ -7,41 +7,48 @@ import setIssueType from "./queries/setIssueType.gql.js";
 import { OrderRepository } from "@cookids/domain/repositories/OrderRepository.js";
 import type { Order } from "@cookids/domain/models/Order.js";
 
+type Issue = Awaited<ReturnType<Octokit["rest"]["issues"]["create"]>>;
+
 @Injectable()
 export class GitHubOrderRepository extends OrderRepository {
+  /** Crée l'issue GitHub, renseigne ses métadonnées de projet et retourne son numéro. */
   async save(order: Order): Promise<{ id: number }> {
-    const token = constant<string>("envs.GITHUB_TOKEN");
-    const owner = constant<string>("githubBoards.owner");
-    const assignee = constant<string>("githubBoards.assignee");
-    const repository = constant<string>("githubBoards.repository");
-    const projectId = constant<string>("githubBoards.projectId");
-    const statusFieldId = constant<string>("githubBoards.fields.status");
-    const pendingOptionId = constant<string>("githubBoards.statuses.pending");
-    const issueTypeId = constant<string>("githubBoards.issueType");
+    const {
+      projectId,
+      statusFieldId,
+      pendingOptionId,
+      issueTypeId
+    } = this.getSettings();
 
-    if (!token || !owner || !assignee || !repository || !projectId || !statusFieldId || !pendingOptionId || !issueTypeId) {
-      throw new Error("GitHub commands configuration is incomplete.");
-    }
+    const issue = await this.createIssue(order);
 
-    const client = new Octokit({
-      auth: token,
-      request: {
-        headers: {
-          "X-GitHub-Api-Version": "2026-03-10"
-        }
-      }
+    await this.setIssueType(issue, issueTypeId);
+    await this.setCustomFieldValues(issue, order);
+    await this.addIssueToProject(projectId, issue, statusFieldId, pendingOptionId);
+
+    return { id: issue.data.number };
+  }
+
+  /** Ajoute l'issue au projet GitHub puis initialise son statut. */
+  protected async addIssueToProject(projectId: string, issue: Issue, statusFieldId: string, pendingOptionId: string) {
+    const client = this.getClient();
+
+    const item = await client.graphql<{
+      addProjectV2ItemById: { item: { id: string } }
+    }>(addProjectItem, { projectId, contentId: issue.data.node_id });
+
+    await client.graphql(setProjectStatus, {
+      projectId,
+      itemId: item.addProjectV2ItemById.item.id,
+      fieldId: statusFieldId,
+      optionId: pendingOptionId
     });
-    const issue = await client.rest.issues.create({
-      owner,
-      repo: repository,
-      title: `Commande - ${order.customer.firstName}${order.customer.lastName ? ` ${order.customer.lastName}` : ""} - ${new Intl.NumberFormat("fr-FR", {
-        style: "currency",
-        currency: "EUR"
-      }).format(order.total)}`,
-      assignees: [assignee],
-      body: this.formatBody(order)
-    });
-    await client.graphql(setIssueType, { issueId: issue.data.node_id, issueTypeId });
+  }
+
+  /** Copie les informations métier de la commande dans les champs du projet GitHub. */
+  protected async setCustomFieldValues(issue: Issue, order: Order) {
+    const client = this.getClient();
+
     await client.graphql(setIssueFields, {
       issueId: issue.data.node_id,
       issueFields: [
@@ -72,19 +79,78 @@ export class GitHubOrderRepository extends OrderRepository {
         }] : [])
       ]
     });
-    const item = await client.graphql<{
-      addProjectV2ItemById: { item: { id: string } }
-    }>(addProjectItem, { projectId, contentId: issue.data.node_id });
-    await client.graphql(setProjectStatus, {
-      projectId,
-      itemId: item.addProjectV2ItemById.item.id,
-      fieldId: statusFieldId,
-      optionId: pendingOptionId
-    });
-    return { id: issue.data.number };
   }
 
-  private formatBody(order: Order): string {
+  /** Attribue à l'issue le type configuré pour les commandes. */
+  protected async setIssueType(issue: Issue, issueTypeId: string) {
+    const client = this.getClient();
+
+    await client.graphql(setIssueType, { issueId: issue.data.node_id, issueTypeId });
+  }
+
+  /** Crée l'issue GitHub initiale qui porte le détail de la commande. */
+  protected async createIssue(order: Order): Promise<Issue> {
+    const client = this.getClient();
+    const {
+      owner,
+      assignee,
+      repository
+    } = this.getSettings();
+
+    return client.rest.issues.create({
+      owner,
+      repo: repository,
+      title: `Commande - ${order.customer.firstName}${order.customer.lastName ? ` ${order.customer.lastName}` : ""} - ${new Intl.NumberFormat("fr-FR", {
+        style: "currency",
+        currency: "EUR"
+      }).format(order.total)}`,
+      assignees: [assignee],
+      body: this.formatBody(order)
+    });
+  }
+
+  /** Construit un client GitHub authentifié et figé sur la version d'API choisie. */
+  protected getClient() {
+    const token = constant<string>("envs.GITHUB_TOKEN");
+
+    return new Octokit({
+      auth: token,
+      request: {
+        headers: {
+          "X-GitHub-Api-Version": "2026-03-10"
+        }
+      }
+    });
+  }
+
+  /** Charge et vérifie les paramètres GitHub indispensables à la création d'une commande. */
+  protected getSettings() {
+    const token = constant<string>("envs.GITHUB_TOKEN");
+    const owner = constant<string>("githubBoards.owner");
+    const assignee = constant<string>("githubBoards.assignee");
+    const repository = constant<string>("githubBoards.repository");
+    const projectId = constant<string>("githubBoards.projectId");
+    const statusFieldId = constant<string>("githubBoards.fields.status");
+    const pendingOptionId = constant<string>("githubBoards.statuses.pending");
+    const issueTypeId = constant<string>("githubBoards.issueType");
+
+    if (!token || !owner || !assignee || !repository || !projectId || !statusFieldId || !pendingOptionId || !issueTypeId) {
+      throw new Error("GitHub commands configuration is incomplete.");
+    }
+    return {
+      token,
+      owner,
+      assignee,
+      repository,
+      projectId,
+      statusFieldId,
+      pendingOptionId,
+      issueTypeId
+    };
+  }
+
+  /** Met en forme le détail de la commande pour le corps Markdown de l'issue. */
+  protected formatBody(order: Order): string {
     const rows = order.items.map((item) => `| ${item.productName} | ${item.quantity} | ${item.unitPrice.toFixed(2)} € | ${item.total.toFixed(2)} € |`).join("\n");
     return `## Commande\n\n| Produit | Quantité | Prix unitaire | Sous-total |\n| --- | ---: | ---: | ---: |\n${rows}\n\n**Total : ${order.total.toFixed(2)} €**`;
   }
