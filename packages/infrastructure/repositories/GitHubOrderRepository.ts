@@ -23,7 +23,14 @@ export class GitHubOrderRepository extends OrderRepository {
       throw new Error("GitHub commands configuration is incomplete.");
     }
 
-    const client = new Octokit({ auth: token });
+    const client = new Octokit({
+      auth: token,
+      request: {
+        headers: {
+          "X-GitHub-Api-Version": "2026-03-10"
+        }
+      }
+    });
     const issue = await client.rest.issues.create({
       owner,
       repo: repository,

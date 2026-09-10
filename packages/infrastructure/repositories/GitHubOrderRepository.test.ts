@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { injector } from "@tsed/di";
 
 const issueCreate = vi.fn().mockResolvedValue({ data: { node_id: "issue-node-id", number: 42 } });
+const octokitOptions = vi.fn();
 const graphql = vi.fn()
   .mockResolvedValueOnce({})
   .mockResolvedValueOnce({})
@@ -10,6 +11,10 @@ const graphql = vi.fn()
 
 vi.mock("octokit", () => ({
   Octokit: class {
+    constructor(options: unknown) {
+      octokitOptions(options);
+    }
+
     rest = { issues: { create: issueCreate } };
     graphql = graphql;
   }
@@ -18,6 +23,7 @@ vi.mock("octokit", () => ({
 describe("GitHubOrderRepository", () => {
   beforeEach(() => {
     issueCreate.mockClear();
+    octokitOptions.mockClear();
     graphql.mockClear();
     graphql.mockResolvedValueOnce({}).mockResolvedValueOnce({}).mockResolvedValueOnce({ addProjectV2ItemById: { item: { id: "project-item-id" } } }).mockResolvedValueOnce({});
     injector().settings.set("envs", {
@@ -62,6 +68,13 @@ describe("GitHubOrderRepository", () => {
       assignees: ["syline"],
       title: "Commande - Camille - 7,00 €",
       body: expect.stringContaining("**Total : 7.00 €**")
+    }));
+    expect(octokitOptions).toHaveBeenCalledWith(expect.objectContaining({
+      request: {
+        headers: {
+          "X-GitHub-Api-Version": "2026-03-10"
+        }
+      }
     }));
     expect(graphql).toHaveBeenNthCalledWith(1, expect.stringContaining("updateIssueIssueType"), expect.objectContaining({ issueId: "issue-node-id" }));
     expect(graphql).toHaveBeenNthCalledWith(2, expect.stringContaining("setIssueFieldValue"), expect.objectContaining({ issueId: "issue-node-id" }));
