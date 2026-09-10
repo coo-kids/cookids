@@ -10,8 +10,12 @@
       "dest": "/api/server.ts"
     },
     {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/assets/(.*)",
+      "destination": "/assets/$1"
+    },
+    {
+      "source": "/((?!api|assets).*)",
+      "destination": "/index.html"
     }
   ],
   "headers": [

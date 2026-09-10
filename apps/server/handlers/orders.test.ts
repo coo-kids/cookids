@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
-import { handleOrderRequest } from "./orders.js";
+import handleOrderRequest from "./orders.js";
 
 describe("handleOrderRequest", () => {
   beforeAll(() => {

@@ -1,4 +1,4 @@
-import { handleOrderRequest } from "../apps/server/handlers/orders.js";
+import ordersHandler from "../apps/server/handlers/orders.js";
 
 function notFound() {
   return Response.json(
@@ -14,13 +14,7 @@ function notFound() {
 Bun.serve({
   routes: {
     "/health": () => Response.json({ status: "OK" }),
-    "/orders": (request) => {
-      if (request.method == "POST") {
-        return handleOrderRequest(request);
-      }
-
-      return notFound();
-    }
+    "/orders": ordersHandler
   },
   fetch: notFound
 });
