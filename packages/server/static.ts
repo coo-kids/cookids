@@ -1,7 +1,7 @@
 import { extname, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const webDistDirectory = fileURLToPath(new URL("../web/dist", import.meta.url));
+const webDistDirectory = fileURLToPath(new URL("../../public", import.meta.url));
 
 function resolveAssetPath(pathname: string): string | undefined {
   let decodedPathname: string;

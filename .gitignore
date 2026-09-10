@@ -7,3 +7,5 @@ coverage/
 .vercel
 .env*
 .idea
+public
+!packages/web/public

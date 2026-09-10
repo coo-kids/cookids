@@ -7,7 +7,8 @@ import { defineConfig } from "vite";
 export default defineConfig({
   plugins: [yaml(), vue(), tailwindcss()],
   build: {
-    target: "esnext"
+    target: "esnext",
+    outDir: "../../public"
   },
   resolve: {
     alias: {
