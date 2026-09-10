@@ -1,3 +1,3 @@
-mutation AddProjectItem($projectId: ID!, $contentId: ID!) {
+export default `mutation AddProjectItem($projectId: ID!, $contentId: ID!) {
     addProjectV2ItemById(input: {projectId: $projectId, contentId: $contentId}) { item { id } }
-}
+}`

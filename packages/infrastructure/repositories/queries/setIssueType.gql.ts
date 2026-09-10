@@ -1,5 +1,5 @@
-mutation SetIssueType($issueId: ID!, $issueTypeId: ID!) {
+export default `mutation SetIssueType($issueId: ID!, $issueTypeId: ID!) {
   updateIssueIssueType(input: {issueId: $issueId, issueTypeId: $issueTypeId}) {
     issue { id }
   }
-}
+}`

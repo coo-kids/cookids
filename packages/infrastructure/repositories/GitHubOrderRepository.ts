@@ -1,10 +1,10 @@
 import { constant, Injectable } from "@tsed/di";
 import { Octokit } from "octokit";
 import { type Order, OrderRepository } from "@cookids/domain";
-import addProjectItem from "./queries/addProjectItem.graphql" with {type: "text"};
-import setProjectStatus from "./queries/setProjectStatus.graphql" with {type: "text"};
-import setIssueFields from "./queries/setIssueFields.graphql" with {type: "text"};
-import setIssueType from "./queries/setIssueType.graphql" with {type: "text"};
+import addProjectItem from "./queries/addProjectItem.gql.js";
+import setProjectStatus from "./queries/setProjectStatus.gql.js";
+import setIssueFields from "./queries/setIssueFields.gql.js";
+import setIssueType from "./queries/setIssueType.gql.js";
 import { getDeliveryLocationOptionId } from "./getDeliveryLocationOptionId.js";
 
 @Injectable()
