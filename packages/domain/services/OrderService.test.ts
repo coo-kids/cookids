@@ -4,7 +4,7 @@ import { AjvService } from "@tsed/ajv";
 import { afterEach, describe, expect, it } from "vitest";
 import { DITest } from "@tsed/di";
 import { CatalogProvider } from "../catalog/CatalogProvider.js";
-import { SiteContentProvider } from "../content/SiteContentProvider.js";
+import { DeliveryLocationProvider } from "../content/DeliveryLocationProvider.js";
 import { MailService } from "../mail/MailService.js";
 import type { Product } from "../models/Product.js";
 import type { Order } from "../models/Order.js";
@@ -61,9 +61,9 @@ class TestCatalogProvider extends CatalogProvider {
 
 let fixedDeliveryDates: string[] = [];
 
-class TestSiteContentProvider extends SiteContentProvider {
-  async getSiteContent() {
-    return { deliveryLocations: [{ id: "rosa-parks", label: "Rosa Parks", fixedDeliveryDates }] } as never;
+class TestDeliveryLocationProvider extends DeliveryLocationProvider {
+  async getDeliveryLocations() {
+    return [{ id: "rosa-parks", label: "Rosa Parks", fixedDeliveryDates }];
   }
 }
 
@@ -79,7 +79,7 @@ async function createFixture(): Promise<{
     { token: MailService, use: mailService },
     { token: AjvService, use: new AjvService() },
     { token: CatalogProvider, use: new TestCatalogProvider() },
-    { token: SiteContentProvider, use: new TestSiteContentProvider() },
+    { token: DeliveryLocationProvider, use: new TestDeliveryLocationProvider() },
   ]);
   return { service, repository, mailService };
 }

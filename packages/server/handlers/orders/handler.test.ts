@@ -7,7 +7,7 @@ describe("handleOrderRequest", () => {
       method: "POST",
       body: JSON.stringify({
         firstName: "Camille",
-        deliveryLocation: "le-perreux-sur-marne",
+        deliveryLocation: "IFSSO_kgDOBOB43g",
         email: "camille@example.com",
         items: [{ productId: "cookie-cafe-noix", quantity: 2 }]
       })

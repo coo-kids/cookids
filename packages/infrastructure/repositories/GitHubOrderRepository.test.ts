@@ -21,19 +21,25 @@ describe("GitHubOrderRepository", () => {
     graphql.mockClear();
     graphql.mockResolvedValueOnce({}).mockResolvedValueOnce({}).mockResolvedValueOnce({ addProjectV2ItemById: { item: { id: "project-item-id" } } }).mockResolvedValueOnce({});
     injector().settings.set("envs", {
-      GITHUB_TOKEN: "test-token",
-      GITHUB_COMMANDS_OWNER: "coo-kids",
-      GITHUB_COMMANDS_ASSIGNEE: "syline",
-      GITHUB_COMMANDS_REPOSITORY: "cookids-commands",
-      GITHUB_COMMANDS_PROJECT_ID: "project-id",
-      GITHUB_STATUS_FIELD_ID: "status-field-id",
-      GITHUB_STATUS_PENDING_OPTION_ID: "pending-option-id",
-      GITHUB_COMMANDS_ISSUE_TYPE_ID: "commands-type-id",
-      GITHUB_LOCATION_ROSA_PARKS_OPTION_ID: "rosa-parks-option-id",
-      GITHUB_FIELD_FIRST_NAME_ID: "first-name-field-id",
-      GITHUB_FIELD_EMAIL_ID: "email-field-id",
-      GITHUB_FIELD_DELIVERY_LOCATION_ID: "location-field-id",
-      GITHUB_FIELD_TOTAL_PRICE_ID: "total-field-id"
+      GITHUB_TOKEN: "test-token"
+    });
+    injector().settings.set("githubBoards", {
+      repository: "cookids-commands",
+      owner: "coo-kids",
+      projectId: "project-id",
+      assignee: "syline",
+      fields: {
+        firstName: "first-name-field-id",
+        lastName: "last-name-field-id",
+        email: "email-field-id",
+        phoneNumber: "phone-number-field-id",
+        location: "location-field-id",
+        targetDate: "target-date-field-id",
+        totalPrice: "total-field-id",
+        status: "status-field-id"
+      },
+      statuses: { pending: "pending-option-id" },
+      issueType: "commands-type-id"
     });
   });
 
@@ -44,7 +50,7 @@ describe("GitHubOrderRepository", () => {
     await repository.save({
       createdAt: new Date(),
       customer: { firstName: "Camille", email: "camille@example.com" },
-      deliveryLocation: "rosa-parks",
+      deliveryLocation: "rosa-parks-option-id",
       items: [{ productId: "cookie", productName: "Cookie", unitPrice: 3.5, quantity: 2, total: 7 }],
       total: 7,
       status: "new"

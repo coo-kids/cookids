@@ -1,0 +1,20 @@
+locations:
+  - id: IFSSO_kgDOBOB43A
+    label: Rosa Parks
+    fixedDeliveryDates:
+      - "2026-09-19"
+      - "2026-09-26"
+  - id: IFSSO_kgDOBOB43Q
+    label: Saint-Lazare
+    fixedDeliveryDates:
+      - "2026-09-20"
+      - "2026-09-27"
+  - id: IFSSO_kgDOBOB43g
+    label: Le Perreux-sur-Marne
+    fixedDeliveryDates: []
+  - id: IFSSO_kgDOBOB43w
+    label: Neuilly-Plaisance
+    fixedDeliveryDates: []
+  - id: IFSSO_kgDOBOB44A
+    label: Montreuil
+    fixedDeliveryDates: []

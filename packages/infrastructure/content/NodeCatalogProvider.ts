@@ -1,5 +1,5 @@
 import { readFile } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
 import { parse } from "yaml";
 import { validate } from "@tsed/ajv";
 import { CatalogProvider } from "@cookids/domain/catalog/CatalogProvider.js";
@@ -9,9 +9,7 @@ import {
   ContentCatalogSchema
 } from "@cookids/domain/schemas/ContentCatalogSchema.js";
 
-const catalogPath = fileURLToPath(
-  new URL("../../../contents/catalog.yml", import.meta.url)
-);
+const catalogPath = resolve(process.cwd(), "contents/catalog.yml");
 
 export class NodeCatalogProvider extends CatalogProvider {
   private productsPromise: Promise<Product[]> | undefined;

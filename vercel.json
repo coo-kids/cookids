@@ -3,5 +3,10 @@
   "outputDirectory": "./packages/web/dist",
   "buildCommand": "pnpm run build",
   "installCommand": "pnpm install --frozen-lockfile",
-  "framework": "vite"
+  "framework": "vite",
+  "functions": {
+    "api/orders.ts": {
+      "includeFiles": "contents/*.yml"
+    }
+  }
 }

@@ -1,11 +1,11 @@
 import { readFile } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
 import { validate } from "@tsed/ajv";
 import { parse } from "yaml";
 import { SiteContentProvider } from "@cookids/domain/content/SiteContentProvider.js";
 import { type SiteContent, SiteContentSchema } from "@cookids/domain/schemas/SiteContentSchema.js";
 
-const sitePath = fileURLToPath(new URL("../../../contents/site.yml", import.meta.url));
+const sitePath = resolve(process.cwd(), "contents/site.yml");
 
 export class NodeSiteContentProvider extends SiteContentProvider {
   private siteContentPromise: Promise<SiteContent> | undefined;

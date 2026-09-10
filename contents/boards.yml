@@ -1,0 +1,16 @@
+repository: cookids-commands
+owner: coo-kids
+projectId: PVT_kwDOE3stbc4Bi-3o
+assignee: syline
+fields:
+  firstName: IFT_kgDOAsk6pA
+  lastName: IFT_kgDOAsk62Q
+  email: IFT_kgDOAsk6Qg
+  phoneNumber: IFT_kgDOAsk6Uw
+  location: IFSS_kgDOAsk7Tg
+  targetDate: IFD_kgDOAsjrDQ
+  totalPrice: IFN_kgDOAslCYA
+  status: PVTSSF_lADOE3stbc4Bi-3ozhh06gU
+statuses:
+  pending: 6efdbf1e
+issueType: IT_kwDOE3stbc4ziBbG

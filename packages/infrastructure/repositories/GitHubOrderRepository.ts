@@ -1,10 +1,9 @@
-import { constant, Injectable, injector } from "@tsed/di";
+import { constant, Injectable } from "@tsed/di";
 import { Octokit } from "octokit";
 import addProjectItem from "./queries/addProjectItem.gql.js";
 import setProjectStatus from "./queries/setProjectStatus.gql.js";
 import setIssueFields from "./queries/setIssueFields.gql.js";
 import setIssueType from "./queries/setIssueType.gql.js";
-import { getDeliveryLocationOptionId } from "./getDeliveryLocationOptionId.js";
 import { OrderRepository } from "@cookids/domain/repositories/OrderRepository.js";
 import type { Order } from "@cookids/domain/models/Order.js";
 
@@ -12,28 +11,15 @@ import type { Order } from "@cookids/domain/models/Order.js";
 export class GitHubOrderRepository extends OrderRepository {
   async save(order: Order): Promise<{ id: number }> {
     const token = constant<string>("envs.GITHUB_TOKEN");
-    const owner = constant<string>("envs.GITHUB_COMMANDS_OWNER");
-    const assignee = constant<string>("envs.GITHUB_COMMANDS_ASSIGNEE");
-    const repository = constant<string>("envs.GITHUB_COMMANDS_REPOSITORY");
-    const projectId = constant<string>("envs.GITHUB_COMMANDS_PROJECT_ID");
-    const statusFieldId = constant<string>("envs.GITHUB_STATUS_FIELD_ID");
-    const pendingOptionId = constant<string>("envs.GITHUB_STATUS_PENDING_OPTION_ID");
-    const issueTypeId = constant<string>("envs.GITHUB_COMMANDS_ISSUE_TYPE_ID");
-
+    const owner = constant<string>("githubBoards.owner");
+    const assignee = constant<string>("githubBoards.assignee");
+    const repository = constant<string>("githubBoards.repository");
+    const projectId = constant<string>("githubBoards.projectId");
+    const statusFieldId = constant<string>("githubBoards.fields.status");
+    const pendingOptionId = constant<string>("githubBoards.statuses.pending");
+    const issueTypeId = constant<string>("githubBoards.issueType");
 
     if (!token || !owner || !assignee || !repository || !projectId || !statusFieldId || !pendingOptionId || !issueTypeId) {
-      console.log({
-        token,
-        owner,
-        assignee,
-        repository,
-        projectId,
-        statusFieldId,
-        pendingOptionId,
-        issueTypeId
-      });
-      console.log(injector().settings.get("envs"));
-
       throw new Error("GitHub commands configuration is incomplete.");
     }
 
@@ -53,28 +39,28 @@ export class GitHubOrderRepository extends OrderRepository {
       issueId: issue.data.node_id,
       issueFields: [
         {
-          fieldId: constant<string>("envs.GITHUB_FIELD_FIRST_NAME_ID"),
+          fieldId: constant<string>("githubBoards.fields.firstName"),
           textValue: order.customer.firstName
         },
         ...(order.customer.lastName ? [{
-          fieldId: constant<string>("envs.GITHUB_FIELD_LAST_NAME_ID"),
+          fieldId: constant<string>("githubBoards.fields.lastName"),
           textValue: order.customer.lastName
         }] : []),
         {
-          fieldId: constant<string>("envs.GITHUB_FIELD_EMAIL_ID"),
+          fieldId: constant<string>("githubBoards.fields.email"),
           textValue: order.customer.email
         },
         ...(order.customer.phoneNumber ? [{
-          fieldId: constant<string>("envs.GITHUB_FIELD_PHONE_NUMBER_ID"),
+          fieldId: constant<string>("githubBoards.fields.phoneNumber"),
           textValue: order.customer.phoneNumber
         }] : []),
         {
-          fieldId: constant<string>("envs.GITHUB_FIELD_DELIVERY_LOCATION_ID"),
-          singleSelectOptionId: getDeliveryLocationOptionId(order.deliveryLocation)
+          fieldId: constant<string>("githubBoards.fields.location"),
+          singleSelectOptionId: order.deliveryLocation
         },
-        { fieldId: constant<string>("envs.GITHUB_FIELD_TOTAL_PRICE_ID"), numberValue: order.total },
+        { fieldId: constant<string>("githubBoards.fields.totalPrice"), numberValue: order.total },
         ...(order.targetDeliveryDate ? [{
-          fieldId: constant<string>("envs.GITHUB_FIELD_TARGET_DATE_ID"),
+          fieldId: constant<string>("githubBoards.fields.targetDate"),
           dateValue: order.targetDeliveryDate.toISOString().slice(0, 10)
         }] : [])
       ]

@@ -3,7 +3,7 @@ import { validate } from "@tsed/ajv";
 import { inject, Injectable } from "@tsed/di";
 import { deserialize, serialize } from "@tsed/json-mapper";
 import { CatalogProvider } from "../catalog/CatalogProvider.js";
-import { SiteContentProvider } from "../content/SiteContentProvider.js";
+import { DeliveryLocationProvider } from "../content/DeliveryLocationProvider.js";
 import { CreateOrder } from "../dto/CreateOrder.js";
 import { OrderValidationError } from "../errors/OrderValidationError.js";
 import { UnknownProductError } from "../errors/UnknownProductError.js";
@@ -17,7 +17,7 @@ export class OrderService {
   private readonly orderRepository = inject<OrderRepository>(OrderRepository);
   private readonly mailService = inject<MailService>(MailService);
   private readonly catalogProvider = inject<CatalogProvider>(CatalogProvider);
-  private readonly siteContentProvider = inject<SiteContentProvider>(SiteContentProvider);
+  private readonly deliveryLocationProvider = inject<DeliveryLocationProvider>(DeliveryLocationProvider);
 
   async create(input: unknown): Promise<Order> {
     const orderInput = deserialize<CreateOrder>(input, { type: CreateOrder });
@@ -31,7 +31,7 @@ export class OrderService {
     }
 
     const catalog = await this.catalogProvider.getProducts();
-    const { deliveryLocations: locations } = await this.siteContentProvider.getSiteContent();
+    const locations = await this.deliveryLocationProvider.getDeliveryLocations();
 
     const deliveryLocation = locations.find((location) => location.id === orderInput.deliveryLocation);
 
