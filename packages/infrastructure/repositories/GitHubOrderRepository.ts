@@ -1,4 +1,4 @@
-import { constant, Injectable } from "@tsed/di";
+import { constant, Injectable, injector } from "@tsed/di";
 import { Octokit } from "octokit";
 import addProjectItem from "./queries/addProjectItem.gql.js";
 import setProjectStatus from "./queries/setProjectStatus.gql.js";
@@ -20,7 +20,20 @@ export class GitHubOrderRepository extends OrderRepository {
     const pendingOptionId = constant<string>("envs.GITHUB_STATUS_PENDING_OPTION_ID");
     const issueTypeId = constant<string>("envs.GITHUB_COMMANDS_ISSUE_TYPE_ID");
 
+
     if (!token || !owner || !assignee || !repository || !projectId || !statusFieldId || !pendingOptionId || !issueTypeId) {
+      console.log({
+        token,
+        owner,
+        assignee,
+        repository,
+        projectId,
+        statusFieldId,
+        pendingOptionId,
+        issueTypeId
+      });
+      console.log(injector().settings.get("envs"));
+
       throw new Error("GitHub commands configuration is incomplete.");
     }
 
@@ -28,7 +41,10 @@ export class GitHubOrderRepository extends OrderRepository {
     const issue = await client.rest.issues.create({
       owner,
       repo: repository,
-      title: `Commande - ${order.customer.firstName}${order.customer.lastName ? ` ${order.customer.lastName}` : ""} - ${new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(order.total)}`,
+      title: `Commande - ${order.customer.firstName}${order.customer.lastName ? ` ${order.customer.lastName}` : ""} - ${new Intl.NumberFormat("fr-FR", {
+        style: "currency",
+        currency: "EUR"
+      }).format(order.total)}`,
       assignees: [assignee],
       body: this.formatBody(order)
     });
@@ -36,16 +52,36 @@ export class GitHubOrderRepository extends OrderRepository {
     await client.graphql(setIssueFields, {
       issueId: issue.data.node_id,
       issueFields: [
-        { fieldId: constant<string>("envs.GITHUB_FIELD_FIRST_NAME_ID"), textValue: order.customer.firstName },
-        ...(order.customer.lastName ? [{ fieldId: constant<string>("envs.GITHUB_FIELD_LAST_NAME_ID"), textValue: order.customer.lastName }] : []),
-        { fieldId: constant<string>("envs.GITHUB_FIELD_EMAIL_ID"), textValue: order.customer.email },
-        ...(order.customer.phoneNumber ? [{ fieldId: constant<string>("envs.GITHUB_FIELD_PHONE_NUMBER_ID"), textValue: order.customer.phoneNumber }] : []),
-        { fieldId: constant<string>("envs.GITHUB_FIELD_DELIVERY_LOCATION_ID"), singleSelectOptionId: getDeliveryLocationOptionId(order.deliveryLocation) },
+        {
+          fieldId: constant<string>("envs.GITHUB_FIELD_FIRST_NAME_ID"),
+          textValue: order.customer.firstName
+        },
+        ...(order.customer.lastName ? [{
+          fieldId: constant<string>("envs.GITHUB_FIELD_LAST_NAME_ID"),
+          textValue: order.customer.lastName
+        }] : []),
+        {
+          fieldId: constant<string>("envs.GITHUB_FIELD_EMAIL_ID"),
+          textValue: order.customer.email
+        },
+        ...(order.customer.phoneNumber ? [{
+          fieldId: constant<string>("envs.GITHUB_FIELD_PHONE_NUMBER_ID"),
+          textValue: order.customer.phoneNumber
+        }] : []),
+        {
+          fieldId: constant<string>("envs.GITHUB_FIELD_DELIVERY_LOCATION_ID"),
+          singleSelectOptionId: getDeliveryLocationOptionId(order.deliveryLocation)
+        },
         { fieldId: constant<string>("envs.GITHUB_FIELD_TOTAL_PRICE_ID"), numberValue: order.total },
-        ...(order.targetDeliveryDate ? [{ fieldId: constant<string>("envs.GITHUB_FIELD_TARGET_DATE_ID"), dateValue: order.targetDeliveryDate.toISOString().slice(0, 10) }] : [])
+        ...(order.targetDeliveryDate ? [{
+          fieldId: constant<string>("envs.GITHUB_FIELD_TARGET_DATE_ID"),
+          dateValue: order.targetDeliveryDate.toISOString().slice(0, 10)
+        }] : [])
       ]
     });
-    const item = await client.graphql<{ addProjectV2ItemById: { item: { id: string } } }>(addProjectItem, { projectId, contentId: issue.data.node_id });
+    const item = await client.graphql<{
+      addProjectV2ItemById: { item: { id: string } }
+    }>(addProjectItem, { projectId, contentId: issue.data.node_id });
     await client.graphql(setProjectStatus, {
       projectId,
       itemId: item.addProjectV2ItemById.item.id,
