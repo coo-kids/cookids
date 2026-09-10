@@ -1,12 +1,12 @@
 import { fileURLToPath } from "node:url";
-import {
-  CatalogProvider,
-  type ContentCatalog,
-  ContentCatalogSchema,
-  type Product,
-} from "@cookids/domain";
 import { parse } from "yaml";
 import { validate } from "@tsed/ajv";
+import { CatalogProvider } from "@cookids/domain/catalog/CatalogProvider.js";
+import type { Product } from "@cookids/domain/models/Product.js";
+import {
+  type ContentCatalog,
+  ContentCatalogSchema
+} from "@cookids/domain/schemas/ContentCatalogSchema.js";
 
 declare const Bun: { file(path: string): { text(): Promise<string> } };
 

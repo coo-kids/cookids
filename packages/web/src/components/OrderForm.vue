@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import type { CartItem } from "@cookids/domain/models/CartItem";
+import type { CartItem } from "@cookids/domain/models/CartItem.js";
 import type { OrderResponse } from "../types/OrderResponse.js";
 import { siteContent } from "../content/site.js";
 import AppButton from "./AppButton.vue";

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { Order } from "@cookids/domain";
 import { FakeMailService } from "./FakeMailService.js";
+import type { Order } from "@cookids/domain/models/Order.js";
 
 describe("FakeMailService", () => {
   it("conserve les confirmations envoyées", async () => {

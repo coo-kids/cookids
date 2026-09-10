@@ -1,6 +1,6 @@
 import { DIContext, injector, runInContext } from "@tsed/di";
 import { createErrorResponse } from "./createErrorResponse.js";
-import { randomUUID } from "crypto";
+import { randomUUID } from "node:crypto";
 
 type DefineFetchHandlerOpts = {
   method: "GET" | "POST" | "PATCH" | "PUT";

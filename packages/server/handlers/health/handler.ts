@@ -1,10 +1,9 @@
-import { defineFetchHandler } from "@cookids/infrastructure";
-import ordersHandler from "../orders/handler.js";
+import { defineFetchHandler } from "@cookids/infrastructure/http/defineFetchHandler.js";
 
 export default defineFetchHandler({
   path: "/health",
   method: "GET",
-  handler(){
-    return Response.json({ status: "OK" })
+  handler() {
+    return Response.json({ status: "OK" });
   }
-})
+});

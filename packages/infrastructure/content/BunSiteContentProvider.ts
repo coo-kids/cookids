@@ -1,7 +1,8 @@
 import { fileURLToPath } from "node:url";
-import { type SiteContent, SiteContentProvider, SiteContentSchema } from "@cookids/domain";
 import { validate } from "@tsed/ajv";
 import { parse } from "yaml";
+import { SiteContentProvider } from "@cookids/domain/content/SiteContentProvider.js";
+import { type SiteContent, SiteContentSchema } from "@cookids/domain/schemas/SiteContentSchema.js";
 
 declare const Bun: { file(path: string): { text(): Promise<string> } };
 

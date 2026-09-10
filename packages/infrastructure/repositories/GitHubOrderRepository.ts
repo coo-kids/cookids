@@ -1,11 +1,12 @@
 import { constant, Injectable } from "@tsed/di";
 import { Octokit } from "octokit";
-import { type Order, OrderRepository } from "@cookids/domain";
 import addProjectItem from "./queries/addProjectItem.gql.js";
 import setProjectStatus from "./queries/setProjectStatus.gql.js";
 import setIssueFields from "./queries/setIssueFields.gql.js";
 import setIssueType from "./queries/setIssueType.gql.js";
 import { getDeliveryLocationOptionId } from "./getDeliveryLocationOptionId.js";
+import { OrderRepository } from "@cookids/domain/repositories/OrderRepository.js";
+import type { Order } from "@cookids/domain/models/Order.js";
 
 @Injectable()
 export class GitHubOrderRepository extends OrderRepository {
