@@ -2,11 +2,12 @@
   "name": "cookids",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@11.17.0",
   "scripts": {
     "typecheck": "vue-tsc --project ./tsconfig.json --noEmit",
-    "build": "bun run --cwd packages/web build",
-    "dev": "bun run --cwd packages/web dev",
-    "start": "bun run server.ts",
+    "build": "pnpm --filter @cookids/web run build",
+    "dev": "pnpm --filter @cookids/web run dev",
+    "start": "tsx packages/server/index.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
@@ -21,20 +22,17 @@
     "@tsed/json-mapper": "^8.38.4"
   },
   "devDependencies": {
-    "@types/bun": "^1.4.2",
     "@types/node": "^20.19.0",
     "@vitest/coverage-v8": "^5.0.0",
     "@vue/test-utils": "^2.4.6",
     "jsdom": "^27.0.1",
+    "tsx": "^4.20.6",
     "typescript": "6.0.3",
     "vitest": "^5.0.0",
     "vue-tsc": "^3.3.11"
   },
   "workspaces": ["packages/*"],
   "engines": {
-    "bun": "1.4.x"
-  },
-  "patchedDependencies": {
-    "universal-github-app-jwt@2.2.2": "patches/universal-github-app-jwt@2.2.2.patch"
+    "node": ">=24"
   }
 }

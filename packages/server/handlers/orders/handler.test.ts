@@ -1,22 +1,9 @@
-import { readFile } from "node:fs/promises";
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import orderRoutes from "./handler.js";
 
 const handleOrderRequest = orderRoutes["/orders"];
 
 describe("handleOrderRequest", () => {
-  beforeAll(() => {
-    vi.stubGlobal("Bun", {
-      file(path: string) {
-        return { text: () => readFile(path, "utf8") };
-      }
-    });
-  });
-
-  afterAll(() => {
-    vi.unstubAllGlobals();
-  });
-
   it("crée une commande via POST /api/orders", async () => {
     const response = await handleOrderRequest(new Request("https://cookids.test/api/orders", {
       method: "POST",

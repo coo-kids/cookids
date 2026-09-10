@@ -2,13 +2,13 @@
 
 ## Commandes
 
-Utiliser Bun depuis la racine : `bun install`, `bun run dev`, `bun run build`, `bun run test`.
+Utiliser Node.js et pnpm depuis la racine : `pnpm install`, `pnpm run dev`, `pnpm run build`, `pnpm run test`.
 
 ## Architecture
 
-- `contents/` contient les YAML métier éditables. Vite les charge côté SPA et l’infrastructure Bun les charge côté backend.
+- `contents/` contient les YAML métier éditables. Vite les charge côté SPA et l’infrastructure Node.js les charge côté backend.
 - `packages/domain` contient les modèles, schémas, DTO, règles métier et ports, sans dépendance Vercel/Google/Resend.
-- `packages/infrastructure` contient les adaptateurs techniques, dont les loaders Bun des YAML métier.
+- `packages/infrastructure` contient les adaptateurs techniques, dont les loaders Node.js des YAML métier.
 - `api/` contient les Functions Vercel et leurs tests co-localisés.
 - `packages/web` est la SPA Vue. Elle ne contient ni secret ni calcul de prix faisant autorité.
 - La couche de style de `packages/web` utilise Tailwind CSS via son plugin Vite ; privilégier les utilitaires et tokens Tailwind aux nouvelles règles CSS globales.
@@ -18,7 +18,7 @@ Utiliser Bun depuis la racine : `bun install`, `bun run dev`, `bun run build`, `
 
 - `contents/catalog.yml` et `contents/site.yml` sont les sources éditables uniques du catalogue et des textes. Ne pas dupliquer leur contenu dans des composants ou des exports TypeScript intermédiaires.
 - Les images statiques détenues par Cookids vivent dans `packages/web/public/images/` et sont référencées depuis les YAML. Une évolution par génération IA demande une validation humaine ; ne pas modifier les visuels sans demande explicite.
-- La validation des YAML est exécutée dès leur chargement, côté Vite comme côté loader Bun ; il n'existe pas de script de validation séparé.
+- La validation des YAML est exécutée dès leur chargement, côté Vite comme côté loader Node.js ; il n'existe pas de script de validation séparé.
 - Les schémas YAML utilisent l'API fonctionnelle Ts.ED (`s.object`, `s.string`, `s.array`, etc.) car ces données ne sont pas désérialisées par `@tsed/json-mapper`.
 - Les DTO de requêtes HTTP, eux, restent des classes décorées : désérialisation par `@tsed/json-mapper`, validation par `@tsed/schema` et `@tsed/ajv`.
 
@@ -45,4 +45,4 @@ Utiliser Bun depuis la racine : `bun install`, `bun run dev`, `bun run build`, `
 
 ## Vérification
 
-Après toute modification fonctionnelle, lancer `bun run test` et `bun run build`.
+Après toute modification fonctionnelle, lancer `pnpm run test` et `pnpm run build`.

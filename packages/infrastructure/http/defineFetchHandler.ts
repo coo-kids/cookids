@@ -14,11 +14,11 @@ export function defineFetchHandler(opts: DefineFetchHandlerOpts) {
   async function handler(request: Request): Promise<Response> {
     await initialization;
 
-
     const ctx = new DIContext({
       id: request.headers.get("x-request-id") || randomUUID()
     })
       .set("request", request);
+
     if (request.method !== opts.method) {
       return Response.json({
         error: {
@@ -60,7 +60,7 @@ export function defineFetchHandler(opts: DefineFetchHandlerOpts) {
     return result;
   };
 
-  return {
-    [opts.path]: handler
-  }
+  return Object.assign(handler, {
+    path: opts.path
+  })
 }

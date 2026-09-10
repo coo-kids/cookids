@@ -1,0 +1,6 @@
+packages:
+  - "packages/*"
+allowBuilds:
+  esbuild: true
+minimumReleaseAgeExclude:
+  - resend@6.27.0

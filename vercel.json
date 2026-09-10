@@ -1,8 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "bunVersion": "1.4.x",
   "outputDirectory": "./packages/web/dist",
-  "buildCommand": "bun run build",
-  "installCommand": "bun install --frozen-lockfile",
-  "framework": "node"
+  "buildCommand": "pnpm run build",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "framework": "vite"
 }

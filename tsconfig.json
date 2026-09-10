@@ -10,9 +10,7 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
-    "types": [
-      "bun"
-    ],
+    "types": ["node"],
     "paths": {
       "@cookids/domain/*": [
         "./packages/domain/*"

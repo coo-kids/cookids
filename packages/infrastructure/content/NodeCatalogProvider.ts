@@ -1,3 +1,4 @@
+import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
 import { validate } from "@tsed/ajv";
@@ -8,13 +9,11 @@ import {
   ContentCatalogSchema
 } from "@cookids/domain/schemas/ContentCatalogSchema.js";
 
-declare const Bun: { file(path: string): { text(): Promise<string> } };
-
 const catalogPath = fileURLToPath(
-  new URL("../../../contents/catalog.yml", import.meta.url),
+  new URL("../../../contents/catalog.yml", import.meta.url)
 );
 
-export class BunCatalogProvider extends CatalogProvider {
+export class NodeCatalogProvider extends CatalogProvider {
   private productsPromise: Promise<Product[]> | undefined;
 
   getProducts(): Promise<Product[]> {
@@ -23,9 +22,9 @@ export class BunCatalogProvider extends CatalogProvider {
   }
 
   private async loadProducts(): Promise<Product[]> {
-    const contentCatalog = parse(await Bun.file(catalogPath).text());
+    const contentCatalog = parse(await readFile(catalogPath, "utf8"));
     const validatedCatalog = await validate<ContentCatalog>(contentCatalog, {
-      type: ContentCatalogSchema,
+      type: ContentCatalogSchema
     });
 
     return validatedCatalog.products;

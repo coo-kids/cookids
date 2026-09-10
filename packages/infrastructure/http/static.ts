@@ -1,3 +1,4 @@
+import { readFile, stat } from "node:fs/promises";
 import { extname, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -22,6 +23,34 @@ function isAssetRequest(pathname: string): boolean {
   return extname(pathname) !== "" || pathname.startsWith("/assets/");
 }
 
+const contentTypes: Record<string, string> = {
+  ".css": "text/css; charset=utf-8",
+  ".html": "text/html; charset=utf-8",
+  ".ico": "image/x-icon",
+  ".js": "text/javascript; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
+  ".png": "image/png",
+  ".svg": "image/svg+xml",
+  ".webp": "image/webp",
+};
+
+async function readStaticFile(path: string): Promise<{ content: ArrayBuffer; contentType: string } | undefined> {
+  try {
+    const fileStats = await stat(path);
+
+    if (!fileStats.isFile()) {
+      return undefined;
+    }
+
+    return {
+      content: Uint8Array.from(await readFile(path)).buffer,
+      contentType: contentTypes[extname(path)] ?? "application/octet-stream",
+    };
+  } catch {
+    return undefined;
+  }
+}
+
 export async function serveStaticAsset(request: Request): Promise<Response | undefined> {
   if (request.method !== "GET" && request.method !== "HEAD") {
     return undefined;
@@ -31,26 +60,26 @@ export async function serveStaticAsset(request: Request): Promise<Response | und
   const assetPath = resolveAssetPath(pathname);
 
   if (assetPath) {
-    const asset = Bun.file(assetPath);
+    const asset = await readStaticFile(assetPath);
 
-    if (await asset.exists()) {
-      return new Response(request.method === "HEAD" ? undefined : asset, {
+    if (asset) {
+      return new Response(request.method === "HEAD" ? undefined : asset.content, {
         headers: {
-          "Content-Type": asset.type,
-          "Content-Length": String(asset.size)
+          "Content-Type": asset.contentType,
+          "Content-Length": String(asset.content.byteLength)
         }
       });
     }
   }
 
   if (!pathname.startsWith("/api/") && !isAssetRequest(pathname)) {
-    const index = Bun.file(resolve(webDistDirectory, "index.html"));
+    const index = await readStaticFile(resolve(webDistDirectory, "index.html"));
 
-    if (await index.exists()) {
-      return new Response(request.method === "HEAD" ? undefined : index, {
+    if (index) {
+      return new Response(request.method === "HEAD" ? undefined : index.content, {
         headers: {
-          "Content-Type": index.type,
-          "Content-Length": String(index.size)
+          "Content-Type": index.contentType,
+          "Content-Length": String(index.content.byteLength)
         }
       });
     }
