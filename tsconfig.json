@@ -25,9 +25,9 @@
   "include": [
     "packages/**/*.ts",
     "api/**/*.ts",
-    "apps/server/**/*.ts",
-    "apps/web/src/**/*.ts",
-    "apps/web/src/**/*.vue",
+    "packages/server/**/*.ts",
+    "packages/web/src/**/*.ts",
+    "packages/web/src/**/*.vue",
     "**/vite.config.ts",
     "**/vitest.config.ts"
   ],

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { formatEuro } from "@cookids/domain/utils/formatEuro";
-import type { OrderResponse } from "../types/OrderResponse";
+import type { OrderResponse } from "../types/OrderResponse.js";
 
 defineProps<{ order: OrderResponse }>();
 defineEmits<{ close: [] }>();

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ShoppingBag } from "lucide-vue-next";
 import AppButton from "./AppButton.vue";
-import { useScrollState } from "../composables/useScrollState";
+import { useScrollState } from "../composables/useScrollState.js";
 
 defineProps<{ cartCount: number; isCartOpen: boolean }>();
 defineEmits<{ toggleCart: [] }>();

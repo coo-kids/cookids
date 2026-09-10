@@ -6,8 +6,8 @@ import CartDrawer from "./components/CartDrawer.vue";
 import CheckoutPage from "./components/CheckoutPage.vue";
 import HeroSection from "./components/HeroSection.vue";
 import ProductGrid from "./components/ProductGrid.vue";
-import { useCart } from "./composables/useCart";
-import { useCheckoutRoute } from "./composables/useCheckoutRoute";
+import { useCart } from "./composables/useCart.js";
+import { useCheckoutRoute } from "./composables/useCheckoutRoute.js";
 
 const cart = useCart();
 const checkoutRoute = useCheckoutRoute();

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { siteContent } from "../content/site";
+import { siteContent } from "../content/site.js";
 import AppButton from "./AppButton.vue";
 </script>
 

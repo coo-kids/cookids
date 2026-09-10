@@ -5,7 +5,7 @@ description: Maintain Cookids Vercel deployment configuration and its thin API f
 
 # Vercel Functions for Cookids
 
-The root `api/server.ts` is only the Vercel discovery entrypoint. Keep HTTP adaptation in `apps/server/**/*.ts` or `packages/infrastructure` and business logic in `packages/domain`.
+The root `api/server.ts` is only the Vercel discovery entrypoint. Keep HTTP adaptation in `../../../packages/server/**/*.ts` or `packages/infrastructure` and business logic in `packages/domain`.
 
 Production deploys automatically from GitHub `main` after the repository and Vercel project are connected. Do not place secrets in repository files; map them in the appropriate Vercel environment.
 

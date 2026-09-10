@@ -1,3 +1,3 @@
-import { createServer } from "./apps/server/server.js";
+import { createServer } from "./packages/server/server.js";
 
 createServer();

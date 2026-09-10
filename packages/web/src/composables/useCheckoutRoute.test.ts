@@ -2,7 +2,7 @@
 import { mount } from "@vue/test-utils";
 import { defineComponent, nextTick } from "vue";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { useCheckoutRoute } from "./useCheckoutRoute";
+import { useCheckoutRoute } from "./useCheckoutRoute.js";
 
 const CheckoutRouteHarness = defineComponent({
   setup() {

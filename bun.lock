@@ -20,37 +20,9 @@
         "@vue/test-utils": "^2.4.6",
         "jsdom": "^27.0.1",
         "typescript": "6.0.3",
+        "vite": "^8.2.2",
         "vitest": "^5.0.0",
         "vue-tsc": "^3.3.11",
-      },
-    },
-    "apps/server": {
-      "name": "@cookids/server",
-      "dependencies": {
-        "@cookids/domain": "workspace:*",
-        "@tsed/ajv": "^8.38.4",
-        "@tsed/di": "^8.38.4",
-        "@tsed/exceptions": "^8.38.4",
-        "@tsed/logger": "^8.0.5",
-        "dotenv-flow": "^4.1.0",
-        "octokit": "^5.0.5",
-        "resend": "^6.27.0",
-        "yaml": "^2.9.0",
-      },
-    },
-    "apps/web": {
-      "name": "@cookids/web",
-      "dependencies": {
-        "@cookids/domain": "workspace:*",
-        "lucide-vue-next": "^1.0.0",
-        "vue": "^3.5.42",
-      },
-      "devDependencies": {
-        "@modyfi/vite-plugin-yaml": "^1.1.1",
-        "@tailwindcss/vite": "^4.3.3",
-        "@vitejs/plugin-vue": "^6.0.8",
-        "tailwindcss": "^4.3.3",
-        "vite": "^8.2.2",
       },
     },
     "packages/domain": {
@@ -78,6 +50,35 @@
         "yaml": "^2.9.0",
       },
     },
+    "packages/server": {
+      "name": "@cookids/server",
+      "dependencies": {
+        "@cookids/domain": "workspace:*",
+        "@tsed/ajv": "^8.38.4",
+        "@tsed/di": "^8.38.4",
+        "@tsed/exceptions": "^8.38.4",
+        "@tsed/logger": "^8.0.5",
+        "dotenv-flow": "^4.1.0",
+        "octokit": "^5.0.5",
+        "resend": "^6.27.0",
+        "yaml": "^2.9.0",
+      },
+    },
+    "packages/web": {
+      "name": "@cookids/web",
+      "dependencies": {
+        "@cookids/domain": "workspace:*",
+        "lucide-vue-next": "^1.0.0",
+        "vue": "^3.5.42",
+      },
+      "devDependencies": {
+        "@modyfi/vite-plugin-yaml": "^1.1.1",
+        "@tailwindcss/vite": "^4.3.3",
+        "@vitejs/plugin-vue": "^6.0.8",
+        "tailwindcss": "^4.3.3",
+        "vite": "^8.2.2",
+      },
+    },
   },
   "packages": {
     "@acemir/cssom": ["@acemir/cssom@0.9.31", "", {}, "sha512-ZnR3GSaH+/vJ0YlHau21FjfLYjMpYVIzTD8M8vIEQvIGxeOXyXdzCI140rrCY862p/C/BbzWsjc1dgnM9mkoTA=="],
@@ -102,9 +103,9 @@
 
     "@cookids/infrastructure": ["@cookids/infrastructure@workspace:packages/infrastructure"],
 
-    "@cookids/server": ["@cookids/server@workspace:apps/server"],
+    "@cookids/server": ["@cookids/server@workspace:packages/server"],
 
-    "@cookids/web": ["@cookids/web@workspace:apps/web"],
+    "@cookids/web": ["@cookids/web@workspace:packages/web"],
 
     "@csstools/color-helpers": ["@csstools/color-helpers@6.1.1", "", {}, "sha512-gLNsunvwf3mCi5u5o46/Z/JcJMnhbHSaZ69rkgPzNM3J4s8hWwpPUQB6/tt0EDFyCiWzxANlx+2LJwpYj4zS1w=="],
 

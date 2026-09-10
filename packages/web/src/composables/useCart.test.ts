@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { catalog } from "../content/catalog";
-import { useCart } from "./useCart";
+import { catalog } from "../content/catalog.js";
+import { useCart } from "./useCart.js";
 
 describe("useCart", () => {
   const cart = useCart();

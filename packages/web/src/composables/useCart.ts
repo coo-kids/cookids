@@ -1,5 +1,5 @@
 import { computed, ref } from "vue";
-import { catalog } from "../content/catalog";
+import { catalog } from "../content/catalog.js";
 import type { CartItem } from "@cookids/domain/models/CartItem";
 
 const items = ref<CartItem[]>([]);

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { formatEuro } from "@cookids/domain/utils/formatEuro";
-import type { EnrichedCartItem } from "../types/EnrichedCartItem";
+import type { EnrichedCartItem } from "../types/EnrichedCartItem.js";
 import QuantitySelector from "./QuantitySelector.vue";
 
 withDefaults(

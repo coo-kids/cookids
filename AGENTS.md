@@ -10,14 +10,14 @@ Utiliser Bun depuis la racine : `bun install`, `bun run dev`, `bun run build`, `
 - `packages/domain` contient les modèles, schémas, DTO, règles métier et ports, sans dépendance Vercel/Google/Resend.
 - `packages/infrastructure` contient les adaptateurs techniques, dont les loaders Bun des YAML métier.
 - `api/` contient les Functions Vercel et leurs tests co-localisés.
-- `apps/web` est la SPA Vue. Elle ne contient ni secret ni calcul de prix faisant autorité.
-- La couche de style de `apps/web` utilise Tailwind CSS via son plugin Vite ; privilégier les utilitaires et tokens Tailwind aux nouvelles règles CSS globales.
+- `packages/web` est la SPA Vue. Elle ne contient ni secret ni calcul de prix faisant autorité.
+- La couche de style de `packages/web` utilise Tailwind CSS via son plugin Vite ; privilégier les utilitaires et tokens Tailwind aux nouvelles règles CSS globales.
 - Le déploiement est automatique depuis `main` vers Vercel. La Function doit rester dans `api/`, car Vercel détecte ce dossier à la racine ; ne pas recréer `apps/api`.
 
 ## Contenu et validation
 
 - `contents/catalog.yml` et `contents/site.yml` sont les sources éditables uniques du catalogue et des textes. Ne pas dupliquer leur contenu dans des composants ou des exports TypeScript intermédiaires.
-- Les images statiques détenues par Cookids vivent dans `apps/web/public/images/` et sont référencées depuis les YAML. Une évolution par génération IA demande une validation humaine ; ne pas modifier les visuels sans demande explicite.
+- Les images statiques détenues par Cookids vivent dans `packages/web/public/images/` et sont référencées depuis les YAML. Une évolution par génération IA demande une validation humaine ; ne pas modifier les visuels sans demande explicite.
 - La validation des YAML est exécutée dès leur chargement, côté Vite comme côté loader Bun ; il n'existe pas de script de validation séparé.
 - Les schémas YAML utilisent l'API fonctionnelle Ts.ED (`s.object`, `s.string`, `s.array`, etc.) car ces données ne sont pas désérialisées par `@tsed/json-mapper`.
 - Les DTO de requêtes HTTP, eux, restent des classes décorées : désérialisation par `@tsed/json-mapper`, validation par `@tsed/schema` et `@tsed/ajv`.
@@ -39,7 +39,7 @@ Utiliser Bun depuis la racine : `bun install`, `bun run dev`, `bun run build`, `
 
 ## Frontend
 
-- Utiliser Tailwind dans les templates. Garder `apps/web/src/styles/main.css` minimal (import et thème) ; ne pas créer de feuilles CSS de composants lorsque les utilitaires Tailwind suffisent.
+- Utiliser Tailwind dans les templates. Garder `packages/web/src/styles/main.css` minimal (import et thème) ; ne pas créer de feuilles CSS de composants lorsque les utilitaires Tailwind suffisent.
 - Centraliser les boutons dans `AppButton` avec variantes, tailles, focus visible et couleur de survol. Utiliser `lucide-vue-next` pour les icônes, notamment le panier.
 - Le header est sticky ; son ombre n'apparaît qu'après défilement. Le bouton panier affiche seulement l'icône et un compteur lorsque celui-ci est supérieur à zéro.
 

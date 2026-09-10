@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { catalog } from "../content/catalog";
+import { catalog } from "../content/catalog.js";
 import ProductCard from "./ProductCard.vue";
 
 defineProps<{ quantities: Record<string, number> }>();

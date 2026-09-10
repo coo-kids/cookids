@@ -32,7 +32,7 @@ Vite affiche l’URL locale une fois le serveur démarré.
 | `bun run test`          | Exécute l’ensemble des tests Vitest.  |
 | `bun run test:watch`    | Lance les tests en mode surveillance. |
 | `bun run test:coverage` | Génère le rapport de couverture.      |
-| `bun run build`         | Produit la SPA dans `apps/web/dist`.  |
+| `bun run build`         | Produit la SPA dans `packages/web/dist`.  |
 
 ## Architecture
 
@@ -44,7 +44,7 @@ packages/domain/           Modèles, DTO, validation, règles métier et ports
 packages/infrastructure/   Chargement YAML, configuration et adaptateurs techniques
 ```
 
-Les fichiers `contents/catalog.yml` et `contents/site.yml` sont les sources de vérité du catalogue et des textes. Ils sont validés à leur chargement dans la SPA comme dans l’infrastructure backend. Les images référencées par le catalogue sont dans `apps/web/public/images/`.
+Les fichiers `contents/catalog.yml` et `contents/site.yml` sont les sources de vérité du catalogue et des textes. Ils sont validés à leur chargement dans la SPA comme dans l’infrastructure backend. Les images référencées par le catalogue sont dans `packages/web/public/images/`.
 
 ## Commandes
 
@@ -87,7 +87,7 @@ Le dépôt est configuré pour Vercel :
 
 - installation : `bunx bun@1.4.0 install --frozen-lockfile` ;
 - build : `bun run build` ;
-- sortie SPA : `apps/web/dist` ;
+- sortie SPA : `packages/web/dist` ;
 - API : `api/orders.ts`, servie sous `POST /api/orders`.
 
 Importez le dépôt dans Vercel en conservant la racine du projet, puis configurez les secrets de production dans les variables d’environnement Vercel. La configuration détaillée est disponible dans [DEPLOYMENT.md](DEPLOYMENT.md).

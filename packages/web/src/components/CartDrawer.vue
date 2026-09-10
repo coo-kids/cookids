@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { X } from "lucide-vue-next";
 import { formatEuro } from "@cookids/domain/utils/formatEuro";
-import type { EnrichedCartItem } from "../types/EnrichedCartItem";
+import type { EnrichedCartItem } from "../types/EnrichedCartItem.js";
 import AppButton from "./AppButton.vue";
 import CartItemRow from "./CartItem.vue";
 
