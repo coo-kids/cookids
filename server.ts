@@ -22,6 +22,9 @@ async function fetch(request: Request) {
 
 Bun.serve({
   routes: {
+    "/": new Response(Bun.file(new URL("./public/index.html", import.meta.url)), {
+      headers: { "Content-Type": "text/html; charset=utf-8" }
+    }),
     ...healthHandler,
     ...ordersHandler,
   },
