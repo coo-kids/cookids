@@ -5,7 +5,7 @@ import { OrderService } from "@cookids/domain/services/OrderService.js";
 
 export default defineFetchHandler({
   method: "POST",
-  path: "/orders",
+  path: "/api/orders",
   async handler(request) {
     const order = await inject(OrderService).create(await request.json());
 
