@@ -25,7 +25,8 @@ export default defineFetchHandler({
     const orderInput = deserialize<Order>(payload, {
       type: Order,
       groups: ["create"],
-      strictGroups: true
+      strictGroups: true,
+      useAlias: false
     });
 
     const order = await inject<OrderService>(OrderService).create(orderInput);

@@ -26,4 +26,18 @@ describe("ResendMailService", () => {
 
     expect(send).toHaveBeenCalledWith(expect.objectContaining({ to: ["camille@example.com"], subject: "Confirmation de votre commande #42", html: expect.stringContaining("#42") }));
   });
+
+  it("rejette une configuration Resend incomplète", async () => {
+    injector().settings.set("envs", { RESEND_FROM: "Cookids <hello@cookids.test>" });
+    const { ResendMailService } = await import("./ResendMailService.js");
+
+    await expect(new ResendMailService().sendOrderConfirmation({
+      createdAt: new Date(),
+      customer: { firstName: "Camille", email: "camille@example.com" },
+      deliveryLocation: "rosa-parks",
+      items: [],
+      total: 0,
+      status: "new"
+    })).rejects.toThrow("Resend configuration is missing.");
+  });
 });

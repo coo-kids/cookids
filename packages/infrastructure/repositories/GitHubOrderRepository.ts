@@ -1,4 +1,4 @@
-import { constant, Injectable } from "@tsed/di";
+import { constant, context, Injectable } from "@tsed/di";
 import { Octokit } from "octokit";
 import addProjectItem from "./queries/addProjectItem.gql.js";
 import setProjectStatus from "./queries/setProjectStatus.gql.js";
@@ -135,6 +135,17 @@ export class GitHubOrderRepository extends OrderRepository {
     const issueTypeId = constant<string>("githubBoards.issueType");
 
     if (!token || !owner || !assignee || !repository || !projectId || !statusFieldId || !pendingOptionId || !issueTypeId) {
+      context().logger.error({
+        event: "github.configuration.missing",
+        github_token_configured: Boolean(token),
+        github_owner_configured: Boolean(owner),
+        github_assignee_configured: Boolean(assignee),
+        github_repository_configured: Boolean(repository),
+        github_project_id_configured: Boolean(projectId),
+        github_status_field_id_configured: Boolean(statusFieldId),
+        github_pending_option_id_configured: Boolean(pendingOptionId),
+        github_issue_type_id_configured: Boolean(issueTypeId)
+      });
       throw new Error("GitHub commands configuration is incomplete.");
     }
     return {

@@ -90,4 +90,18 @@ describe("GitHubOrderRepository", () => {
     expect(graphql).toHaveBeenNthCalledWith(3, expect.stringContaining("addProjectV2ItemById"), { projectId: "project-id", contentId: "issue-node-id" });
     expect(graphql).toHaveBeenNthCalledWith(4, expect.stringContaining("updateProjectV2ItemFieldValue"), expect.objectContaining({ optionId: "pending-option-id" }));
   });
+
+  it("rejette une configuration GitHub incomplète", async () => {
+    injector().settings.set("envs", {});
+    const { GitHubOrderRepository } = await import("./GitHubOrderRepository.js");
+
+    await expect(new GitHubOrderRepository().save({
+      createdAt: new Date(),
+      customer: { firstName: "Camille", email: "camille@example.com" },
+      deliveryLocation: "rosa-parks-option-id",
+      items: [],
+      total: 0,
+      status: "new"
+    })).rejects.toThrow("GitHub commands configuration is incomplete.");
+  });
 });

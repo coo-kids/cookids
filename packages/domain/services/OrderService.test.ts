@@ -99,7 +99,7 @@ function createOrderInput(overrides: {
       { productId: "financiers-amandes", quantity: 1 }
     ],
     targetDeliveryDate: overrides.targetDeliveryDate
-  }, { type: Order, groups: ["create"], strictGroups: true });
+  }, { type: Order, groups: ["create"], strictGroups: true, useAlias: false });
 }
 
 const validOrder = createOrderInput();

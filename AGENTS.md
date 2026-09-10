@@ -27,7 +27,7 @@ Utiliser Node.js et pnpm depuis la racine : `pnpm install`, `pnpm run dev`, `pnp
 - Un fichier par classe Ts.ED injectable, modèle, DTO, erreur métier, adaptateur ou utilitaire réutilisable.
 - Extraire les règles partagées ; ne pas créer d’abstraction pour du rendu local trivial. Éviter les fonctions inline quand une fonction est réutilisable : lui donner son propre fichier.
 - Ne jamais accepter un prix venant du navigateur.
-- Les DTO utilisent `@tsed/schema` + `@tsed/ajv` pour la validation. Employer `@tsed/json-mapper` pour désérialiser les entrées et sérialiser les réponses.
+- Les DTO utilisent `@tsed/schema` + `@tsed/ajv` pour la validation. Employer `@tsed/json-mapper` pour désérialiser les entrées et sérialiser les réponses ; toujours passer `useAlias: false` à `deserialize()`.
 - Un handler HTTP extrait le payload, le valide, puis le désérialise avant d'appeler le service. Un service reçoit uniquement des modèles déjà désérialisés : il n'extrait, ne valide ni ne remappe l'entrée HTTP, mais applique les règles métier et enrichit directement ses objets (par exemple via des méthodes métier telles que `setProduct()`).
 - Les méthodes d'adaptateurs qui orchestrent des appels externes ou portent une transformation non triviale sont documentées par un JSDoc concis. Les types de leurs réponses sont dérivés du SDK concerné plutôt que reconstruits à la main ou laissés implicites.
 - Les `.env*` réels ne sont pas versionnés. dotenv-flow ne sert qu’en local/test ; Vercel fournit les secrets hébergés.

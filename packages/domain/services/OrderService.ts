@@ -1,4 +1,4 @@
-import { inject, Injectable } from "@tsed/di";
+import { context, inject, Injectable } from "@tsed/di";
 import { CatalogProvider } from "../catalog/CatalogProvider.js";
 import { DeliveryLocationProvider } from "../content/DeliveryLocationProvider.js";
 import { MailService } from "../mail/MailService.js";
@@ -14,14 +14,23 @@ export class OrderService {
   private readonly deliveryLocationProvider = inject<DeliveryLocationProvider>(DeliveryLocationProvider);
 
   async create(orderInput: Order): Promise<Order> {
+    const logger = context().logger;
+
+    logger.info({
+      event: "order.create.start",
+      delivery_location: orderInput.deliveryLocation,
+      item_count: orderInput.items.length
+    });
 
     await this.checkLocation(orderInput);
     await this.resolveProducts(orderInput);
 
     const ticket = await this.orderRepository.save(orderInput);
     orderInput.id = ticket.id;
+    logger.info({ event: "order.create.saved", order_id: orderInput.id });
 
     await this.mailService.sendOrderConfirmation(orderInput);
+    logger.info({ event: "order.confirmation.sent", order_id: orderInput.id });
 
     return orderInput;
   }
