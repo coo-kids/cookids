@@ -2,12 +2,6 @@
   "name": "@cookids/domain",
   "private": true,
   "type": "module",
-  "exports": {
-    ".": "./index.ts",
-    "./models/CartItem": "./models/CartItem.ts",
-    "./models/Product": "./models/Product.ts",
-    "./utils/formatEuro": "./utils/formatEuro.ts"
-  },
   "dependencies": {
     "@tsed/ajv": "^8.38.4",
     "@tsed/di": "^8.38.4",

@@ -14,11 +14,11 @@
       "bun"
     ],
     "paths": {
-      "@cookids/domain": [
-        "./packages/domain/index.ts"
+      "@cookids/domain/*": [
+        "./packages/domain/*"
       ],
-      "@cookids/infrastructure": [
-        "./packages/infrastructure/index.ts"
+      "@cookids/infrastructure/*": [
+        "./packages/infrastructure/*"
       ],
       "@cookids/server/*": [
         "./packages/server/*"

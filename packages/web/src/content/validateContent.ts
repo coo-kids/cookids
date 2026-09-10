@@ -1,10 +1,9 @@
+import { validate } from "@tsed/ajv";
 import {
   type ContentCatalog,
-  ContentCatalogSchema,
-  type SiteContent,
-  SiteContentSchema
-} from "@cookids/domain";
-import { validate } from "@tsed/ajv";
+  ContentCatalogSchema
+} from "@cookids/domain/schemas/ContentCatalogSchema.js";
+import { type SiteContent, SiteContentSchema } from "@cookids/domain/schemas/SiteContentSchema.js";
 
 export function validateCatalog(content: unknown): Promise<ContentCatalog> {
   return validate<ContentCatalog>(content, { type: ContentCatalogSchema });

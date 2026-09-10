@@ -2,10 +2,6 @@
   "name": "@cookids/infrastructure",
   "private": true,
   "type": "module",
-  "exports": {
-    ".": "./index.ts",
-    "./http/defineFetchHandler": "./http/defineFetchHandler.ts"
-  },
   "dependencies": {
     "@cookids/domain": "workspace:*",
     "@tsed/ajv": "^8.38.4",

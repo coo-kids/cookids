@@ -1,3 +1,4 @@
+import "@cookids/infrastructure/config/index.js"
 // import ordersHandler from "@cookids/server/handlers/orders/handler.js";
 // import healthHandler from "@cookids/server/handlers/health/handler.js";
 // import { serveStaticAsset } from "@cookids/infrastructure";
