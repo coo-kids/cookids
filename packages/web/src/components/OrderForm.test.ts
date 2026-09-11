@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { mount } from "@vue/test-utils";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import OrderForm from "./OrderForm.vue";
 
 describe("OrderForm", () => {
@@ -14,6 +14,28 @@ describe("OrderForm", () => {
 
     expect(wrapper.emitted("back")).toHaveLength(1);
     expect(wrapper.emitted("submit")).toBeUndefined();
+  });
+
+  it("ouvre le calendrier natif au clic sur le champ date", async () => {
+    const showPicker = vi.fn();
+    const originalDescriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "showPicker");
+    Object.defineProperty(HTMLInputElement.prototype, "showPicker", {
+      configurable: true,
+      value: showPicker
+    });
+
+    try {
+      const wrapper = mount(OrderForm);
+      await wrapper.get('input[type="date"]').trigger("click");
+
+      expect(showPicker).toHaveBeenCalledOnce();
+    } finally {
+      if (originalDescriptor) {
+        Object.defineProperty(HTMLInputElement.prototype, "showPicker", originalDescriptor);
+      } else {
+        Reflect.deleteProperty(HTMLInputElement.prototype, "showPicker");
+      }
+    }
   });
 
   it("valide les coordonnées sans envoyer la commande", async () => {
