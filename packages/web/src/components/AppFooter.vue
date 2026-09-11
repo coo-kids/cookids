@@ -5,15 +5,12 @@
       Découvrir notre projet
     </a>
     <p class="mb-0 mt-3">
-      Site fait par
-      <a
+      Site fait par <a
         class="font-bold underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7d6054]"
         href="https://www.linkedin.com/in/romainlenzotti/"
         target="_blank"
         rel="noopener noreferrer"
-      >
-        Romain L.
-      </a>
+      >Romain L.</a>
     </p>
   </footer>
 </template>
