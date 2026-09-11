@@ -3,8 +3,7 @@ import { ShoppingBag } from "lucide-vue-next";
 import AppButton from "./AppButton.vue";
 import { useScrollState } from "../composables/useScrollState.js";
 
-defineProps<{ cartCount: number; isCartOpen: boolean }>();
-defineEmits<{ toggleCart: [] }>();
+defineProps<{ cartCount: number }>();
 const { isScrolled } = useScrollState();
 </script>
 
@@ -15,7 +14,7 @@ const { isScrolled } = useScrollState();
         <img class="h-auto w-32" src="/logo-optimized.webp" alt="Cookids">
       </a>
       <div class="relative">
-        <AppButton :variant="isCartOpen ? 'dark' : 'neutral'" size="icon" aria-controls="cart-drawer" :aria-expanded="isCartOpen" :aria-label="isCartOpen ? 'Fermer le panier' : 'Ouvrir le panier'" @click="$emit('toggleCart')">
+        <AppButton as="a" href="#commande" variant="neutral" size="icon" aria-label="Voir le panier">
           <ShoppingBag :size="21" :stroke-width="2" aria-hidden="true" />
         </AppButton>
         <span v-if="cartCount > 0" class="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-cookids-coral font-sans text-xs font-bold text-white" aria-hidden="true">{{ cartCount }}</span>
