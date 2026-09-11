@@ -31,7 +31,8 @@ const details: CheckoutDetails = {
   email: "romain@example.com",
   phoneNumber: "0600000000",
   deliveryLocation: "IFSSO_kgDOBOB43g",
-  targetDeliveryDate: "2026-10-01"
+  targetDeliveryDate: "2026-10-01",
+  deliveryComment: "Merci de sonner à l’arrivée"
 };
 
 const order: OrderResponse = {
@@ -106,6 +107,8 @@ describe("CheckoutPage", () => {
     expect(wrapper.get("h1").text()).toBe("Récapitulatif");
     expect(wrapper.get("table").text()).toContain("Cookie café & noix");
     expect(wrapper.text()).toContain("romain@example.com");
+    expect(wrapper.text()).toContain("Livraison");
+    expect(wrapper.text()).toContain("Merci de sonner à l’arrivée");
     expect(wrapper.findAll("button").some((button) => button.text() === "Valider la commande")).toBe(true);
 
     wrapper.getComponent(OrderReview).vm.$emit("success", order);
