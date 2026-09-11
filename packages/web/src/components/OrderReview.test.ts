@@ -49,11 +49,26 @@ describe("OrderReview", () => {
     expect(wrapper.find('[aria-label="Quantité"]').exists()).toBe(false);
   });
 
+  it("propose de revenir aux coordonnées sans envoyer la commande", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const wrapper = mount(OrderReview, { props: { details, items, total: 7 } });
+    const backButton = wrapper.findAll("button").find((button) => button.text() === "Revenir aux coordonnées");
+
+    expect(backButton).toBeDefined();
+    await backButton!.trigger("click");
+
+    expect(wrapper.emitted("back")).toHaveLength(1);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it("envoie la commande et affiche le spinner à la validation finale", async () => {
     vi.stubGlobal("fetch", vi.fn(() => new Promise(() => {})));
     const wrapper = mount(OrderReview, { props: { details, items, total: 7 } });
+    const submitButton = wrapper.findAll("button").find((button) => button.text() === "Valider la commande");
 
-    await wrapper.get("button").trigger("click");
+    expect(submitButton).toBeDefined();
+    await submitButton!.trigger("click");
 
     expect(wrapper.attributes("aria-busy")).toBe("true");
     expect(wrapper.get('[role="status"]').text()).toContain("Nous enregistrons votre commande");
