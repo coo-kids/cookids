@@ -17,6 +17,16 @@ const deliveryComment = ref(props.initialValues?.deliveryComment ?? "");
 const selectedDeliveryLocation = computed(() => locations.find((location) => location.id === deliveryLocation.value));
 const hasFixedDeliveryDates = computed(() => (selectedDeliveryLocation.value?.fixedDeliveryDates.length ?? 0) > 0);
 
+function openDatePicker(event: MouseEvent): void {
+  const input = event.currentTarget as HTMLInputElement;
+
+  try {
+    input.showPicker?.();
+  } catch {
+    // The native field remains usable when showPicker is unavailable or blocked.
+  }
+}
+
 function submitDetails(): void {
   emit("submit", {
     firstName: firstName.value,
@@ -45,7 +55,7 @@ function submitDetails(): void {
       <label class="my-4 block font-sans text-[.92rem] font-bold">Lieu de livraison<select class="mt-[.4rem] block w-full rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 font-serif font-normal" v-model="deliveryLocation" @change="targetDeliveryDate = ''" required><option value="" disabled>Choisir un lieu</option><option v-for="location in locations" :key="location.id" :value="location.id">{{ location.label }}</option></select></label>
       <label class="my-4 block font-sans text-[.92rem] font-bold">Date de livraison souhaitée
         <select v-if="hasFixedDeliveryDates" class="mt-[.4rem] block w-full rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 font-serif font-normal" v-model="targetDeliveryDate" required><option value="" disabled>Choisir une date</option><option v-for="date in selectedDeliveryLocation?.fixedDeliveryDates" :key="date" :value="date">{{ date }}</option></select>
-        <input v-else class="mt-[.4rem] block w-full rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 font-serif font-normal" v-model="targetDeliveryDate" type="date" />
+        <input v-else class="mt-[.4rem] block w-full rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 font-serif font-normal" v-model="targetDeliveryDate" type="date" @click="openDatePicker" />
       </label>
       <label class="my-4 block font-sans text-[.92rem] font-bold">Commentaire <span class="text-[#80685d] font-normal">(facultatif)</span><input class="mt-[.4rem] block w-full rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 font-serif font-normal" v-model.trim="deliveryComment" type="text" maxlength="500" /></label>
     </section>
