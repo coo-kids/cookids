@@ -143,6 +143,7 @@ function handleSuccess(orderResult: OrderResponse): void {
           :items="items"
           :total="total"
           :is-loading-preview="isLoaderPreviewVisible"
+          @back="goToStep(2)"
           @success="handleSuccess"
         />
 
