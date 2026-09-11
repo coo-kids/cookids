@@ -54,7 +54,15 @@ function submitDetails(): void {
       <h2 id="delivery-details-title" class="text-[1.7rem]">Livraison</h2>
       <label class="my-4 block font-sans text-[.92rem] font-bold">Lieu de livraison<select class="mt-[.4rem] block w-full rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 font-serif font-normal" v-model="deliveryLocation" @change="targetDeliveryDate = ''" required><option value="" disabled>Choisir un lieu</option><option v-for="location in locations" :key="location.id" :value="location.id">{{ location.label }}</option></select></label>
       <label class="my-4 block font-sans text-[.92rem] font-bold">Date de livraison souhaitée
-        <select v-if="hasFixedDeliveryDates" class="mt-[.4rem] block w-full rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 font-serif font-normal" v-model="targetDeliveryDate" required><option value="" disabled>Choisir une date</option><option v-for="date in selectedDeliveryLocation?.fixedDeliveryDates" :key="date" :value="date">{{ date }}</option></select>
+        <span v-if="hasFixedDeliveryDates" class="relative mt-[.4rem] block">
+          <select class="block w-full appearance-none rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 pr-11 font-serif font-normal text-[#3f332d]" v-model="targetDeliveryDate" required>
+            <option value="" disabled>Choisir une date</option>
+            <option v-for="date in selectedDeliveryLocation?.fixedDeliveryDates" :key="date" :value="date">{{ date }}</option>
+          </select>
+          <svg class="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#80685d]" aria-hidden="true" viewBox="0 0 20 20" fill="none">
+            <path d="m5 7.5 5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
         <input v-else class="mt-[.4rem] block w-full rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 font-serif font-normal" v-model="targetDeliveryDate" type="date" @click="openDatePicker" />
       </label>
       <label class="my-4 block font-sans text-[.92rem] font-bold">Commentaire <span class="text-[#80685d] font-normal">(facultatif)</span><input class="mt-[.4rem] block w-full rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 font-serif font-normal" v-model.trim="deliveryComment" type="text" maxlength="500" /></label>
