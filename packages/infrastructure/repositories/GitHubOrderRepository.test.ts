@@ -58,6 +58,7 @@ describe("GitHubOrderRepository", () => {
       createdAt: new Date(),
       customer: { firstName: "Camille", email: "camille@example.com" },
       deliveryLocation: "rosa-parks-option-id",
+      deliveryComment: "Merci de sonner à l’arrivée",
       items: [Object.assign(new OrderItem(), { productId: "cookie", productName: "Cookie", unitPrice: 12, unitLabel: "la boîte de 12", quantity: 2 })],
       total: 24,
       status: "new"
@@ -70,6 +71,8 @@ describe("GitHubOrderRepository", () => {
       title: "Commande - Camille - 24,00 €",
       body: expect.stringContaining("la boîte de 12")
     }));
+    expect(issueCreate.mock.calls[0]?.[0].body).toContain("## Livraison");
+    expect(issueCreate.mock.calls[0]?.[0].body).toContain("**Commentaire :** Merci de sonner à l’arrivée");
     expect(octokitOptions).toHaveBeenCalledWith(expect.objectContaining({
       request: {
         headers: {

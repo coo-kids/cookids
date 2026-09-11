@@ -17,6 +17,7 @@ describe("handleOrderRequest", () => {
         },
         deliveryLocation: "IFSSO_kgDOBOB43g",
         targetDeliveryDate: "2026-10-01T00:00:00.000Z",
+        deliveryComment: " Merci de sonner à l’arrivée ",
         items: [{
           productId: "cookie-cafe-noix",
           quantity: 2,
@@ -30,9 +31,10 @@ describe("handleOrderRequest", () => {
     expect(response.status).toBe(201);
     await expect(response.json()).resolves.toMatchObject({
       order: {
-        total: 24,
+        total: 2,
         status: "new",
         targetDeliveryDate: "2026-10-01T00:00:00.000Z",
+        deliveryComment: "Merci de sonner à l’arrivée",
         customer: {
           firstName: "Camille",
           lastName: "Dupont",

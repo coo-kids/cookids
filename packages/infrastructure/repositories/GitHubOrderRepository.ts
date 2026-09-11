@@ -163,6 +163,10 @@ export class GitHubOrderRepository extends OrderRepository {
   /** Met en forme le détail de la commande pour le corps Markdown de l'issue. */
   protected formatBody(order: Order): string {
     const rows = order.items.map((item) => `| ${item.productName} | ${item.quantity} | ${item.unitLabel} | ${item.unitPrice.toFixed(2)} € | ${item.total.toFixed(2)} € |`).join("\n");
-    return `## Commande\n\n| Produit | Quantité | Unité | Prix unitaire | Sous-total |\n| --- | ---: | --- | ---: | ---: |\n${rows}\n\n**Total : ${order.total.toFixed(2)} €**`;
+    const deliveryComment = order.deliveryComment
+      ? `\n\n## Livraison\n\n**Commentaire :** ${order.deliveryComment}`
+      : "";
+
+    return `## Commande\n\n| Produit | Quantité | Unité | Prix unitaire | Sous-total |\n| --- | ---: | --- | ---: | ---: |\n${rows}\n\n**Total : ${order.total.toFixed(2)} €**${deliveryComment}`;
   }
 }

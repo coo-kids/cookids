@@ -1,3 +1,4 @@
+import { OnDeserialize } from "@tsed/json-mapper";
 import { CollectionOf, Enum, ForwardGroups, Groups, MaxLength, MinItems, Minimum, Property, Required } from "@tsed/schema";
 import { OrderCustomer } from "./OrderCustomer.js";
 import { OrderItem } from "./OrderItem.js";
@@ -38,6 +39,11 @@ export class Order {
 
   @Property(Date)
   targetDeliveryDate?: Date;
+
+  @Property()
+  @MaxLength(500)
+  @OnDeserialize((value?: string) => value?.trim())
+  deliveryComment?: string;
 
   @Property()
   @Required()
