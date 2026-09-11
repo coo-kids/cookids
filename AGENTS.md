@@ -47,7 +47,7 @@ Utiliser Node.js et pnpm depuis la racine : `pnpm install`, `pnpm run dev`, `pnp
 
 ## Vérification
 
-Après toute modification fonctionnelle, lancer `pnpm run test` et `pnpm run build`.
+Après toute modification fonctionnelle, lancer `pnpm run typecheck`, `pnpm run test` et `pnpm run build`.
 
 ## Commits liés aux tickets
 
