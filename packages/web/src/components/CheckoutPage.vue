@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { nextTick, ref, watch } from "vue";
 import { siteContent } from "../content/site.js";
 import type { CheckoutDetails } from "../types/CheckoutDetails.js";
 import type { EnrichedCartItem } from "../types/EnrichedCartItem.js";
@@ -19,6 +19,11 @@ const isLoaderPreviewVisible = ref(false);
 const isConfirmationPreviewVisible = ref(false);
 const order = ref<OrderResponse | null>(null);
 const isPreviewMode = import.meta.env.DEV;
+
+watch(currentStep, async () => {
+  await nextTick();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}, { immediate: true });
 
 function goToStep(step: 1 | 2 | 3): void {
   currentStep.value = step;
