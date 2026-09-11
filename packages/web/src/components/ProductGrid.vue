@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { catalog } from "../content/catalog.js";
+import AppButton from "./AppButton.vue";
 import ProductCard from "./ProductCard.vue";
 
 defineProps<{ quantities: Record<string, number> }>();
@@ -22,6 +23,9 @@ defineEmits<{ changeQuantity: [productId: string, quantity: number] }>();
           :quantity="quantities[product.id] ?? 0"
           @change-quantity="$emit('changeQuantity', product.id, $event)"
         />
+      </div>
+      <div class="mt-10 flex justify-center">
+        <AppButton as="a" href="#commande">Commander</AppButton>
       </div>
     </div>
   </section>
