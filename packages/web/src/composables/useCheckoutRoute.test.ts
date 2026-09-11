@@ -44,7 +44,7 @@ describe("useCheckoutRoute", () => {
   });
 
   it("affiche la page de présentation depuis son hash", async () => {
-    window.location.hash = "#projet";
+    window.history.replaceState(null, "", "#projet");
     const wrapper = mount(CheckoutRouteHarness);
 
     expect(wrapper.get('[data-testid="project-state"]').text()).toBe("true");
