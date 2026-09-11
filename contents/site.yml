@@ -6,4 +6,7 @@ catalogTitle: Les gourmandises du moment
 cookiesNote: Les cookies pèsent entre 40 et 42 g crus et sont vendus par boîtes de 12.
 orderTitle: Finaliser la commande
 footer: Cookids · Des pâtisseries faites avec cœur.
-socialLinks: []
+socialLinks:
+  - icon: MessageCircle
+    title: Contacter Cookids sur WhatsApp
+    href: https://wa.me/33600000000
