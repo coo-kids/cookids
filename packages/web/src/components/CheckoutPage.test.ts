@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { mount } from "@vue/test-utils";
 import { nextTick } from "vue";
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { CheckoutDetails } from "../types/CheckoutDetails.js";
 import type { EnrichedCartItem } from "../types/EnrichedCartItem.js";
 import type { OrderResponse } from "../types/OrderResponse.js";
@@ -50,6 +50,28 @@ async function openDetails(wrapper: ReturnType<typeof mount>): Promise<void> {
 }
 
 describe("CheckoutPage", () => {
+  beforeEach(() => {
+    vi.stubGlobal("scrollTo", vi.fn());
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("revient en haut à l’ouverture et à chaque changement d’étape", async () => {
+    const wrapper = mount(CheckoutPage, { props: { items, total: 7 } });
+    await nextTick();
+    await nextTick();
+
+    expect(window.scrollTo).toHaveBeenLastCalledWith({ top: 0, behavior: "smooth" });
+
+    await openDetails(wrapper);
+    await nextTick();
+
+    expect(window.scrollTo).toHaveBeenCalledTimes(2);
+    expect(window.scrollTo).toHaveBeenLastCalledWith({ top: 0, behavior: "smooth" });
+  });
+
   it("affiche quatre étapes dans le tunnel", () => {
     const wrapper = mount(CheckoutPage, { props: { items, total: 7 } });
 
