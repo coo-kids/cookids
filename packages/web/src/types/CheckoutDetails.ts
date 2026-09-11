@@ -5,4 +5,5 @@ export interface CheckoutDetails {
   phoneNumber?: string;
   deliveryLocation: string;
   targetDeliveryDate?: string;
+  deliveryComment?: string;
 }
