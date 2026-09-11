@@ -25,6 +25,7 @@ describe("OrderForm", () => {
     await wrapper.get('input[autocomplete="tel"]').setValue("0600000000");
     await wrapper.get("select").setValue("IFSSO_kgDOBOB43g");
     await wrapper.get('input[type="date"]').setValue("2026-10-01");
+    await wrapper.get('input[maxlength="500"]').setValue("Merci de sonner à l’arrivée");
     await wrapper.get("form").trigger("submit");
 
     expect(wrapper.get('button[type="submit"]').text()).toBe("Valider les coordonnées");
@@ -35,7 +36,8 @@ describe("OrderForm", () => {
         email: "romain@example.com",
         phoneNumber: "0600000000",
         deliveryLocation: "IFSSO_kgDOBOB43g",
-        targetDeliveryDate: "2026-10-01"
+        targetDeliveryDate: "2026-10-01",
+        deliveryComment: "Merci de sonner à l’arrivée"
       }
     ]]);
   });
