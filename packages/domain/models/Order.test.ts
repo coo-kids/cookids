@@ -84,6 +84,10 @@ describe("Order", () => {
           "customer": {
             "$ref": "#/definitions/OrderCustomer",
           },
+          "deliveryComment": {
+            "maxLength": 500,
+            "type": "string",
+          },
           "deliveryLocation": {
             "maxLength": 120,
             "minLength": 1,
