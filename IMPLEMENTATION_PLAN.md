@@ -167,9 +167,9 @@ Critères d’acceptation : aucune tentative de confirmation n’est envoyée sa
 
 Critères d’acceptation : le parcours catalogue → panier → coordonnées/livraison → succès crée exactement une issue GitHub complète. Une requête invalide retourne une erreur exploitable et aucun ticket partiellement configuré n’est considéré comme une commande confirmée.
 
-## Phase 3 bis — Conditionnement des cookies (issue #5)
+## Phase 3 bis — Boîtes de cookies (issue #5)
 
-- [x] Définir le conditionnement dans la source unique `contents/catalog.yml` : chaque quantité de cookie représente une boîte de 12, facturée 12,00 € et libellée « la boîte de 12 ».
+- [x] Définir le conditionnement dans la source unique `contents/catalog.yml` : la quantité représente un nombre de boîtes, chaque boîte contient 12 cookies, coûte 12,00 € et porte le libellé « la boîte de 12 ».
 - [x] Conserver les financiers comme produit distinct vendu par lots de 10 ; aucune règle de quantité transversale n’est appliquée.
 - [x] Propager le libellé d’unité résolu au serveur dans le panier, les récapitulatifs, l’email de confirmation et le corps Markdown de l’issue GitHub.
 - [x] Couvrir le calcul des boîtes, la sérialisation de l’unité et les rendus GitHub et Gmail associés.
