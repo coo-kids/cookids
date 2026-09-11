@@ -47,6 +47,7 @@ async function submitOrder(): Promise<void> {
         targetDeliveryDate: props.details.targetDeliveryDate
           ? new Date(`${props.details.targetDeliveryDate}T00:00:00.000Z`).toISOString()
           : undefined,
+        deliveryComment: props.details.deliveryComment,
         items: props.items.map(({ productId, quantity }) => ({ productId, quantity }))
       })
     });
@@ -83,8 +84,15 @@ async function submitOrder(): Promise<void> {
         <div><dt class="font-sans text-xs font-bold uppercase tracking-[.08em] text-[#80685d]">Nom</dt><dd class="m-0 mt-1">{{ details.lastName || "Non renseigné" }}</dd></div>
         <div><dt class="font-sans text-xs font-bold uppercase tracking-[.08em] text-[#80685d]">Email</dt><dd class="m-0 mt-1 break-all">{{ details.email }}</dd></div>
         <div><dt class="font-sans text-xs font-bold uppercase tracking-[.08em] text-[#80685d]">Téléphone</dt><dd class="m-0 mt-1">{{ details.phoneNumber || "Non renseigné" }}</dd></div>
-        <div><dt class="font-sans text-xs font-bold uppercase tracking-[.08em] text-[#80685d]">Lieu de livraison</dt><dd class="m-0 mt-1">{{ deliveryLocationLabel }}</dd></div>
+      </dl>
+    </section>
+
+    <section class="mt-10" aria-labelledby="delivery-summary-title">
+      <h2 id="delivery-summary-title" class="text-[1.7rem]">Livraison</h2>
+      <dl class="grid gap-x-8 gap-y-4 rounded-2xl border border-[#eadace] bg-white p-5 sm:grid-cols-2">
+        <div><dt class="font-sans text-xs font-bold uppercase tracking-[.08em] text-[#80685d]">Lieu</dt><dd class="m-0 mt-1">{{ deliveryLocationLabel }}</dd></div>
         <div><dt class="font-sans text-xs font-bold uppercase tracking-[.08em] text-[#80685d]">Date souhaitée</dt><dd class="m-0 mt-1">{{ formatDeliveryDate(details.targetDeliveryDate) }}</dd></div>
+        <div class="sm:col-span-2"><dt class="font-sans text-xs font-bold uppercase tracking-[.08em] text-[#80685d]">Commentaire</dt><dd class="m-0 mt-1">{{ details.deliveryComment || "Aucun commentaire" }}</dd></div>
       </dl>
     </section>
 
