@@ -133,7 +133,7 @@ function handleSuccess(orderResult: OrderResponse): void {
             </div>
             <img class="relative -top-5 -mb-10 hidden h-[7.5rem] w-auto shrink-0 object-contain opacity-90 lg:block" src="/images/pages/cookids-staked.png" alt="" aria-hidden="true" />
           </div>
-          <OrderForm :initial-values="checkoutDetails ?? undefined" :show-title="false" @submit="reviewOrder" />
+          <OrderForm :initial-values="checkoutDetails ?? undefined" :show-title="false" @back="goToStep(1)" @submit="reviewOrder" />
         </div>
 
         <OrderReview
