@@ -5,7 +5,7 @@ import type { OrderResponse } from "../types/OrderResponse.js";
 import { locations } from "../content/locations.js";
 import AppButton from "./AppButton.vue";
 
-const props = defineProps<{ items: CartItem[] }>();
+const props = defineProps<{ items: CartItem[]; showTitle?: boolean; isLoadingPreview?: boolean }>();
 const emit = defineEmits<{ success: [order: OrderResponse] }>();
 
 const firstName = ref("");
@@ -16,11 +16,12 @@ const deliveryLocation = ref("");
 const targetDeliveryDate = ref("");
 const errorMessage = ref("");
 const isSubmitting = ref(false);
+const isLoading = computed(() => isSubmitting.value || props.isLoadingPreview === true);
 const selectedDeliveryLocation = computed(() => locations.find((location) => location.id === deliveryLocation.value));
 const hasFixedDeliveryDates = computed(() => (selectedDeliveryLocation.value?.fixedDeliveryDates.length ?? 0) > 0);
 
 async function submitOrder(): Promise<void> {
-  if (isSubmitting.value || props.items.length === 0) return;
+  if (isLoading.value || props.items.length === 0) return;
   isSubmitting.value = true;
   errorMessage.value = "";
   try {
@@ -41,8 +42,8 @@ async function submitOrder(): Promise<void> {
 </script>
 
 <template>
-  <form class="mt-6" @submit.prevent="submitOrder">
-    <h2 class="text-[1.7rem]">Vos coordonnées</h2>
+  <form class="relative mt-6" :aria-busy="isLoading" @submit.prevent="submitOrder">
+    <h2 v-if="showTitle !== false" class="text-[1.7rem]">Vos coordonnées</h2>
     <label class="my-4 block font-sans text-[.92rem] font-bold">Prénom<input class="mt-[.4rem] block w-full rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 font-serif font-normal" v-model.trim="firstName" required minlength="2" maxlength="100" autocomplete="given-name" /></label>
     <label class="my-4 block font-sans text-[.92rem] font-bold">Nom <span class="text-[#80685d] font-normal">(facultatif)</span><input class="mt-[.4rem] block w-full rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 font-serif font-normal" v-model.trim="lastName" maxlength="100" autocomplete="family-name" /></label>
     <label class="my-4 block font-sans text-[.92rem] font-bold">Email<input class="mt-[.4rem] block w-full rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 font-serif font-normal" v-model.trim="email" required type="email" maxlength="254" autocomplete="email" /></label>
@@ -53,8 +54,24 @@ async function submitOrder(): Promise<void> {
       <input v-else class="mt-[.4rem] block w-full rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 font-serif font-normal" v-model="targetDeliveryDate" type="date" />
     </label>
     <p v-if="errorMessage" class="font-sans text-[.9rem] font-bold text-[#b3261e]" role="alert">{{ errorMessage }}</p>
-    <AppButton class="w-full disabled:cursor-wait" type="submit" :disabled="isSubmitting || items.length === 0">
-      {{ isSubmitting ? "Envoi en cours…" : "Valider ma commande" }}
+    <AppButton class="w-full disabled:cursor-wait" type="submit" :disabled="isLoading || items.length === 0">
+      {{ isLoading ? "Envoi en cours…" : "Valider ma commande" }}
     </AppButton>
+    <Transition
+      enter-active-class="transition duration-200 ease-out"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition duration-150 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div v-if="isLoading" class="absolute inset-0 z-10 flex min-h-full items-center justify-center rounded-xl bg-[#fffaf4]/92 px-6 text-center backdrop-blur-sm" role="status" aria-live="polite">
+        <div class="flex max-w-xs flex-col items-center gap-4">
+          <img class="h-56 w-auto animate-[bounce_3s_ease-in-out_infinite] object-contain" src="/images/pages/cookids-cook.png" alt="" aria-hidden="true" />
+          <p class="font-sans text-base font-bold text-cookids-ink">Nous enregistrons votre commande</p>
+          <span class="size-10 animate-spin rounded-full border-4 border-cookids-coral/25 border-t-cookids-coral" aria-hidden="true" />
+        </div>
+      </div>
+    </Transition>
   </form>
 </template>

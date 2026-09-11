@@ -33,6 +33,32 @@ const order: OrderResponse = {
 };
 
 describe("CheckoutPage", () => {
+  it("ouvre la confirmation simulée depuis l’aperçu de développement", async () => {
+    const wrapper = mount(CheckoutPage, { props: { items, total: 7 } });
+    const confirmationButton = wrapper.findAll("button").find((button) => button.text() === "Voir la confirmation");
+
+    expect(confirmationButton).toBeDefined();
+    await confirmationButton!.trigger("click");
+    await nextTick();
+
+    expect(wrapper.text()).toContain("Ta commande est bien reçue.");
+    expect(wrapper.text()).toContain("CKIDS-00000");
+    expect(wrapper.findAll("table")).toHaveLength(1);
+  });
+
+  it("affiche le formulaire avant le récapitulatif à l’étape coordonnées", async () => {
+    const wrapper = mount(CheckoutPage, { props: { items, total: 7 } });
+
+    const validateButton = wrapper.findAll("button").find((button) => button.text() === "Valider mon panier");
+    expect(validateButton).toBeDefined();
+    await validateButton!.trigger("click");
+    await nextTick();
+
+    expect(wrapper.get("h1").text()).toBe("Vos coordonnées");
+    expect(wrapper.html().indexOf("<form")).toBeLessThan(wrapper.html().indexOf("<table"));
+    expect(wrapper.text()).toContain("Récapitulatif");
+  });
+
   it("conserve le récapitulatif confirmé lorsque le panier est vidé", async () => {
     const wrapper = mount(CheckoutPage, { props: { items, total: 7 } });
 
