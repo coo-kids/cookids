@@ -21,10 +21,10 @@ products:
         is_allergen: false
       - label: Levure chimique
         is_allergen: false
-    price: 12.00
+    price: 1.00
     image: /images/products/cookie-cafe-noix.jpg
     category: cookies
-    unitLabel: la boîte de 12
+    unitLabel: 1 unité
 
   - id: cookie-pistache-cranberries
     name: Cookie pistache & cranberries
@@ -48,10 +48,10 @@ products:
         is_allergen: true
       - label: Levure chimique
         is_allergen: false
-    price: 12.00
+    price: 1.00
     image: /images/products/cookie-pistache-cranberries.jpg
     category: cookies
-    unitLabel: la boîte de 12
+    unitLabel: 1 unité
 
   - id: cookie-pecan-chocolat
     name: Cookie pécan & chocolat
@@ -73,10 +73,10 @@ products:
         is_allergen: false
       - label: Fleur de sel
         is_allergen: false
-    price: 12.00
+    price: 1.00
     image: /images/products/cookie-chocolat-noix-pecan.jpg
     category: cookies
-    unitLabel: la boîte de 12
+    unitLabel: 1 unité
 
   - id: cookie-chocolat-noir
     name: Cookie au chocolat noir
@@ -102,10 +102,10 @@ products:
         is_allergen: false
       - label: Gousse de vanille
         is_allergen: false
-    price: 12.00
+    price: 1.00
     image: /images/products/cookie-chocolat.jpg
     category: cookies
-    unitLabel: la boîte de 12
+    unitLabel: 1 unité
 
   - id: cookie-triple-noisette
     name: Cookie triple noisette
@@ -129,10 +129,10 @@ products:
         is_allergen: true
       - label: Levure chimique
         is_allergen: false
-    price: 12.00
+    price: 1.00
     image: /images/products/cookie-triple-noisette.jpg
     category: cookies
-    unitLabel: la boîte de 12
+    unitLabel: 1 unité
 
   - id: cookie-chocolat-sesame
     name: Cookie chocolat & sésame
@@ -152,10 +152,10 @@ products:
         is_allergen: true
       - label: Miel français
         is_allergen: false
-    price: 12.00
+    price: 1.00
     image: /images/products/cookie-chocolat-sesame.jpg
     category: cookies
-    unitLabel: la boîte de 12
+    unitLabel: 1 unité
 
   - id: financiers-amandes
     name: Financiers aux amandes
