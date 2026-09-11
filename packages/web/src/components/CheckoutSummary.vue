@@ -44,7 +44,7 @@ defineEmits<{ changeQuantity: [productId: string, quantity: number] }>();
               <div>
                 <span class="block font-bold">{{ item.product.name }}</span>
                 <span class="text-sm text-[#80685d]"
-                  >{{ formatEuro(item.product.price) }} l'unité</span
+                  >{{ formatEuro(item.product.price) }} {{ item.product.unitLabel }}</span
                 >
               </div>
             </div>

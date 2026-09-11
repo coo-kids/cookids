@@ -9,10 +9,11 @@ import CheckoutStepper from "./CheckoutStepper.vue";
 import OrderForm from "./OrderForm.vue";
 import OrderSuccess from "./OrderSuccess.vue";
 
-defineProps<{ items: EnrichedCartItem[]; total: number }>();
+const props = defineProps<{ items: EnrichedCartItem[]; total: number }>();
 const emit = defineEmits<{ backToCatalog: []; changeQuantity: [productId: string, quantity: number]; success: [] }>();
 const isFormVisible = ref(false);
 const order = ref<OrderResponse | null>(null);
+const confirmedItems = ref<EnrichedCartItem[]>([]);
 
 function showOrderForm(): void {
   isFormVisible.value = true;
@@ -29,6 +30,7 @@ function changeQuantity(productId: string, quantity: number): void {
 }
 
 function handleSuccess(orderResult: OrderResponse): void {
+  confirmedItems.value = [...props.items];
   order.value = orderResult;
   emit("success");
 }
@@ -39,7 +41,7 @@ function handleSuccess(orderResult: OrderResponse): void {
     <section class="mx-auto max-w-3xl">
       <template v-if="order">
         <CheckoutStepper :current-step="3" />
-        <OrderSuccess :order="order" @close="$emit('backToCatalog')" />
+        <OrderSuccess :order="order" :items="confirmedItems" @close="$emit('backToCatalog')" />
       </template>
       <template v-else>
         <CheckoutStepper :current-step="isFormVisible ? 2 : 1" @go-to-step="goToStep" />

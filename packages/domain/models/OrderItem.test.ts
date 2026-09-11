@@ -27,6 +27,10 @@ describe("OrderItem", () => {
             "minimum": 0,
             "type": "number",
           },
+          "unitLabel": {
+            "minLength": 1,
+            "type": "string",
+          },
           "unitPrice": {
             "minimum": 0,
             "type": "number",
@@ -36,6 +40,7 @@ describe("OrderItem", () => {
           "productId",
           "productName",
           "unitPrice",
+          "unitLabel",
           "quantity",
           "total",
         ],
@@ -52,12 +57,14 @@ describe("OrderItem", () => {
     item.setProduct({
       id: "cookie-cafe-noix",
       name: "Cookie café & noix",
-      price: 1.5
+      price: 1.5,
+      unitLabel: "la boîte de 12"
     } as Product);
 
     expect(item).toMatchObject({
       productName: "Cookie café & noix",
       unitPrice: 1.5,
+      unitLabel: "la boîte de 12",
       total: 3
     });
   });

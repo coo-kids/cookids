@@ -18,6 +18,7 @@ defineEmits<{ changeQuantity: [quantity: number] }>();
       <div class="mt-3 flex justify-end">
         <QuantitySelector :quantity="quantity" @change="$emit('changeQuantity', $event)" />
       </div>
+      <p class="mt-2 text-sm text-[#80685d]">{{ product.unitLabel }}</p>
     </div>
   </li>
 </template>

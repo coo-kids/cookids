@@ -38,4 +38,5 @@ describe("useCart", () => {
     expect(cart.count.value).toBe(0);
     expect(cart.enrichedItems.value).toEqual([]);
   });
+
 });

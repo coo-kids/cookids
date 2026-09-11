@@ -23,13 +23,13 @@ describe("GmailMailService", () => {
       createdAt: new Date(),
       customer: { firstName: "Camille", email: "camille@example.com" },
       deliveryLocation: "rosa-parks",
-      items: [Object.assign(new OrderItem(), { productId: "cookie", productName: "Cookie", unitPrice: 3.5, quantity: 2 })],
-      total: 7,
+      items: [Object.assign(new OrderItem(), { productId: "cookie", productName: "Cookie", unitPrice: 12, unitLabel: "la boîte de 12", quantity: 2 })],
+      total: 24,
       status: "new"
     });
 
     expect(createTransport).toHaveBeenCalledWith({ service: "gmail", auth: { user: "hello@cookids.test", pass: "test-app-password" } });
-    expect(sendMail).toHaveBeenCalledWith(expect.objectContaining({ from: "hello@cookids.test", to: "camille@example.com", subject: "Confirmation de votre commande #42", html: expect.stringContaining("#42") }));
+    expect(sendMail).toHaveBeenCalledWith(expect.objectContaining({ from: "hello@cookids.test", to: "camille@example.com", subject: "Confirmation de votre commande #42", html: expect.stringContaining("la boîte de 12") }));
   });
 
   it("rejette une configuration Gmail incomplète", async () => {

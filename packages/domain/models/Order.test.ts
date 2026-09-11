@@ -56,6 +56,10 @@ describe("Order", () => {
                 "minimum": 0,
                 "type": "number",
               },
+              "unitLabel": {
+                "minLength": 1,
+                "type": "string",
+              },
               "unitPrice": {
                 "minimum": 0,
                 "type": "number",
@@ -65,6 +69,7 @@ describe("Order", () => {
               "productId",
               "productName",
               "unitPrice",
+              "unitLabel",
               "quantity",
               "total",
             ],

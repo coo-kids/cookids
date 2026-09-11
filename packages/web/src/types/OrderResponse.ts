@@ -5,6 +5,7 @@ export interface OrderResponse {
   items: Array<{
     productName: string;
     quantity: number;
+    unitLabel: string;
     total: number;
   }>;
 }
