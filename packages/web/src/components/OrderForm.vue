@@ -5,7 +5,7 @@ import { locations } from "../content/locations.js";
 import AppButton from "./AppButton.vue";
 
 const props = defineProps<{ initialValues?: CheckoutDetails; showTitle?: boolean }>();
-const emit = defineEmits<{ submit: [details: CheckoutDetails] }>();
+const emit = defineEmits<{ back: []; submit: [details: CheckoutDetails] }>();
 
 const firstName = ref(props.initialValues?.firstName ?? "");
 const lastName = ref(props.initialValues?.lastName ?? "");
@@ -40,6 +40,9 @@ function submitDetails(): void {
       <select v-if="hasFixedDeliveryDates" class="mt-[.4rem] block w-full rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 font-serif font-normal" v-model="targetDeliveryDate" required><option value="" disabled>Choisir une date</option><option v-for="date in selectedDeliveryLocation?.fixedDeliveryDates" :key="date" :value="date">{{ date }}</option></select>
       <input v-else class="mt-[.4rem] block w-full rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 font-serif font-normal" v-model="targetDeliveryDate" type="date" />
     </label>
-    <AppButton class="w-full" type="submit">Valider mes coordonnées</AppButton>
+    <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+      <AppButton class="flex-1" type="button" variant="neutral" @click="emit('back')">Revenir au panier</AppButton>
+      <AppButton class="flex-1" type="submit">Valider les coordonnées</AppButton>
+    </div>
   </form>
 </template>
