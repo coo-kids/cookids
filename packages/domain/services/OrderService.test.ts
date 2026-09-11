@@ -39,10 +39,10 @@ class TestCatalogProvider extends CatalogProvider {
         name: "Cookie café & noix",
         description: "",
         ingredients: [],
-        price: 1,
+        price: 12,
         image: "/images/cookie-cafe-noix.jpg",
         category: "cookies",
-        unitLabel: "à l'unité",
+        unitLabel: "la boîte de 12",
       },
       {
         id: "financiers-amandes",
@@ -111,7 +111,7 @@ describe("OrderService", () => {
     const { service, repository, mailService } = await createFixture();
     const order = await service.create(validOrder);
 
-    expect(order.total).toBe(7);
+    expect(order.total).toBe(29);
     expect(order.id).toBe(42);
     expect(order.items).toHaveLength(2);
     expect(repository.orders).toHaveLength(1);

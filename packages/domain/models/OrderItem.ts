@@ -19,6 +19,11 @@ export class OrderItem {
 
   @Property()
   @Required()
+  @Groups("!create")
+  unitLabel!: string;
+
+  @Property()
+  @Required()
   @Integer()
   @Minimum(1)
   @Maximum(48)
@@ -35,6 +40,7 @@ export class OrderItem {
   setProduct(product: Product) {
     this.productName = product.name;
     this.unitPrice = product.price;
+    this.unitLabel = product.unitLabel;
     return this;
   }
 }

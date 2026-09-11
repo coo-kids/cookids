@@ -8,19 +8,19 @@ Le navigateur ne transmet jamais un prix, un total, un libellé produit ou une c
 
 Google Sheets sort du périmètre de cette livraison. GitHub est le suivi opérationnel et Gmail SMTP est le canal des emails transactionnels : confirmation après création réussie, puis notifications d’étape dans une phase ultérieure. Les ports `OrderRepository` et `MailService` sont conservés afin d’isoler le domaine de GitHub et Gmail, et de rendre les tests unitaires déterministes.
 
-## État constaté de l’implémentation (9 septembre 2026)
+## État constaté de l’implémentation (11 septembre 2026)
 
-Les éléments suivants existent déjà et constituent la base à faire évoluer ; ils ne couvrent pas encore le suivi GitHub ni les nouvelles informations de livraison.
+Les éléments suivants sont effectivement réalisés dans le dépôt.
 
 - [x] SPA Vue avec catalogue, panier, tunnel de commande, états de soumission et écran de succès.
-- [x] Function `POST /api/orders`, DTO Ts.ED, calcul serveur des produits/prix/totaux et réponse `201` ; l’implémentation actuelle utilise encore des montants internes `totalCents`.
+- [x] Function `POST /api/orders`, DTO Ts.ED, calcul serveur des produits/prix/totaux et réponse `201` ; les totaux sont exprimés en euros (`total`).
 - [x] Ports `OrderRepository` et `MailService`, ainsi que leurs doubles `FakeOrderRepository` et `FakeMailService` pour les tests.
 - [x] Chargement et validation des contenus `catalog.yml` et `site.yml` côté frontend et backend.
 - [x] Tests unitaires co-localisés pour le domaine, l’infrastructure, la Function et les composables déjà présents.
-- [ ] Nouveaux champs `firstName`, `lastName`, `phoneNumber`, `deliveryLocation` et `targetDeliveryDate` : le code utilise encore `name`, `phone` et `comment`.
-- [ ] Repository GitHub, projet « Commands tracking », numéro d’issue de suivi et client GitHub configuré.
+- [x] Nouveaux champs `firstName`, `lastName`, `phoneNumber`, `deliveryLocation` et `targetDeliveryDate` dans le DTO, les modèles, l’API et le formulaire ; les anciens champs `name`, `phone` et `comment` ne sont plus utilisés pour les commandes.
+- [x] Repository GitHub, projet « Commands tracking », numéro d’issue de suivi et client GitHub configuré.
 - [x] `GmailMailService` réel et email de confirmation contenant le numéro d’issue.
-- [x] Vérifications de la base : le 9 septembre 2026, la suite de tests et le build passent. Le build signale seulement un avertissement non bloquant pour un bundle JavaScript supérieur à 500 kB.
+- [x] Vérifications de la base : le 11 septembre 2026, la suite de tests, le contrôle de types et le build passent. Le build signale seulement un avertissement non bloquant pour un bundle JavaScript supérieur à 500 kB.
 
 ## Architecture cible
 
@@ -52,17 +52,17 @@ Principes non négociables :
 
 Faire évoluer `CreateOrder`, `OrderCustomer` et `Order` autour des champs suivants :
 
-| Champ API / domaine | Obligatoire | Destination GitHub |
-| --- | --- | --- |
-| `lastName` | non | champ « Last name » |
-| `firstName` | oui | champ « First name » |
-| `email` | oui, email valide | champ « Email » |
-| `phoneNumber` | non | champ « Phone number » |
-| `deliveryLocation` | oui | champ « Location delivery » |
-| `targetDeliveryDate` | à confirmer | champ date « Target date » |
-| `items` | oui, non vide | description Markdown |
-| `totalPrice` calculé (`EUR`, non en centimes) | — | champ « Total price » |
-| `githubIssueNumber` généré par GitHub | — | référence de suivi dans la réponse API et l’email |
+| Champ API / domaine                           | Obligatoire       | Destination GitHub                                |
+|-----------------------------------------------|-------------------|---------------------------------------------------|
+| `lastName`                                    | non               | champ « Last name »                               |
+| `firstName`                                   | oui               | champ « First name »                              |
+| `email`                                       | oui, email valide | champ « Email »                                   |
+| `phoneNumber`                                 | non               | champ « Phone number »                            |
+| `deliveryLocation`                            | oui               | champ « Location delivery »                       |
+| `targetDeliveryDate`                          | à confirmer       | champ date « Target date »                        |
+| `items`                                       | oui, non vide     | description Markdown                              |
+| `totalPrice` calculé (`EUR`, non en centimes) | —                 | champ « Total price »                             |
+| `githubIssueNumber` généré par GitHub         | —                 | référence de suivi dans la réponse API et l’email |
 
 Les noms entre guillemets sont les noms visibles sur le projet d’après la configuration fournie ; leur résolution technique se fait par ID GitHub, jamais par saisie navigateur. `totalPrice` est un nombre en euros, de devise fixe `EUR`, sans conversion en centimes, et est envoyé une seule fois au format monétaire attendu par « Total price ». Les rendus GitHub et Gmail utilisent le format français (`fr-FR`, `EUR`).
 
@@ -113,10 +113,10 @@ Un seul module formate le corps Markdown de l’issue afin que les tests verroui
 
 ## Phase 1 — Contrat, contenu et domaine
 
-- [ ] Remplacer les anciens champs `name` et `phone` par `firstName`, `lastName` et `phoneNumber` dans les DTO, modèles, réponses API et tests. Remplacer aussi `totalCents` par `totalPrice` (`EUR`, non en centimes). Décider explicitement du devenir du champ libre `comment`, absent du nouveau brief.
-- [ ] Ajouter `deliveryLocation` (identifiant de configuration) et `targetDeliveryDate` au DTO et au modèle. Désérialiser avec `@tsed/json-mapper`, puis valider avec `@tsed/ajv` : prénom, email, longueurs maximales, panier non vide et quantités entières bornées.
-- [ ] Étendre `site.yml` et `SiteContentSchema` avec les lieux et dates fixes ; les charger côté Vite et via un provider Node.js backend typé.
-- [ ] Faire dépendre `OrderService` de la configuration de livraison. Il rejette les lieux inconnus et les dates non autorisées, consolide les lignes si nécessaire, refuse les produits inconnus et recalcule complètement les montants.
+- [x] Remplacer les anciens champs `name` et `phone` par `firstName`, `lastName` et `phoneNumber` dans les DTO, modèles, réponses API et tests. Le champ libre `comment` a été retiré ; le total est calculé côté serveur en euros.
+- [x] Ajouter `deliveryLocation` (identifiant de configuration) et `targetDeliveryDate` au DTO et au modèle. Les entrées sont validées par `@tsed/ajv` puis désérialisées par `@tsed/json-mapper` avec `useAlias: false`.
+- [x] Charger les lieux et dates fixes depuis la configuration éditable, côté Vite et via un provider Node.js backend typé.
+- [x] Faire dépendre `OrderService` de la configuration de livraison : il rejette les lieux inconnus, les dates non autorisées et les produits inconnus, et recalcule les montants.
 - [x] Conserver `OrderRepository.save(order)` comme frontière de persistance et `MailService.sendOrderConfirmation(order)` comme frontière de messagerie. Des doubles existent déjà pour les tests isolés.
 - [ ] Ajouter les erreurs contrôlées : `INVALID_ORDER` (400), `UNKNOWN_PRODUCT` (400), `INVALID_DELIVERY_LOCATION` (400), `INVALID_TARGET_DELIVERY_DATE` (400), `ORDER_PROCESSING_FAILED` (500 sans détail interne) et, si nécessaire, `ORDER_CONFIRMATION_FAILED` (500 sans détail interne).
 
@@ -136,9 +136,9 @@ Le corps d’issue est rendu exclusivement en Markdown et inclut les lignes du p
 ```md
 ## Commande CK-YYYYMMDD-XXXX
 
-| Produit | Quantité | Prix unitaire | Sous-total |
-| --- | ---: | ---: | ---: |
-| Cookie chocolat | 2 | 3,50 € | 7,00 € |
+| Produit         | Quantité | Prix unitaire | Sous-total |
+|-----------------|---------:|--------------:|-----------:|
+| Cookie chocolat |        2 |        3,50 € |     7,00 € |
 
 **Total : 7,00 €**
 ```
@@ -161,11 +161,18 @@ Critères d’acceptation : aucune tentative de confirmation n’est envoyée sa
 ## Phase 3 — Adaptateur Vercel et interface
 
 - [x] Brancher `GitHubOrderRepository` et `GmailMailService` dans `packages/infrastructure/config/index.ts` pour les environnements configurés. Garder des doubles uniquement pour les tests isolés, jamais comme comportement de production.
-- [ ] Adapter `api/orders.ts` pour sérialiser la commande normalisée, avec `githubIssueNumber` comme référence de suivi, et projeter toutes les erreurs contrôlées. La réponse `201` ne contient pas de node ID, URL privée, token ou autre donnée GitHub interne.
-- [ ] Mettre à jour `OrderForm` : prénom requis, nom/téléphone facultatifs, email requis, liste déroulante alimentée par `site.yml` et sélection de date adaptée au lieu. Afficher une erreur utile avant envoi lorsque la date n’est pas sélectionnable ; le backend reste l’autorité.
+- [x] Adapter l’API de commande pour sérialiser la commande normalisée, avec le numéro d’issue GitHub comme référence et sans donnée GitHub interne.
+- [x] Mettre à jour `OrderForm` : prénom requis, nom/téléphone facultatifs, email requis, liste déroulante de lieux et sélection de date adaptée au lieu ; le backend reste l’autorité.
 - [x] Conserver le panier, l’état de soumission, la prévention du double-submit, l’accessibilité et le vidage du panier uniquement après `201`.
 
 Critères d’acceptation : le parcours catalogue → panier → coordonnées/livraison → succès crée exactement une issue GitHub complète. Une requête invalide retourne une erreur exploitable et aucun ticket partiellement configuré n’est considéré comme une commande confirmée.
+
+## Phase 3 bis — Conditionnement des cookies (issue #5)
+
+- [x] Définir le conditionnement dans la source unique `contents/catalog.yml` : chaque quantité de cookie représente une boîte de 12, facturée 12,00 € et libellée « la boîte de 12 ».
+- [x] Conserver les financiers comme produit distinct vendu par lots de 10 ; aucune règle de quantité transversale n’est appliquée.
+- [x] Propager le libellé d’unité résolu au serveur dans le panier, les récapitulatifs, l’email de confirmation et le corps Markdown de l’issue GitHub.
+- [x] Couvrir le calcul des boîtes, la sérialisation de l’unité et les rendus GitHub et Gmail associés.
 
 ## Phase 4 — Vérification et livraison
 

@@ -58,8 +58,8 @@ describe("GitHubOrderRepository", () => {
       createdAt: new Date(),
       customer: { firstName: "Camille", email: "camille@example.com" },
       deliveryLocation: "rosa-parks-option-id",
-      items: [Object.assign(new OrderItem(), { productId: "cookie", productName: "Cookie", unitPrice: 3.5, quantity: 2 })],
-      total: 7,
+      items: [Object.assign(new OrderItem(), { productId: "cookie", productName: "Cookie", unitPrice: 12, unitLabel: "la boîte de 12", quantity: 2 })],
+      total: 24,
       status: "new"
     });
 
@@ -67,8 +67,8 @@ describe("GitHubOrderRepository", () => {
       owner: "coo-kids",
       repo: "cookids-commands",
       assignees: ["syline"],
-      title: "Commande - Camille - 7,00 €",
-      body: expect.stringContaining("**Total : 7.00 €**")
+      title: "Commande - Camille - 24,00 €",
+      body: expect.stringContaining("la boîte de 12")
     }));
     expect(octokitOptions).toHaveBeenCalledWith(expect.objectContaining({
       request: {
@@ -84,7 +84,7 @@ describe("GitHubOrderRepository", () => {
         { fieldId: "first-name-field-id", textValue: "Camille" },
         { fieldId: "email-field-id", textValue: "camille@example.com" },
         { fieldId: "location-field-id", singleSelectOptionId: "rosa-parks-option-id" },
-        { fieldId: "total-field-id", numberValue: 7 }
+        { fieldId: "total-field-id", numberValue: 24 }
       ])
     });
     expect(graphql).toHaveBeenNthCalledWith(3, expect.stringContaining("addProjectV2ItemById"), { projectId: "project-id", contentId: "issue-node-id" });

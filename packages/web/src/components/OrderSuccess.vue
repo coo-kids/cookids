@@ -11,7 +11,7 @@ defineEmits<{ close: [] }>();
     <p class="m-0 font-sans text-[.78rem] font-bold uppercase tracking-[.14em] text-[#b85131]">Merci !</p>
     <h2 class="text-[2.2rem] leading-none">Ta commande est bien reçue.</h2>
     <ul class="list-none p-0">
-      <li v-for="item in order.items" :key="item.productName" class="flex justify-between gap-4 py-[.6rem]"><span>{{ item.quantity }} × {{ item.productName }}</span><strong>{{ formatEuro(item.total) }}</strong></li>
+      <li v-for="item in order.items" :key="item.productName" class="flex justify-between gap-4 py-[.6rem]"><span>{{ item.quantity }} × {{ item.productName }} · {{ item.unitLabel }}</span><strong>{{ formatEuro(item.total) }}</strong></li>
     </ul>
     <p class="flex justify-between border-t border-[#eadace] py-4 text-[1.2rem]"><span>Total</span><strong>{{ formatEuro(order.total) }}</strong></p>
     <p class="font-sans text-[.9rem] text-[#695149]">Commande : #{{ order.id }}</p>
