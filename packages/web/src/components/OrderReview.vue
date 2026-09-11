@@ -13,7 +13,7 @@ const props = defineProps<{
   total: number;
   isLoadingPreview?: boolean;
 }>();
-const emit = defineEmits<{ success: [order: OrderResponse] }>();
+const emit = defineEmits<{ back: []; success: [order: OrderResponse] }>();
 
 const errorMessage = ref("");
 const isSubmitting = ref(false);
@@ -89,9 +89,12 @@ async function submitOrder(): Promise<void> {
     </section>
 
     <p v-if="errorMessage" class="font-sans text-[.9rem] font-bold text-[#b3261e]" role="alert">{{ errorMessage }}</p>
-    <AppButton class="mt-8 w-full disabled:cursor-wait" :disabled="isLoading || items.length === 0" @click="submitOrder">
-      {{ isLoading ? "Envoi en cours…" : "Valider la commande" }}
-    </AppButton>
+    <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+      <AppButton class="flex-1" variant="neutral" :disabled="isLoading" @click="emit('back')">Revenir aux coordonnées</AppButton>
+      <AppButton class="flex-1 disabled:cursor-wait" :disabled="isLoading || items.length === 0" @click="submitOrder">
+        {{ isLoading ? "Envoi en cours…" : "Valider la commande" }}
+      </AppButton>
+    </div>
 
     <Transition
       enter-active-class="transition duration-200 ease-out"
