@@ -1,48 +1,35 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import type { CartItem } from "@cookids/domain/models/CartItem.js";
-import type { OrderResponse } from "../types/OrderResponse.js";
+import type { CheckoutDetails } from "../types/CheckoutDetails.js";
 import { locations } from "../content/locations.js";
 import AppButton from "./AppButton.vue";
 
-const props = defineProps<{ items: CartItem[]; showTitle?: boolean; isLoadingPreview?: boolean }>();
-const emit = defineEmits<{ success: [order: OrderResponse] }>();
+const props = defineProps<{ initialValues?: CheckoutDetails; showTitle?: boolean }>();
+const emit = defineEmits<{ submit: [details: CheckoutDetails] }>();
 
-const firstName = ref("");
-const lastName = ref("");
-const email = ref("");
-const phoneNumber = ref("");
-const deliveryLocation = ref("");
-const targetDeliveryDate = ref("");
-const errorMessage = ref("");
-const isSubmitting = ref(false);
-const isLoading = computed(() => isSubmitting.value || props.isLoadingPreview === true);
+const firstName = ref(props.initialValues?.firstName ?? "");
+const lastName = ref(props.initialValues?.lastName ?? "");
+const email = ref(props.initialValues?.email ?? "");
+const phoneNumber = ref(props.initialValues?.phoneNumber ?? "");
+const deliveryLocation = ref(props.initialValues?.deliveryLocation ?? "");
+const targetDeliveryDate = ref(props.initialValues?.targetDeliveryDate ?? "");
 const selectedDeliveryLocation = computed(() => locations.find((location) => location.id === deliveryLocation.value));
 const hasFixedDeliveryDates = computed(() => (selectedDeliveryLocation.value?.fixedDeliveryDates.length ?? 0) > 0);
 
-async function submitOrder(): Promise<void> {
-  if (isLoading.value || props.items.length === 0) return;
-  isSubmitting.value = true;
-  errorMessage.value = "";
-  try {
-    const response = await fetch("/api/orders", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ customer: { firstName: firstName.value, lastName: lastName.value || undefined, email: email.value, phoneNumber: phoneNumber.value || undefined }, deliveryLocation: deliveryLocation.value, targetDeliveryDate: targetDeliveryDate.value ? new Date(`${targetDeliveryDate.value}T00:00:00.000Z`).toISOString() : undefined, items: props.items.map(({ productId, quantity }) => ({ productId, quantity })) })
-    });
-    const payload = await response.json();
-    if (!response.ok) throw new Error(payload.error?.message ?? "La commande n'a pas pu être envoyée.");
-    emit("success", payload.order as OrderResponse);
-  } catch (error) {
-    errorMessage.value = error instanceof Error ? error.message : "La commande n'a pas pu être envoyée.";
-  } finally {
-    isSubmitting.value = false;
-  }
+function submitDetails(): void {
+  emit("submit", {
+    firstName: firstName.value,
+    lastName: lastName.value || undefined,
+    email: email.value,
+    phoneNumber: phoneNumber.value || undefined,
+    deliveryLocation: deliveryLocation.value,
+    targetDeliveryDate: targetDeliveryDate.value || undefined
+  });
 }
 </script>
 
 <template>
-  <form class="relative mt-6" :aria-busy="isLoading" @submit.prevent="submitOrder">
+  <form class="mt-6" @submit.prevent="submitDetails">
     <h2 v-if="showTitle !== false" class="text-[1.7rem]">Vos coordonnées</h2>
     <label class="my-4 block font-sans text-[.92rem] font-bold">Prénom<input class="mt-[.4rem] block w-full rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 font-serif font-normal" v-model.trim="firstName" required minlength="2" maxlength="100" autocomplete="given-name" /></label>
     <label class="my-4 block font-sans text-[.92rem] font-bold">Nom <span class="text-[#80685d] font-normal">(facultatif)</span><input class="mt-[.4rem] block w-full rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 font-serif font-normal" v-model.trim="lastName" maxlength="100" autocomplete="family-name" /></label>
@@ -53,25 +40,6 @@ async function submitOrder(): Promise<void> {
       <select v-if="hasFixedDeliveryDates" class="mt-[.4rem] block w-full rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 font-serif font-normal" v-model="targetDeliveryDate" required><option value="" disabled>Choisir une date</option><option v-for="date in selectedDeliveryLocation?.fixedDeliveryDates" :key="date" :value="date">{{ date }}</option></select>
       <input v-else class="mt-[.4rem] block w-full rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 font-serif font-normal" v-model="targetDeliveryDate" type="date" />
     </label>
-    <p v-if="errorMessage" class="font-sans text-[.9rem] font-bold text-[#b3261e]" role="alert">{{ errorMessage }}</p>
-    <AppButton class="w-full disabled:cursor-wait" type="submit" :disabled="isLoading || items.length === 0">
-      {{ isLoading ? "Envoi en cours…" : "Valider ma commande" }}
-    </AppButton>
-    <Transition
-      enter-active-class="transition duration-200 ease-out"
-      enter-from-class="opacity-0"
-      enter-to-class="opacity-100"
-      leave-active-class="transition duration-150 ease-in"
-      leave-from-class="opacity-100"
-      leave-to-class="opacity-0"
-    >
-      <div v-if="isLoading" class="absolute inset-0 z-10 flex min-h-full items-center justify-center rounded-xl bg-[#fffaf4]/92 px-6 text-center backdrop-blur-sm" role="status" aria-live="polite">
-        <div class="flex max-w-xs flex-col items-center gap-4">
-          <img class="h-56 w-auto animate-[bounce_3s_ease-in-out_infinite] object-contain" src="/images/pages/cookids-cook.png" alt="" aria-hidden="true" />
-          <p class="font-sans text-base font-bold text-cookids-ink">Nous enregistrons votre commande</p>
-          <span class="size-10 animate-spin rounded-full border-4 border-cookids-coral/25 border-t-cookids-coral" aria-hidden="true" />
-        </div>
-      </div>
-    </Transition>
+    <AppButton class="w-full" type="submit">Valider mes coordonnées</AppButton>
   </form>
 </template>
