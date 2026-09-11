@@ -27,7 +27,8 @@ const details: CheckoutDetails = {
   email: "romain@example.com",
   phoneNumber: "0600000000",
   deliveryLocation: "IFSSO_kgDOBOB43g",
-  targetDeliveryDate: "2026-10-01"
+  targetDeliveryDate: "2026-10-01",
+  deliveryComment: "Merci de sonner à l’arrivée"
 };
 
 describe("OrderReview", () => {
@@ -46,6 +47,8 @@ describe("OrderReview", () => {
     expect(wrapper.text()).toContain("0600000000");
     expect(wrapper.text()).toContain("Le Perreux-sur-Marne");
     expect(wrapper.text()).toContain("1 octobre 2026");
+    expect(wrapper.text()).toContain("Merci de sonner à l’arrivée");
+    expect(wrapper.findAll("h2").map((heading) => heading.text())).toEqual(["Votre commande", "Vos coordonnées", "Livraison"]);
     expect(wrapper.find('[aria-label="Quantité"]').exists()).toBe(false);
   });
 
@@ -63,13 +66,16 @@ describe("OrderReview", () => {
   });
 
   it("envoie la commande et affiche le spinner à la validation finale", async () => {
-    vi.stubGlobal("fetch", vi.fn(() => new Promise(() => {})));
+    const fetchMock = vi.fn(() => new Promise(() => {}));
+    vi.stubGlobal("fetch", fetchMock);
     const wrapper = mount(OrderReview, { props: { details, items, total: 7 } });
     const submitButton = wrapper.findAll("button").find((button) => button.text() === "Valider la commande");
 
     expect(submitButton).toBeDefined();
     await submitButton!.trigger("click");
 
+    const request = fetchMock.mock.calls[0]?.[1] as RequestInit;
+    expect(JSON.parse(request.body as string).deliveryComment).toBe("Merci de sonner à l’arrivée");
     expect(wrapper.attributes("aria-busy")).toBe("true");
     expect(wrapper.get('[role="status"]').text()).toContain("Nous enregistrons votre commande");
     expect(wrapper.get('[role="status"] img').attributes("src")).toBe("/images/pages/cookids-cook.png");
