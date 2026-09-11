@@ -40,7 +40,7 @@ function showConfirmationPreview(): void {
     id: 0,
     total: props.total,
     deliveryLocation: "preview",
-    items: props.items.map((item) => ({ productName: item.product.name, quantity: item.quantity, total: item.total }))
+    items: props.items.map((item) => ({ productName: item.product.name, quantity: item.quantity, unitLabel: item.product.unitLabel, total: item.total }))
   };
   isConfirmationPreviewVisible.value = true;
 }

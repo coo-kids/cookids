@@ -38,7 +38,7 @@ describe("OrderSuccess", () => {
     expect(wrapper.get("table").text()).toContain("3,50 € pièce");
     expect(wrapper.get("table").text()).toContain("7,00 €");
     expect(wrapper.get("table img").attributes("src")).toBe("/images/cookie-cafe-noix.jpg");
-    expect(wrapper.get('img[src="/images/pages/cookids-thanks.png"]').exists()).toBe(true);
+    expect(wrapper.get('img[src="/images/pages/cookids-thanks.png"]').attributes("src")).toBe("/images/pages/cookids-thanks.png");
     expect(wrapper.find('[aria-label="Quantité"]').exists()).toBe(false);
     expect(wrapper.text()).toContain("Votre numéro de commande : CKIDS-00042");
     expect(wrapper.text()).toContain("informations sur l’état d’avancement de votre commande");

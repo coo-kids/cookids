@@ -6,8 +6,8 @@ import CheckoutSummary from "./CheckoutSummary.vue";
 const props = defineProps<{ order: OrderResponse; items: EnrichedCartItem[] }>();
 defineEmits<{ close: [] }>();
 
-function formatOrderNumber(orderId: number): string {
-  return `CKIDS-${orderId.toString().padStart(5, "0")}`;
+function formatOrderNumber(orderId: number | undefined): string {
+  return `CKIDS-${(orderId ?? 0).toString().padStart(5, "0")}`;
 }
 </script>
 
