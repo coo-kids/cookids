@@ -1,7 +1,7 @@
 import { s } from "@tsed/schema";
 
 export const SocialLinkSchema = s.object({
-  icon: s.string().enum("Instagram", "MessageCircle", "Facebook", "Youtube", "Mail", "Phone", "Send").required(),
+  icon: s.string().enum("whatsapp", "x", "instagram", "facebook").required(),
   title: s.string().maxLength(160).required(),
   href: s.url().pattern(/^https:\/\//).maxLength(2048).required()
 });

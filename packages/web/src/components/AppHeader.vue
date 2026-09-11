@@ -1,22 +1,12 @@
 <script setup lang="ts">
-import { Facebook, Instagram, Mail, MessageCircle, Phone, Send, ShoppingBag, Youtube } from "lucide-vue-next";
-import type { Component } from "vue";
+import { ShoppingBag } from "lucide-vue-next";
 import AppButton from "./AppButton.vue";
+import SocialIcon from "./SocialIcon.vue";
 import { useScrollState } from "../composables/useScrollState.js";
 import { siteContent } from "../content/site.js";
 
 defineProps<{ cartCount: number }>();
 const { isScrolled } = useScrollState();
-
-const socialLinkIcons = {
-  Instagram,
-  MessageCircle,
-  Facebook,
-  Youtube,
-  Mail,
-  Phone,
-  Send
-} satisfies Record<(typeof siteContent.socialLinks)[number]["icon"], Component>;
 </script>
 
 <template>
@@ -36,7 +26,7 @@ const socialLinkIcons = {
           rel="noopener noreferrer"
           class="inline-flex size-11 items-center justify-center rounded-full text-cookids-ink transition-colors hover:bg-[#f4e8dc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cookids-coral focus-visible:ring-offset-2"
         >
-          <component :is="socialLinkIcons[socialLink.icon]" :size="21" :stroke-width="2" aria-hidden="true" />
+          <SocialIcon :icon="socialLink.icon" class="size-[21px]" />
         </a>
         <div class="relative">
           <AppButton as="a" href="#commande" variant="neutral" size="icon" aria-label="Voir le panier">

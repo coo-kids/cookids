@@ -61,13 +61,10 @@ describe("SiteContentSchema", () => {
                 },
                 "icon": {
                   "enum": [
-                    "Instagram",
-                    "MessageCircle",
-                    "Facebook",
-                    "Youtube",
-                    "Mail",
-                    "Phone",
-                    "Send",
+                    "whatsapp",
+                    "x",
+                    "instagram",
+                    "facebook",
                   ],
                   "minLength": 1,
                   "type": "string",
@@ -105,11 +102,11 @@ describe("SiteContentSchema", () => {
 
   it("accepte les liens sociaux HTTPS pris en charge", async () => {
     await expect(validate({
-      icon: "Instagram",
+      icon: "instagram",
       title: "Suivre Cookids sur Instagram",
       href: "https://www.instagram.com/cookids"
     }, { type: SocialLinkSchema })).resolves.toMatchObject({
-      icon: "Instagram",
+      icon: "instagram",
       title: "Suivre Cookids sur Instagram",
       href: "https://www.instagram.com/cookids"
     });
