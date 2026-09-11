@@ -1,3 +1,7 @@
+<script setup lang="ts">
+import AppButton from "./AppButton.vue";
+</script>
+
 <template>
   <main class="px-4 py-12 sm:py-16">
     <article class="mx-auto max-w-3xl rounded-2xl border border-[#eadace] bg-white px-6 py-10 shadow-sm sm:px-12 sm:py-14">
@@ -34,9 +38,9 @@
         <p class="font-bold text-[#b85131]">Syline</p>
       </div>
 
-      <a class="mx-auto mt-10 block w-fit rounded-full bg-cookids-coral px-6 py-3 font-sans font-bold text-white transition hover:brightness-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cookids-coral" href="#catalogue">
+      <AppButton as="a" class="mx-auto mt-10 w-fit" href="#catalogue">
         Découvrir le catalogue
-      </a>
+      </AppButton>
     </article>
   </main>
 </template>
