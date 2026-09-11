@@ -144,17 +144,23 @@ describe("OrderService", () => {
     await expect(service.create(createOrderInput({ targetDeliveryDate: new Date("2026-09-20T00:00:00.000Z") }))).rejects.toThrow("La date de livraison n'est pas disponible pour ce lieu.");
   });
 
-  it("propage les défaillances du repository et du mail", async () => {
+  it("propage les défaillances du repository", async () => {
     const repositoryFailure = await createFixture();
     repositoryFailure.repository.shouldFail = true;
     await expect(repositoryFailure.service.create(validOrder)).rejects.toThrow(
       "repository failed",
     );
 
+  });
+
+  it("conserve la commande lorsque l'email de confirmation échoue", async () => {
     const mailFailure = await createFixture();
     mailFailure.mailService.shouldFail = true;
-    await expect(mailFailure.service.create(validOrder)).rejects.toThrow(
-      "mail failed",
-    );
+
+    const order = await mailFailure.service.create(createOrderInput());
+
+    expect(order.id).toBe(42);
+    expect(mailFailure.repository.orders).toHaveLength(1);
+    expect(mailFailure.mailService.orders).toHaveLength(0);
   });
 });

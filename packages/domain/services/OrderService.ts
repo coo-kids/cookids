@@ -29,8 +29,20 @@ export class OrderService {
     orderInput.id = ticket.id;
     logger.info({ event: "order.create.saved", order_id: orderInput.id });
 
-    await this.mailService.sendOrderConfirmation(orderInput);
-    logger.info({ event: "order.confirmation.sent", order_id: orderInput.id });
+    try {
+      await this.mailService.sendOrderConfirmation(orderInput);
+      logger.info({ event: "order.confirmation.sent", order_id: orderInput.id });
+    } catch (error) {
+      const emailError = error instanceof Error ? error : new Error(String(error));
+
+      logger.warn({
+        event: "order.confirmation.failed",
+        order_id: orderInput.id,
+        erreur_name: emailError.name,
+        erreur_message: emailError.message,
+        stack: emailError.stack
+      });
+    }
 
     return orderInput;
   }

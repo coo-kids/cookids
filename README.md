@@ -74,8 +74,8 @@ Les fichiers d’exemple listent les variables prévues pour les intégrations d
 GOOGLE_CLIENT_EMAIL=
 GOOGLE_PRIVATE_KEY=
 GOOGLE_SHEET_ID=
-RESEND_API_KEY=
-RESEND_FROM=
+GMAIL_USER=
+GMAIL_APP_PASSWORD=
 ORDER_NOTIFICATION_EMAIL=
 ```
 

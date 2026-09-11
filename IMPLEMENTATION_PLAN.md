@@ -6,7 +6,7 @@ Le site Cookids reste une SPA Vue servie par Vercel. À chaque commande valide, 
 
 Le navigateur ne transmet jamais un prix, un total, un libellé produit ou une configuration GitHub. Il transmet les coordonnées, le lieu, la date souhaitée et les lignes `{ productId, quantity }`. `OrderService` résout les produits, recalcule le total et applique les règles de livraison avant toute écriture distante. Le numéro GitHub de l’issue créée (`issue.number`) est la référence de suivi communiquée au client ; l’identifiant interne `CK-…` peut rester technique mais n’est pas la référence client.
 
-Google Sheets sort du périmètre de cette livraison. GitHub est le suivi opérationnel et Resend reste le canal des emails transactionnels : confirmation après création réussie, puis notifications d’étape dans une phase ultérieure. Les ports `OrderRepository` et `MailService` sont conservés afin d’isoler le domaine de GitHub et Resend, et de rendre les tests unitaires déterministes.
+Google Sheets sort du périmètre de cette livraison. GitHub est le suivi opérationnel et Gmail SMTP est le canal des emails transactionnels : confirmation après création réussie, puis notifications d’étape dans une phase ultérieure. Les ports `OrderRepository` et `MailService` sont conservés afin d’isoler le domaine de GitHub et Gmail, et de rendre les tests unitaires déterministes.
 
 ## État constaté de l’implémentation (9 septembre 2026)
 
@@ -19,7 +19,7 @@ Les éléments suivants existent déjà et constituent la base à faire évoluer
 - [x] Tests unitaires co-localisés pour le domaine, l’infrastructure, la Function et les composables déjà présents.
 - [ ] Nouveaux champs `firstName`, `lastName`, `phoneNumber`, `deliveryLocation` et `targetDeliveryDate` : le code utilise encore `name`, `phone` et `comment`.
 - [ ] Repository GitHub, projet « Commands tracking », numéro d’issue de suivi et client GitHub configuré.
-- [ ] `ResendMailService` réel et email de confirmation contenant le numéro d’issue.
+- [x] `GmailMailService` réel et email de confirmation contenant le numéro d’issue.
 - [x] Vérifications de la base : le 9 septembre 2026, la suite de tests et le build passent. Le build signale seulement un avertissement non bloquant pour un bundle JavaScript supérieur à 500 kB.
 
 ## Architecture cible
@@ -31,9 +31,9 @@ apps/web (Vue + Vite)
                                   ├── CatalogProvider ← contents/catalog.yml
                                   ├── DeliveryConfiguration ← contents/site.yml
                                   └── OrderRepository ← GitHubOrderRepository
-                                  ├── MailService ← ResendMailService
+                                  ├── MailService ← GmailMailService
                                   └── issue cookids-commands → récupère `issue.number`
-                                        └── projet « Commands tracking » → email Resend de confirmation
+                                        └── projet « Commands tracking » → email Gmail de confirmation
 ```
 
 Principes non négociables :
@@ -64,7 +64,7 @@ Faire évoluer `CreateOrder`, `OrderCustomer` et `Order` autour des champs suiva
 | `totalPrice` calculé (`EUR`, non en centimes) | — | champ « Total price » |
 | `githubIssueNumber` généré par GitHub | — | référence de suivi dans la réponse API et l’email |
 
-Les noms entre guillemets sont les noms visibles sur le projet d’après la configuration fournie ; leur résolution technique se fait par ID GitHub, jamais par saisie navigateur. `totalPrice` est un nombre en euros, de devise fixe `EUR`, sans conversion en centimes, et est envoyé une seule fois au format monétaire attendu par « Total price ». Les rendus GitHub et Resend utilisent le format français (`fr-FR`, `EUR`).
+Les noms entre guillemets sont les noms visibles sur le projet d’après la configuration fournie ; leur résolution technique se fait par ID GitHub, jamais par saisie navigateur. `totalPrice` est un nombre en euros, de devise fixe `EUR`, sans conversion en centimes, et est envoyé une seule fois au format monétaire attendu par « Total price ». Les rendus GitHub et Gmail utilisent le format français (`fr-FR`, `EUR`).
 
 `contents/site.yml` devient la source de vérité de :
 
@@ -145,22 +145,22 @@ Le corps d’issue est rendu exclusivement en Markdown et inclut les lignes du p
 
 Critères d’acceptation : avec un dépôt/projet de test, une commande crée une unique issue affectée à `syline`, de type « Commands », liée à « Commands tracking », avec tous les champs attendus, le statut initial et un corps Markdown conforme. Les tests unitaires emploient un faux client GitHub ; un test d’intégration protégé par variables d’environnement est exécuté uniquement contre le projet de test.
 
-## Phase 2 bis — Confirmation et suivi email via Resend
+## Phase 2 bis — Confirmation et suivi email via Gmail SMTP
 
 - [x] Conserver le port `MailService`, son contrat `sendOrderConfirmation(order)` et un double de test.
-- [ ] Créer `ResendMailService` dans l’infrastructure backend. Son unique responsabilité initiale est `sendOrderConfirmation(order)`.
+- [x] Créer `GmailMailService` dans l’infrastructure backend. Son unique responsabilité initiale est `sendOrderConfirmation(order)`.
 - [ ] Après la persistance GitHub réussie et la récupération de `issue.number`, `OrderService` déclenche l’email de confirmation vers l’adresse normalisée du client. L’email comprend explicitement le numéro GitHub de suivi, le récapitulatif Markdown/HTML du panier, le total calculé et les informations de livraison utiles ; il ne contient aucun autre identifiant GitHub interne.
-- [ ] Configurer `RESEND_API_KEY` et `RESEND_FROM` dans Vercel, avec une adresse d’expéditeur/domaine vérifié. Ajouter les clés fictives correspondantes dans `.env.example`, sans secret.
+- [ ] Configurer `GMAIL_USER` et `GMAIL_APP_PASSWORD` dans Vercel. `GMAIL_APP_PASSWORD` est un mot de passe d'application Gmail créé après activation de la validation en deux étapes ; aucun domaine personnalisé n'est requis. Ajouter les clés fictives correspondantes dans `.env.example`, sans secret.
 - [ ] Tester le rendu, le destinataire et les erreurs avec un double `MailService`, puis réaliser un test d’intégration vers une adresse de test autorisée.
-- [ ] Feature ultérieure — Déclencher les emails d’étape depuis les changements de statut GitHub. Elle nécessitera un webhook GitHub vérifié, une correspondance statut → modèle Resend et une stratégie d’idempotence afin de ne jamais envoyer deux fois le même message.
+- [ ] Feature ultérieure — Déclencher les emails d’étape depuis les changements de statut GitHub. Elle nécessitera un webhook GitHub vérifié, une correspondance statut → modèle Gmail et une stratégie d’idempotence afin de ne jamais envoyer deux fois le même message.
 
-Règle de cohérence initiale : formulaire valide → issue GitHub créée et configurée → récupération de `issue.number` → envoi Resend. Si l’email échoue après la création GitHub, l’API retourne une erreur contrôlée et journalise l’incident sans donnée personnelle ; elle ne prétend pas au client que la confirmation a été délivrée. La reprise manuelle ou automatisée de l’envoi est une étape distincte à décider.
+Règle de cohérence initiale : formulaire valide → issue GitHub créée et configurée → récupération de `issue.number` → tentative d’envoi Gmail. Si l’email échoue après la création GitHub, l’API conserve la commande et la confirme au client ; l’incident est journalisé sans donnée personnelle. La reprise manuelle ou automatisée de l’envoi est une étape distincte à décider.
 
-Critères d’acceptation : aucune confirmation n’est envoyée sans issue GitHub créée ; une commande complète entraîne une seule confirmation Resend avec le numéro GitHub exact et le total serveur exact ; les erreurs Resend ne divulguent pas de détail technique au client.
+Critères d’acceptation : aucune tentative de confirmation n’est envoyée sans issue GitHub créée ; une commande complète entraîne une seule tentative Gmail avec le numéro GitHub exact et le total serveur exact ; une erreur Gmail ne bloque pas le tunnel de commande et ne divulgue pas de détail technique au client.
 
 ## Phase 3 — Adaptateur Vercel et interface
 
-- [ ] Brancher `GitHubOrderRepository` et `ResendMailService` dans `packages/infrastructure/config/index.ts` pour les environnements configurés. Garder des doubles uniquement pour les tests isolés, jamais comme comportement de production.
+- [x] Brancher `GitHubOrderRepository` et `GmailMailService` dans `packages/infrastructure/config/index.ts` pour les environnements configurés. Garder des doubles uniquement pour les tests isolés, jamais comme comportement de production.
 - [ ] Adapter `api/orders.ts` pour sérialiser la commande normalisée, avec `githubIssueNumber` comme référence de suivi, et projeter toutes les erreurs contrôlées. La réponse `201` ne contient pas de node ID, URL privée, token ou autre donnée GitHub interne.
 - [ ] Mettre à jour `OrderForm` : prénom requis, nom/téléphone facultatifs, email requis, liste déroulante alimentée par `site.yml` et sélection de date adaptée au lieu. Afficher une erreur utile avant envoi lorsque la date n’est pas sélectionnable ; le backend reste l’autorité.
 - [x] Conserver le panier, l’état de soumission, la prévention du double-submit, l’accessibilité et le vidage du panier uniquement après `201`.
@@ -169,10 +169,10 @@ Critères d’acceptation : le parcours catalogue → panier → coordonnées/li
 
 ## Phase 4 — Vérification et livraison
 
-- [ ] Compléter les tests de schémas Ts.ED (`compile(...).toMatchInlineSnapshot()`), du domaine, du formateur Markdown, du repository GitHub simulé, du mailer Resend simulé et de la Function.
+- [ ] Compléter les tests de schémas Ts.ED (`compile(...).toMatchInlineSnapshot()`), du domaine, du formateur Markdown, du repository GitHub simulé, du mailer Gmail simulé et de la Function.
 - [x] Lancer `pnpm run test` puis `pnpm run build` à la racine.
-- [ ] Faire une recette sur un projet GitHub de test et une adresse Resend de test : permissions du token, assignee, type, projet, statut, valeurs des champs, total monétaire, description, destinataire et absence de données sensibles dans les logs.
-- [ ] Configurer les secrets Vercel pour Development, Preview et Production ; vérifier que le token GitHub et la clé Resend ne sont jamais exposés dans le bundle Vite.
+- [ ] Faire une recette sur un projet GitHub de test et une adresse Gmail de test : permissions du token, assignee, type, projet, statut, valeurs des champs, total monétaire, description, destinataire et absence de données sensibles dans les logs.
+- [ ] Configurer les secrets Vercel pour Development, Preview et Production ; vérifier que le token GitHub et le mot de passe d'application Gmail ne sont jamais exposés dans le bundle Vite.
 - [ ] Mettre à jour le README : démarrage local, variables requises, création du projet GitHub de test et procédure de rotation du token.
 
 ## Décisions à confirmer avant implémentation
@@ -183,6 +183,6 @@ Critères d’acceptation : le parcours catalogue → panier → coordonnées/li
 - Le champ libre historique « Un mot pour Syline ? » doit-il être supprimé, conservé dans l’issue, ou déplacé dans un champ GitHub ?
 - Confirmez-vous les noms exacts des champs GitHub visibles (« First name », « Last name », « Location delivery », etc.), le nom exact de l’option de statut et le format souhaité du titre d’issue ?
 - Le projet « Commands tracking » est-il un GitHub Project d’organisation `coo-kids` et acceptez-vous un GitHub App/jeton finement restreint dédié à son écriture ?
-- Quelle adresse/domaine d’expédition Resend est validé, et quel contenu exact doit figurer dans l’email de confirmation ?
-- [ ] Feature ultérieure — Définir les statuts GitHub qui déclenchent les emails d’étape, leurs modèles Resend et leur stratégie d’idempotence.
+- Quelle adresse Gmail d’expédition est validée, et quel contenu exact doit figurer dans l’email de confirmation ?
+- [ ] Feature ultérieure — Définir les statuts GitHub qui déclenchent les emails d’étape, leurs modèles Gmail et leur stratégie d’idempotence.
 - [ ] Ajouter les textes confidentialité/RGPD : finalité de collecte, durée de conservation, droits de la personne, contact et lien vers la politique applicable avant la soumission du formulaire.

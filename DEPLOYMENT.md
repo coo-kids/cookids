@@ -16,7 +16,7 @@ La CI n'envoie aucun secret et ne déploie pas directement. Cette responsabilit�
 1. Dans Vercel, importez le dépôt GitHub et conservez la racine du dépôt comme *Root Directory*.
 2. Choisissez `main` comme *Production Branch*.
 3. Conservez la configuration versionnée : `pnpm install --frozen-lockfile`, `pnpm run build` et `packages/web/dist`. La Function `api/orders.ts` est automatiquement servie sous `POST /api/orders`.
-4. Ajoutez les variables de production, puis les variables de preview si celles-ci doivent pouvoir créer une commande : `GOOGLE_CLIENT_EMAIL`, `GOOGLE_PRIVATE_KEY`, `GOOGLE_SHEET_ID`, `RESEND_API_KEY`, `RESEND_FROM` et `ORDER_NOTIFICATION_EMAIL`.
+4. Ajoutez les variables de production, puis les variables de preview si celles-ci doivent pouvoir créer une commande : `GOOGLE_CLIENT_EMAIL`, `GOOGLE_PRIVATE_KEY`, `GOOGLE_SHEET_ID`, `GMAIL_USER`, `GMAIL_APP_PASSWORD` et `ORDER_NOTIFICATION_EMAIL`. `GMAIL_APP_PASSWORD` est un mot de passe d'application Gmail, créé après activation de la validation en deux étapes ; ne le remplacez pas par le mot de passe habituel du compte.
 5. Lancez un premier déploiement et testez la preview, y compris une requête `POST /api/orders`, avant de fusionner dans `main`.
 
 Ne versionnez aucune valeur de variable d'environnement. Pour `GOOGLE_PRIVATE_KEY`, conservez les retours à la ligne de la clé dans la valeur configurée dans Vercel.

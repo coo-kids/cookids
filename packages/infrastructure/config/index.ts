@@ -6,7 +6,7 @@ import { NodeCatalogProvider } from "../content/NodeCatalogProvider.js";
 import { GitHubOrderRepository } from "../repositories/GitHubOrderRepository.js";
 import { FakeOrderRepository } from "../repositories/FakeOrderRepository.js";
 import { FakeMailService } from "../services/FakeMailService.js";
-import { ResendMailService } from "../services/ResendMailService.js";
+import { GmailMailService } from "../services/GmailMailService.js";
 import { CatalogProvider } from "@cookids/domain/catalog/CatalogProvider.js";
 import { SiteContentProvider } from "@cookids/domain/content/SiteContentProvider.js";
 import { DeliveryLocationProvider } from "@cookids/domain/content/DeliveryLocationProvider.js";
@@ -39,7 +39,7 @@ injector().settings.set({
     },
     {
       token: MailService,
-      useClass: process.env.NODE_ENV === "test" ? FakeMailService : ResendMailService
+      useClass: process.env.NODE_ENV === "test" ? FakeMailService : GmailMailService
     }
   ]
 });

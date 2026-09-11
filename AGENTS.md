@@ -7,7 +7,7 @@ Utiliser Node.js et pnpm depuis la racine : `pnpm install`, `pnpm run dev`, `pnp
 ## Architecture
 
 - `contents/` contient les YAML métier éditables. Vite les charge côté SPA et l’infrastructure Node.js les charge côté backend.
-- `packages/domain` contient les modèles, schémas, DTO, règles métier et ports, sans dépendance Vercel/Google/Resend.
+- `packages/domain` contient les modèles, schémas, DTO, règles métier et ports, sans dépendance Vercel/Google/Gmail.
 - `packages/infrastructure` contient les adaptateurs techniques, dont les loaders Node.js des YAML métier.
 - `api/` contient les Functions Vercel et leurs tests co-localisés.
 - `packages/web` est la SPA Vue. Elle ne contient ni secret ni calcul de prix faisant autorité.
