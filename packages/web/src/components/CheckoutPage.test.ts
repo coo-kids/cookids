@@ -80,6 +80,22 @@ describe("CheckoutPage", () => {
     expect(wrapper.get("table").text()).toContain("Cookie café & noix");
   });
 
+  it("revient aux coordonnées depuis le récapitulatif", async () => {
+    const wrapper = mount(CheckoutPage, { props: { items, total: 7 } });
+    await openDetails(wrapper);
+    wrapper.getComponent(OrderForm).vm.$emit("submit", details);
+    await nextTick();
+
+    const backButton = wrapper.findAll("button").find((button) => button.text() === "Revenir aux coordonnées");
+    expect(backButton).toBeDefined();
+    await backButton!.trigger("click");
+    await nextTick();
+
+    expect(wrapper.get("h1").text()).toBe("Vos coordonnées");
+    expect((wrapper.get('input[autocomplete="given-name"]').element as HTMLInputElement).value).toBe("Romain");
+    expect((wrapper.get('input[autocomplete="email"]').element as HTMLInputElement).value).toBe("romain@example.com");
+  });
+
   it("déplace les récapitulatifs à l’étape 3 puis confirme sans les répéter", async () => {
     const wrapper = mount(CheckoutPage, { props: { items, total: 7 } });
     await openDetails(wrapper);
