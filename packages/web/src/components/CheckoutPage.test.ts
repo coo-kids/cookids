@@ -64,7 +64,20 @@ describe("CheckoutPage", () => {
 
     expect(wrapper.get("h1").text()).toBe("Vos coordonnées");
     expect(wrapper.find("table").exists()).toBe(false);
-    expect(wrapper.get('button[type="submit"]').text()).toBe("Valider mes coordonnées");
+    expect(wrapper.get('button[type="submit"]').text()).toBe("Valider les coordonnées");
+  });
+
+  it("revient au panier depuis l’étape coordonnées", async () => {
+    const wrapper = mount(CheckoutPage, { props: { items, total: 7 } });
+    await openDetails(wrapper);
+
+    const backButton = wrapper.findAll("button").find((button) => button.text() === "Revenir au panier");
+    expect(backButton).toBeDefined();
+    await backButton!.trigger("click");
+    await nextTick();
+
+    expect(wrapper.get("h1").text()).toBe("Finaliser la commande");
+    expect(wrapper.get("table").text()).toContain("Cookie café & noix");
   });
 
   it("déplace les récapitulatifs à l’étape 3 puis confirme sans les répéter", async () => {
