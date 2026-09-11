@@ -74,7 +74,7 @@ products:
       - label: Fleur de sel
         is_allergen: false
     price: 12.00
-    image: /images/products/cookie-pecan-chocolat.jpg
+    image: /images/products/cookie-chocolat-noix-pecan.jpg
     category: cookies
     unitLabel: la boîte de 12
 
@@ -103,7 +103,7 @@ products:
       - label: Gousse de vanille
         is_allergen: false
     price: 12.00
-    image: /images/products/cookie-chocolat-noir.jpg
+    image: /images/products/cookie-chocolat.jpg
     category: cookies
     unitLabel: la boîte de 12
 
