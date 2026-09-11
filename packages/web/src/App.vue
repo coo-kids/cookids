@@ -5,6 +5,7 @@ import AppHeader from "./components/AppHeader.vue";
 import CheckoutPage from "./components/CheckoutPage.vue";
 import HeroSection from "./components/HeroSection.vue";
 import ProductGrid from "./components/ProductGrid.vue";
+import ProjectPage from "./components/ProjectPage.vue";
 import { useCart } from "./composables/useCart.js";
 import { useCheckoutRoute } from "./composables/useCheckoutRoute.js";
 
@@ -20,6 +21,7 @@ function returnToCatalog(): void { checkoutRoute.closeCheckout(); }
   <div class="[--app-header-height:5rem]">
     <AppHeader :cart-count="cart.count.value" />
     <CheckoutPage v-if="checkoutRoute.isCheckout.value" :items="cart.enrichedItems.value" :total="cart.total.value" @change-quantity="cart.setQuantity" @success="handleOrderSuccess" @back-to-catalog="returnToCatalog" />
+    <ProjectPage v-else-if="checkoutRoute.isProject.value" />
     <main v-else>
       <HeroSection />
       <ProductGrid :quantities="quantities" @change-quantity="cart.setQuantity" />
