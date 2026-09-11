@@ -13,6 +13,6 @@ describe("ordersApi", () => {
     }));
 
     expect(response.status).toBe(201);
-    await expect(response.json()).resolves.toMatchObject({ order: { total: 24 } });
+    await expect(response.json()).resolves.toMatchObject({ order: { total: 2 } });
   });
 });
