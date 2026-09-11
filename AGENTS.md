@@ -48,3 +48,7 @@ Utiliser Node.js et pnpm depuis la racine : `pnpm install`, `pnpm run dev`, `pnp
 ## Vérification
 
 Après toute modification fonctionnelle, lancer `pnpm run test` et `pnpm run build`.
+
+## Commits liés aux tickets
+
+Tout commit qui implémente un ticket GitHub doit inclure le footer suivant dans son message, sur une ligne distincte : `Closes: #<issueNumber>`.
