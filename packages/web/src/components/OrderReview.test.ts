@@ -66,7 +66,7 @@ describe("OrderReview", () => {
   });
 
   it("envoie la commande et affiche le spinner à la validation finale", async () => {
-    const fetchMock = vi.fn(() => new Promise(() => {}));
+    const fetchMock = vi.fn((_url: string, _init?: RequestInit) => new Promise<Response>(() => {}));
     vi.stubGlobal("fetch", fetchMock);
     const wrapper = mount(OrderReview, { props: { details, items, total: 7 } });
     const submitButton = wrapper.findAll("button").find((button) => button.text() === "Valider la commande");
