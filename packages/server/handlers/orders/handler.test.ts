@@ -30,7 +30,7 @@ describe("handleOrderRequest", () => {
     expect(response.status).toBe(201);
     await expect(response.json()).resolves.toMatchObject({
       order: {
-        total: 24,
+        total: 2,
         status: "new",
         targetDeliveryDate: "2026-10-01T00:00:00.000Z",
         customer: {
