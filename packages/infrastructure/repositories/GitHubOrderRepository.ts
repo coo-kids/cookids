@@ -1,4 +1,5 @@
-import { constant, context, Injectable } from "@tsed/di";
+import { constant, context, inject, Injectable } from "@tsed/di";
+import { CatalogProvider } from "@cookids/domain/catalog/CatalogProvider.js";
 import { Octokit } from "octokit";
 import addProjectItem from "./queries/addProjectItem.gql.js";
 import setProjectStatus from "./queries/setProjectStatus.gql.js";
@@ -11,6 +12,8 @@ type Issue = Awaited<ReturnType<Octokit["rest"]["issues"]["create"]>>;
 
 @Injectable()
 export class GitHubOrderRepository extends OrderRepository {
+  protected catalogProvider = inject(CatalogProvider);
+
   /** Crée l'issue GitHub, renseigne ses métadonnées de projet et retourne son numéro. */
   async save(order: Order): Promise<{ id: number }> {
     const {
@@ -45,9 +48,15 @@ export class GitHubOrderRepository extends OrderRepository {
     });
   }
 
-  /** Copie les informations métier de la commande dans les champs du projet GitHub. */
+  /** Copie les informations de commande dans les champs d'issue et compte les cookies du catalogue serveur. */
   protected async setCustomFieldValues(issue: Issue, order: Order) {
     const client = this.getClient();
+    const catalog = await this.catalogProvider.getCatalog();
+    const cookieProductIds = new Set(catalog.products
+      .filter((product) => product.category === "cookies")
+      .map((product) => product.id));
+    const totalCookies = order.items.reduce((total, item) =>
+      total + (cookieProductIds.has(item.productId) ? item.quantity : 0), 0);
 
     await client.graphql(setIssueFields, {
       issueId: issue.data.node_id,
@@ -73,6 +82,7 @@ export class GitHubOrderRepository extends OrderRepository {
           singleSelectOptionId: order.deliveryLocation
         },
         { fieldId: constant<string>("githubBoards.fields.totalPrice"), numberValue: order.total },
+        { fieldId: constant<string>("githubBoards.fields.totalCookies"), numberValue: totalCookies },
         ...(order.targetDeliveryDate ? [{
           fieldId: constant<string>("githubBoards.fields.targetDate"),
           dateValue: order.targetDeliveryDate.toISOString().slice(0, 10)
