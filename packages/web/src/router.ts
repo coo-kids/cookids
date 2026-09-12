@@ -2,12 +2,14 @@ import { createRouter, createWebHistory } from "vue-router";
 import CheckoutPage from "./pages/CheckoutPage.vue";
 import HomePage from "./pages/HomePage.vue";
 import ProjectPage from "./pages/ProjectPage.vue";
+import CagnottePage from "./pages/CagnottePage.vue";
 
 export const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: "/", name: "home", component: HomePage },
     { path: "/projet", name: "project", component: ProjectPage },
+    { path: "/cagnotte", name: "cagnotte", component: CagnottePage },
     { path: "/commande", name: "checkout", component: CheckoutPage },
     { path: "/:pathMatch(.*)*", redirect: { name: "home" } }
   ],

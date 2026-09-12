@@ -17,6 +17,9 @@ export const ProjectSectionSchema = s.object({
 
 export const SiteContentSchema = s.object({
   brand: s.string().maxLength(80).required(),
+  cagnotteTitle: s.string().maxLength(80).required(),
+  cagnotteCounter: s.string().maxLength(160).required(),
+  cagnotteText: s.string().maxLength(500).required(),
   intro: s.string().maxLength(500).required(),
   heroTitle: s.string().maxLength(240).required(),
   heroText: s.string().maxLength(500).required(),

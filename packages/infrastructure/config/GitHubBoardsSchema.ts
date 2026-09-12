@@ -18,7 +18,7 @@ export const GitHubBoardsSchema = s.object({
   projectId: s.string().required(),
   assignee: s.string().required(),
   fields: GitHubBoardFieldSchema.required(),
-  statuses: s.object({ pending: s.string().required() }).required(),
+  statuses: s.object({ pending: s.string().required(), completed: s.string().required() }).required(),
   issueType: s.string().required()
 });
 

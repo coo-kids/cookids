@@ -13,6 +13,21 @@ describe("SiteContentSchema", () => {
             "minLength": 1,
             "type": "string",
           },
+          "cagnotteCounter": {
+            "maxLength": 160,
+            "minLength": 1,
+            "type": "string",
+          },
+          "cagnotteText": {
+            "maxLength": 500,
+            "minLength": 1,
+            "type": "string",
+          },
+          "cagnotteTitle": {
+            "maxLength": 80,
+            "minLength": 1,
+            "type": "string",
+          },
           "catalogTitle": {
             "maxLength": 160,
             "minLength": 1,
@@ -140,6 +155,9 @@ describe("SiteContentSchema", () => {
         },
         "required": [
           "brand",
+          "cagnotteTitle",
+          "cagnotteCounter",
+          "cagnotteText",
           "intro",
           "heroTitle",
           "heroText",
