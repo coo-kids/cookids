@@ -15,6 +15,12 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe("AppHeader", () => {
+  it("ouvre le livre d’or depuis l’icône livre", () => {
+    const wrapper = mount(AppHeader, { global: { plugins: [router] } });
+    const link = wrapper.get('a[aria-label="Voir le livre d’or"]');
+    expect(link.attributes("href")).toBe("/livre-d-or");
+    expect(link.get("svg").classes()).toContain("lucide-book-open");
+  });
   it("affiche le lien cagnotte avec une tirelire immédiatement avant le panier", () => {
     const wrapper = mount(AppHeader, { global: { plugins: [router] } });
     const cagnotteLink = wrapper.get('a[aria-label="Voir la cagnotte"]');

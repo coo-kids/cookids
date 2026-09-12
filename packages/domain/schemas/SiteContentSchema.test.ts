@@ -43,6 +43,21 @@ describe("SiteContentSchema", () => {
             "minLength": 1,
             "type": "string",
           },
+          "guestbookFormTitle": {
+            "default": "Laissez un petit mot",
+            "maxLength": 80,
+            "type": "string",
+          },
+          "guestbookReviewsTitle": {
+            "default": "Vos petits mots",
+            "maxLength": 80,
+            "type": "string",
+          },
+          "guestbookTitle": {
+            "default": "Livre d’or",
+            "maxLength": 80,
+            "type": "string",
+          },
           "heroText": {
             "maxLength": 500,
             "minLength": 1,

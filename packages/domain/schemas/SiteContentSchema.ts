@@ -17,6 +17,9 @@ export const ProjectSectionSchema = s.object({
 
 export const SiteContentSchema = s.object({
   brand: s.string().maxLength(80).required(),
+  guestbookTitle: s.string().maxLength(80).default("Livre d’or"),
+  guestbookFormTitle: s.string().maxLength(80).default("Laissez un petit mot"),
+  guestbookReviewsTitle: s.string().maxLength(80).default("Vos petits mots"),
   cagnotteTitle: s.string().maxLength(80).required(),
   cagnotteCounter: s.string().maxLength(160).required(),
   cagnotteText: s.string().maxLength(500).required(),
