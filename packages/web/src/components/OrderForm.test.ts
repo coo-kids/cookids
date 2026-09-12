@@ -4,6 +4,31 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import OrderForm from "./OrderForm.vue";
 
 describe("OrderForm", () => {
+  it("grise la date sans lieu et refuse de valider un lieu inconnu", async () => {
+    const wrapper = mount(OrderForm, { props: { initialValues: { firstName: "Alice", email: "alice@example.com", deliveryLocation: "inconnu", targetDeliveryDate: "2026-10-01" } } });
+    const input = wrapper.get('input[type="date"]');
+    expect(input.attributes("disabled")).toBeDefined();
+    expect(input.classes()).toContain("disabled:bg-stone-100");
+    expect(input.classes()).toContain("min-w-0");
+    expect(input.classes()).toContain("max-w-full");
+    expect((input.element as HTMLInputElement).value).toBe("");
+    await wrapper.get("form").trigger("submit");
+    expect(wrapper.emitted("submit")).toBeUndefined();
+    await wrapper.get("select").setValue("IFSSO_kgDOBOB43g");
+    expect(input.attributes("disabled")).toBeUndefined();
+  });
+
+  it("utilise la même flèche pour les deux listes déroulantes", async () => {
+    const wrapper = mount(OrderForm);
+    expect(wrapper.get('input[type="date"]').attributes("disabled")).toBeDefined();
+    await wrapper.get("select").setValue("IFSSO_kgDOBOB43A");
+    const selects = wrapper.findAll("select");
+    for (const select of selects) {
+      expect(select.classes()).toContain("appearance-none");
+      expect(select.element.parentElement!.querySelector("svg")?.classList.contains("lucide-chevron-down")).toBe(true);
+    }
+    expect(selects[1]!.attributes("disabled")).toBeUndefined();
+  });
   it("harmonise le champ lieu et réinitialise la date au changement de lieu", async () => {
     const wrapper = mount(OrderForm);
     const select = wrapper.get("select");
@@ -34,6 +59,7 @@ describe("OrderForm", () => {
     const wrapper = mount(OrderForm);
     const input = wrapper.get('input[type="date"]');
     expect(input.attributes("min")).toBe("2026-09-20");
+    await wrapper.get("select").setValue("IFSSO_kgDOBOB43g");
     await input.setValue("2026-09-19");
     expect((input.element as HTMLInputElement).value).toBe("");
     await input.setValue("2026-09-20");
@@ -91,6 +117,7 @@ describe("OrderForm", () => {
 
     try {
       const wrapper = mount(OrderForm);
+      await wrapper.get("select").setValue("IFSSO_kgDOBOB43g");
       await wrapper.get('input[type="date"]').trigger("click");
 
       expect(showPicker).toHaveBeenCalledOnce();

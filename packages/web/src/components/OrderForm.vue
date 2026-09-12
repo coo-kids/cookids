@@ -42,7 +42,7 @@ const availableDeliveryDates = computed(() =>
 watchEffect(() => {
   if (
     targetDeliveryDate.value &&
-    (targetDeliveryDate.value < minimumDeliveryDate ||
+    (!selectedDeliveryLocation.value || targetDeliveryDate.value < minimumDeliveryDate ||
       (hasFixedDeliveryDates.value &&
         !availableDeliveryDates.value.includes(targetDeliveryDate.value)))
   ) {
@@ -52,6 +52,7 @@ watchEffect(() => {
 
 function openDatePicker(event: MouseEvent): void {
   const input = event.currentTarget as HTMLInputElement;
+  if (input.disabled) return;
 
   try {
     input.showPicker?.();
@@ -61,6 +62,7 @@ function openDatePicker(event: MouseEvent): void {
 }
 
 function submitDetails(): void {
+  if (!selectedDeliveryLocation.value) return;
   if (
     hasFixedDeliveryDates.value &&
     !availableDeliveryDates.value.includes(targetDeliveryDate.value)
@@ -85,7 +87,7 @@ function submitDetails(): void {
 </script>
 
 <template>
-  <form class="mt-6" @submit.prevent="submitDetails">
+  <form class="mt-6 min-w-0" @submit.prevent="submitDetails">
     <section aria-labelledby="customer-details-title">
       <h2
         v-if="showTitle !== false"
@@ -139,7 +141,7 @@ function submitDetails(): void {
         >Lieu de livraison
         <span class="relative mt-[.4rem] block">
           <select
-            class="block w-full appearance-none rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 pr-11 font-serif font-normal text-[#3f332d]"
+            class="block min-w-0 w-full max-w-full appearance-none rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 pr-11 font-serif font-normal text-[#3f332d]"
             v-model="deliveryLocation"
             @change="targetDeliveryDate = ''"
             required
@@ -164,7 +166,7 @@ function submitDetails(): void {
         >Date de livraison souhaitée
         <span v-if="hasFixedDeliveryDates" class="relative mt-[.4rem] block">
           <select
-            class="block w-full appearance-none rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 pr-11 font-serif font-normal text-[#3f332d]"
+            class="block min-w-0 w-full max-w-full appearance-none rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 pr-11 font-serif font-normal text-[#3f332d] disabled:cursor-not-allowed disabled:bg-stone-100 disabled:text-stone-500"
             v-model="targetDeliveryDate"
             :disabled="availableDeliveryDates.length === 0"
             required
@@ -178,20 +180,11 @@ function submitDetails(): void {
               {{ date }}
             </option>
           </select>
-          <svg
+          <ChevronDown
             class="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#80685d]"
             aria-hidden="true"
-            viewBox="0 0 20 20"
-            fill="none"
-          >
-            <path
-              d="m5 7.5 5 5 5-5"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
+            :stroke-width="1.8"
+          />
           <span
             v-if="availableDeliveryDates.length === 0"
             class="mt-2 block font-normal text-[#80685d]"
@@ -200,12 +193,14 @@ function submitDetails(): void {
         </span>
         <input
           v-else
-          class="mt-[.4rem] block w-full rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 font-serif font-normal"
+          class="mt-[.4rem] block min-w-0 w-full max-w-full appearance-none rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 font-serif font-normal disabled:cursor-not-allowed disabled:bg-stone-100 disabled:text-stone-500 [&::-webkit-date-and-time-value]:min-w-0 [&::-webkit-date-and-time-value]:text-left [&::-webkit-datetime-edit]:min-w-0"
           v-model="targetDeliveryDate"
           type="date"
           :min="minimumDeliveryDate"
+          :disabled="!selectedDeliveryLocation"
           @click="openDatePicker"
         />
+        <span v-if="!selectedDeliveryLocation" class="mt-2 block font-normal text-[#80685d]">Choisissez d’abord un lieu de livraison.</span>
       </label>
       <label class="my-4 block font-sans text-[.92rem] font-bold"
         >Commentaire <span class="text-[#80685d] font-normal">(facultatif)</span
