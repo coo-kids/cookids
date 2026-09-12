@@ -16,7 +16,7 @@ const total = new Intl.NumberFormat("fr-FR").format(
     <section class="mx-auto max-w-3xl text-center">
       <img
         class="mx-auto my-8 w-full max-w-[200px] object-contain sm:max-w-[260px]"
-        src="/images/pages/cookids-cookies.png"
+        src="/images/pages/cagnotte.png"
         alt=""
         aria-hidden="true"
       />
