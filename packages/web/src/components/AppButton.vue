@@ -13,7 +13,7 @@ withDefaults(defineProps<{
 
 const variants = {
   primary: "bg-cookids-coral text-white hover:bg-[#bd4f2f] focus-visible:ring-cookids-coral",
-  neutral: "bg-transparent text-cookids-ink hover:bg-[#f4e8dc] focus-visible:ring-cookids-coral",
+  neutral: "bg-[#f4e8dc] text-cookids-ink hover:bg-[#eadace] focus-visible:ring-cookids-coral",
   dark: "bg-cookids-ink text-white hover:bg-[#49372f] focus-visible:ring-cookids-coral"
 };
 

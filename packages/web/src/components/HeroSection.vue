@@ -13,7 +13,10 @@ import AppButton from "./AppButton.vue";
           {{ siteContent.heroTitle }}
         </h1>
         <p class="mx-auto mb-8 max-w-[570px] text-base leading-[1.55] md:mx-0">{{ siteContent.heroText }}</p>
-        <AppButton as="a" href="#catalogue">Voir les gourmandises</AppButton>
+        <div class="flex flex-wrap justify-center gap-3 md:justify-start">
+          <AppButton as="a" href="#catalogue">Voir les gourmandises</AppButton>
+          <AppButton as="a" variant="neutral" href="#projet">Découvrir mon projet</AppButton>
+        </div>
       </div>
       <img class="order-1 mx-auto w-full max-w-[260px] sm:max-w-[320px] md:order-2 md:max-w-[360px] lg:max-w-[400px]" src="/hero-banner-v2-optimized.webp" alt="Syline entourée de cookies Cookids">
     </div>

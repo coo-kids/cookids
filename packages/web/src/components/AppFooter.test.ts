@@ -3,11 +3,10 @@ import { describe, expect, it } from "vitest";
 import AppFooter from "./AppFooter.vue";
 
 describe("AppFooter", () => {
-  it("affiche un lien vers le profil LinkedIn du créateur", () => {
+  it("affiche uniquement la signature Cookids", () => {
     const wrapper = mount(AppFooter);
-    const creatorLink = wrapper.get('a[href="https://www.linkedin.com/in/romainlenzotti/"]');
 
-    expect(creatorLink.text()).toBe("Romain L.");
-    expect(wrapper.text()).toContain("Site fait par Romain L.");
+    expect(wrapper.text()).toContain("Cookids · Des pâtisseries faites avec cœur.");
+    expect(wrapper.find("a").exists()).toBe(false);
   });
 });
