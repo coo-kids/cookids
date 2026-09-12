@@ -1,8 +1,27 @@
 import { compile } from "@tsed/schema";
+import { validate } from "@tsed/ajv";
 import { describe, expect, it } from "vitest";
 import { ContentProductSchema } from "./ContentProductSchema.js";
 
 describe("ContentProductSchema", () => {
+  const product = {
+    id: "cookie", name: "Cookie", description: "Un cookie",
+    ingredients: [], price: 1, image: "/cookie.jpg",
+    category: "cookies", unitLabel: "1 unité",
+  };
+
+  it.each([true, false])("accepte is_limited_edition=%s", async (is_limited_edition) => {
+    await expect(validate({ ...product, is_limited_edition }, { type: ContentProductSchema })).resolves.toMatchObject({ is_limited_edition });
+  });
+
+  it("accepte un produit sans le champ optionnel", async () => {
+    await expect(validate(product, { type: ContentProductSchema })).resolves.toMatchObject(product);
+  });
+
+  it("refuse une valeur non booléenne", async () => {
+    await expect(validate({ ...product, is_limited_edition: {} }, { type: ContentProductSchema })).rejects.toThrow();
+  });
+
   it("compile son schéma Ts.ED", () => {
     expect(compile(ContentProductSchema)).toMatchInlineSnapshot(`
       {
@@ -46,6 +65,9 @@ describe("ContentProductSchema", () => {
               "type": "object",
             },
             "type": "array",
+          },
+          "is_limited_edition": {
+            "type": "boolean",
           },
           "name": {
             "maxLength": 120,

@@ -74,6 +74,9 @@ describe("ContentCatalogSchema", () => {
                   },
                   "type": "array",
                 },
+                "is_limited_edition": {
+                  "type": "boolean",
+                },
                 "name": {
                   "maxLength": 120,
                   "minLength": 1,

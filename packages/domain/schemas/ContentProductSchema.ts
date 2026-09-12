@@ -14,10 +14,13 @@ export const ContentProductSchema = s.object({
   image: s.string().maxLength(200).required(),
   category: s.string().maxLength(80).required(),
   unitLabel: s.string().maxLength(60).required(),
+  is_limited_edition: s.boolean(),
 });
 
 export type ContentProductIngredient = s.infer<
   typeof ContentProductIngredientSchema
 >;
 
-export type ContentProduct = s.infer<typeof ContentProductSchema>;
+export type ContentProduct = Omit<s.infer<typeof ContentProductSchema>, "is_limited_edition"> & {
+  is_limited_edition?: boolean;
+};

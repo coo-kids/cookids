@@ -6,6 +6,8 @@ categories:
     label: Financiers
 
 products:
+  # Ajouter is_limited_edition: true à un produit pour afficher le bandeau.
+  # Si le champ est absent ou vaut false, aucun bandeau n'est affiché.
   - id: cookie-cafe-noix
     name: Cookie café & noix
     description: Café, chocolat noir et noix.

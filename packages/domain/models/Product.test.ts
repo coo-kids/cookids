@@ -48,6 +48,9 @@ describe("Product", () => {
             },
             "type": "array",
           },
+          "is_limited_edition": {
+            "type": "boolean",
+          },
           "name": {
             "minLength": 1,
             "type": "string",
