@@ -6,7 +6,9 @@ describe("AppFooter", () => {
   it("affiche uniquement la signature Cookids", () => {
     const wrapper = mount(AppFooter);
 
-    expect(wrapper.text()).toContain("Cookids · Des pâtisseries faites avec cœur.");
+    expect(wrapper.text()).toContain(
+      "Cookids · Des pâtisseries faites avec le cœur.",
+    );
     expect(wrapper.find("a").exists()).toBe(false);
   });
 });
