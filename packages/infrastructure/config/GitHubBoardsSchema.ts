@@ -8,6 +8,7 @@ const GitHubBoardFieldSchema = s.object({
   location: s.string().required(),
   targetDate: s.string().required(),
   totalPrice: s.string().required(),
+  totalCookies: s.string().required(),
   status: s.string().required()
 });
 
