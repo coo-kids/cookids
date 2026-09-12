@@ -29,7 +29,7 @@ function formatOrderNumber(orderId: number | undefined): string {
       </p>
 
       <h1 class="mb-0 mt-2 text-[2.2rem] leading-none">
-        Ta commande est bien reçue.
+        Votre commande est bien reçue.
       </h1>
     </div>
     <div class="my-8 text-center">
