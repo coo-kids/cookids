@@ -4,6 +4,23 @@ import { describe, expect, it, vi } from "vitest";
 import OrderForm from "./OrderForm.vue";
 
 describe("OrderForm", () => {
+  it("harmonise le champ lieu et réinitialise la date au changement de lieu", async () => {
+    const wrapper = mount(OrderForm);
+    const select = wrapper.get("select");
+    expect(select.classes()).toContain("appearance-none");
+    expect(select.classes()).toContain("pr-11");
+    expect(select.attributes("required")).toBeDefined();
+    const arrow = select.element.parentElement!.querySelector("svg");
+    expect(arrow?.getAttribute("aria-hidden")).toBe("true");
+    expect(arrow?.classList.contains("pointer-events-none")).toBe(true);
+
+    await select.setValue("IFSSO_kgDOBOB43g");
+    await wrapper.get('input[type="date"]').setValue("2026-10-01");
+    await select.setValue("IFSSO_kgDOBOB43w");
+    expect((wrapper.get('input[type="date"]').element as HTMLInputElement).value).toBe("");
+    wrapper.unmount();
+  });
+
   it("propose de revenir au panier", async () => {
     const wrapper = mount(OrderForm);
     const backButton = wrapper.findAll("button").find((button) => button.text() === "Revenir au panier");
