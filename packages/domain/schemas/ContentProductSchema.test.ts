@@ -8,10 +8,7 @@ describe("ContentProductSchema", () => {
       {
         "properties": {
           "category": {
-            "enum": [
-              "cookies",
-              "other",
-            ],
+            "maxLength": 80,
             "minLength": 1,
             "type": "string",
           },

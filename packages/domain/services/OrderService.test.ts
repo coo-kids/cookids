@@ -5,7 +5,7 @@ import { deserialize } from "@tsed/json-mapper";
 import { CatalogProvider } from "../catalog/CatalogProvider.js";
 import { DeliveryLocationProvider } from "../content/DeliveryLocationProvider.js";
 import { MailService } from "../mail/MailService.js";
-import type { Product } from "../models/Product.js";
+import type { ContentCatalog } from "../schemas/ContentCatalogSchema.js";
 import { Order } from "../models/Order.js";
 import { OrderRepository } from "../repositories/OrderRepository.js";
 import { OrderService } from "./OrderService.js";
@@ -32,17 +32,32 @@ class TestMailService extends MailService {
 }
 
 class TestCatalogProvider extends CatalogProvider {
-  async getProducts(): Promise<Product[]> {
-    return [
+  async getCatalog(): Promise<ContentCatalog> {
+    return {
+      categories: [
+        { id: "cookies", label: "Cookies", quantityMultiple: 12 },
+        { id: "financiers", label: "Financiers", quantityMultiple: undefined },
+      ],
+      products: [
       {
         id: "cookie-cafe-noix",
         name: "Cookie café & noix",
         description: "",
         ingredients: [],
-        price: 12,
+        price: 1,
         image: "/images/cookie-cafe-noix.jpg",
         category: "cookies",
-        unitLabel: "la boîte de 12",
+        unitLabel: "1 unité",
+      },
+      {
+        id: "cookie-chocolat-noir",
+        name: "Cookie au chocolat noir",
+        description: "",
+        ingredients: [],
+        price: 1,
+        image: "/images/cookie-chocolat-noir.jpg",
+        category: "cookies",
+        unitLabel: "1 unité",
       },
       {
         id: "financiers-amandes",
@@ -51,10 +66,11 @@ class TestCatalogProvider extends CatalogProvider {
         ingredients: [],
         price: 5,
         image: "/images/financiers-amandes.jpg",
-        category: "other",
+        category: "financiers",
         unitLabel: "le lot de 10",
       },
-    ];
+    ],
+    };
   }
 }
 
@@ -95,7 +111,7 @@ function createOrderInput(overrides: {
     },
     deliveryLocation: "rosa-parks",
     items: overrides.items ?? [
-      { productId: "cookie-cafe-noix", quantity: 2 },
+      { productId: "cookie-cafe-noix", quantity: 12 },
       { productId: "financiers-amandes", quantity: 1 }
     ],
     targetDeliveryDate: overrides.targetDeliveryDate
@@ -111,7 +127,7 @@ describe("OrderService", () => {
     const { service, repository, mailService } = await createFixture();
     const order = await service.create(validOrder);
 
-    expect(order.total).toBe(29);
+    expect(order.total).toBe(17);
     expect(order.id).toBe(42);
     expect(order.items).toHaveLength(2);
     expect(repository.orders).toHaveLength(1);
@@ -123,6 +139,39 @@ describe("OrderService", () => {
     await expect(
       service.create(createOrderInput({ items: [{ productId: "inconnu", quantity: 1 }] })),
     ).rejects.toThrow("n'existe pas");
+  });
+
+  it("rejette une quantité qui ne respecte pas le multiple de sa catégorie", async () => {
+    const { service } = await createFixture();
+
+    await expect(
+      service.create(createOrderInput({ items: [{ productId: "cookie-cafe-noix", quantity: 11 }] })),
+    ).rejects.toThrow("multiple de 12");
+  });
+
+  it("additionne les variétés d'une même catégorie pour appliquer son multiple", async () => {
+    const { service } = await createFixture();
+
+    const order = await service.create(
+      createOrderInput({
+        items: [
+          { productId: "cookie-cafe-noix", quantity: 5 },
+          { productId: "cookie-chocolat-noir", quantity: 7 },
+        ],
+      }),
+    );
+
+    expect(order.total).toBe(12);
+  });
+
+  it("accepte librement une catégorie sans règle de composition", async () => {
+    const { service } = await createFixture();
+
+    const order = await service.create(
+      createOrderInput({ items: [{ productId: "financiers-amandes", quantity: 1 }] }),
+    );
+
+    expect(order.total).toBe(5);
   });
 
   it("rejette une date absente lorsqu'un lieu impose des dates fixes", async () => {

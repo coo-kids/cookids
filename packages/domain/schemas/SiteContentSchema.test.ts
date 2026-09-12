@@ -48,6 +48,59 @@ describe("SiteContentSchema", () => {
             "minLength": 1,
             "type": "string",
           },
+          "projectLabel": {
+            "maxLength": 80,
+            "minLength": 1,
+            "type": "string",
+          },
+          "projectSections": {
+            "items": {
+              "properties": {
+                "closing": {
+                  "maxLength": 240,
+                  "type": "string",
+                },
+                "image": {
+                  "maxLength": 200,
+                  "type": "string",
+                },
+                "imageAlt": {
+                  "maxLength": 160,
+                  "type": "string",
+                },
+                "paragraphs": {
+                  "items": {
+                    "maxLength": 600,
+                    "minLength": 1,
+                    "type": "string",
+                  },
+                  "minItems": 1,
+                  "type": "array",
+                },
+                "signature": {
+                  "maxLength": 80,
+                  "type": "string",
+                },
+                "title": {
+                  "maxLength": 160,
+                  "minLength": 1,
+                  "type": "string",
+                },
+              },
+              "required": [
+                "title",
+                "paragraphs",
+              ],
+              "type": "object",
+            },
+            "minItems": 1,
+            "type": "array",
+          },
+          "projectTitle": {
+            "maxLength": 240,
+            "minLength": 1,
+            "type": "string",
+          },
           "socialLinks": {
             "default": [],
             "items": {
@@ -94,6 +147,9 @@ describe("SiteContentSchema", () => {
           "cookiesNote",
           "orderTitle",
           "footer",
+          "projectLabel",
+          "projectTitle",
+          "projectSections",
         ],
         "type": "object",
       }

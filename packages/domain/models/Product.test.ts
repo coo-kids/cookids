@@ -27,10 +27,6 @@ describe("Product", () => {
         },
         "properties": {
           "category": {
-            "enum": [
-              "cookies",
-              "other",
-            ],
             "minLength": 1,
             "type": "string",
           },

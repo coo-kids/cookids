@@ -5,6 +5,7 @@ import { NodeCatalogProvider } from "./NodeCatalogProvider.js";
 vi.mock("node:fs/promises", () => ({ readFile: vi.fn() }));
 
 const catalogSource = JSON.stringify({
+  categories: [{ id: "cookies", label: "Cookies", quantityMultiple: 12 }],
   products: [{
     id: "cookie-cafe-noix",
     name: "Cookie café & noix",
@@ -22,9 +23,9 @@ describe("NodeCatalogProvider", () => {
     vi.mocked(readFile).mockResolvedValue(catalogSource);
     const provider = new NodeCatalogProvider();
 
-    const [first, second] = await Promise.all([provider.getProducts(), provider.getProducts()]);
+    const [first, second] = await Promise.all([provider.getCatalog(), provider.getCatalog()]);
 
-    expect(first).toEqual([JSON.parse(catalogSource).products[0]]);
+    expect(first).toEqual(JSON.parse(catalogSource));
     expect(second).toBe(first);
     expect(readFile).toHaveBeenCalledTimes(1);
   });

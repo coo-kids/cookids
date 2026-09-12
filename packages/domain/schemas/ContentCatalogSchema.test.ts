@@ -7,14 +7,35 @@ describe("ContentCatalogSchema", () => {
     expect(compile(ContentCatalogSchema)).toMatchInlineSnapshot(`
       {
         "properties": {
+          "categories": {
+            "items": {
+              "properties": {
+                "id": {
+                  "maxLength": 80,
+                  "minLength": 1,
+                  "type": "string",
+                },
+                "label": {
+                  "maxLength": 120,
+                  "minLength": 1,
+                  "type": "string",
+                },
+                "quantityMultiple": {
+                  "minimum": 1,
+                  "multipleOf": 1,
+                  "type": "integer",
+                },
+              },
+              "type": "object",
+            },
+            "minItems": 1,
+            "type": "array",
+          },
           "products": {
             "items": {
               "properties": {
                 "category": {
-                  "enum": [
-                    "cookies",
-                    "other",
-                  ],
+                  "maxLength": 80,
                   "minLength": 1,
                   "type": "string",
                 },
@@ -86,6 +107,7 @@ describe("ContentCatalogSchema", () => {
           },
         },
         "required": [
+          "categories",
           "products",
         ],
         "type": "object",

@@ -1,3 +1,10 @@
+categories:
+  - id: cookies
+    label: Cookies
+    quantityMultiple: 12
+  - id: financiers
+    label: Financiers
+
 products:
   - id: cookie-cafe-noix
     name: Cookie café & noix
@@ -175,5 +182,5 @@ products:
         is_allergen: false
     price: 5.00
     image: /images/products/financiers-amandes.jpg
-    category: other
+    category: financiers
     unitLabel: le lot de 10

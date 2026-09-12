@@ -2,17 +2,18 @@
 import { nextTick, ref, watch } from "vue";
 import { siteContent } from "../content/site.js";
 import type { CheckoutDetails } from "../types/CheckoutDetails.js";
-import type { EnrichedCartItem } from "../types/EnrichedCartItem.js";
 import type { OrderResponse } from "../types/OrderResponse.js";
-import AppButton from "./AppButton.vue";
-import CheckoutSummary from "./CheckoutSummary.vue";
-import CheckoutStepper from "./CheckoutStepper.vue";
-import OrderForm from "./OrderForm.vue";
-import OrderReview from "./OrderReview.vue";
-import OrderSuccess from "./OrderSuccess.vue";
+import AppButton from "../components/AppButton.vue";
+import CheckoutSummary from "../components/CheckoutSummary.vue";
+import CheckoutStepper from "../components/CheckoutStepper.vue";
+import OrderForm from "../components/OrderForm.vue";
+import OrderReview from "../components/OrderReview.vue";
+import OrderSuccess from "../components/OrderSuccess.vue";
+import { useCart } from "../composables/useCart.js";
+import { RouterLink, useRouter } from "vue-router";
 
-const props = defineProps<{ items: EnrichedCartItem[]; total: number }>();
-const emit = defineEmits<{ backToCatalog: []; changeQuantity: [productId: string, quantity: number]; success: [] }>();
+const cart = useCart();
+const router = useRouter();
 const currentStep = ref<1 | 2 | 3 | 4>(1);
 const checkoutDetails = ref<CheckoutDetails | null>(null);
 const isLoaderPreviewVisible = ref(false);
@@ -42,9 +43,9 @@ function reviewOrder(details: CheckoutDetails): void {
 function showConfirmationPreview(): void {
   order.value = {
     id: 0,
-    total: props.total,
+    total: cart.total.value,
     deliveryLocation: "preview",
-    items: props.items.map((item) => ({
+    items: cart.enrichedItems.value.map((item) => ({
       productName: item.product.name,
       quantity: item.quantity,
       unitLabel: item.product.unitLabel,
@@ -62,7 +63,7 @@ function hideConfirmationPreview(): void {
 }
 
 function changeQuantity(productId: string, quantity: number): void {
-  emit("changeQuantity", productId, quantity);
+  cart.setQuantity(productId, quantity);
 }
 
 function handleSuccess(orderResult: OrderResponse): void {
@@ -70,7 +71,7 @@ function handleSuccess(orderResult: OrderResponse): void {
   currentStep.value = 4;
   isLoaderPreviewVisible.value = false;
   isConfirmationPreviewVisible.value = false;
-  emit("success");
+  cart.clear();
 }
 </script>
 
@@ -120,11 +121,11 @@ function handleSuccess(orderResult: OrderResponse): void {
             </div>
             <img class="relative -top-5 -mb-10 hidden h-[7.5rem] w-auto shrink-0 object-contain opacity-90 lg:block" src="/images/pages/cookids-staked.png" alt="" aria-hidden="true" />
           </div>
-          <p v-if="items.length === 0" class="rounded-xl bg-white p-5 text-[#695149]">Votre panier est encore vide.</p>
+          <p v-if="cart.enrichedItems.value.length === 0" class="rounded-xl bg-white p-5 text-[#695149]">Votre panier est encore vide.</p>
           <template v-else>
-            <CheckoutSummary :items="items" :total="total" editable @change-quantity="changeQuantity" />
+            <CheckoutSummary :items="cart.enrichedItems.value" :total="cart.total.value" editable @change-quantity="changeQuantity" />
             <div class="mt-8 flex flex-wrap gap-3">
-              <AppButton as="a" variant="neutral" href="#catalogue">Continuer mes achats</AppButton>
+              <AppButton :as="RouterLink" :to="{ name: 'home', hash: '#catalogue' }" variant="neutral">Continuer mes achats</AppButton>
               <AppButton @click="showOrderForm">Valider mon panier</AppButton>
             </div>
           </template>
@@ -145,8 +146,8 @@ function handleSuccess(orderResult: OrderResponse): void {
           v-else-if="currentStep === 3 && checkoutDetails"
           key="review"
           :details="checkoutDetails"
-          :items="items"
-          :total="total"
+          :items="cart.enrichedItems.value"
+          :total="cart.total.value"
           :is-loading-preview="isLoaderPreviewVisible"
           @back="goToStep(2)"
           @success="handleSuccess"
@@ -156,7 +157,7 @@ function handleSuccess(orderResult: OrderResponse): void {
           v-else-if="currentStep === 4 && order"
           key="confirmation"
           :order="order"
-          @close="$emit('backToCatalog')"
+          @close="router.push({ name: 'home', hash: '#catalogue' })"
         />
       </Transition>
     </section>

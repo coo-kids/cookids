@@ -20,7 +20,7 @@ describe("handleOrderRequest", () => {
         deliveryComment: " Merci de sonner à l’arrivée ",
         items: [{
           productId: "cookie-cafe-noix",
-          quantity: 2,
+          quantity: 12,
           productName: "Prix falsifié",
           unitPrice: 999,
           total: 999
@@ -31,7 +31,7 @@ describe("handleOrderRequest", () => {
     expect(response.status).toBe(201);
     await expect(response.json()).resolves.toMatchObject({
       order: {
-        total: 2,
+        total: 12,
         status: "new",
         targetDeliveryDate: "2026-10-01T00:00:00.000Z",
         deliveryComment: "Merci de sonner à l’arrivée",

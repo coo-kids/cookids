@@ -9,7 +9,8 @@
   "dependencies": {
     "@cookids/domain": "workspace:*",
     "lucide-vue-next": "^1.0.0",
-    "vue": "^3.5.42"
+    "vue": "^3.5.42",
+    "vue-router": "^5.3.1"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",

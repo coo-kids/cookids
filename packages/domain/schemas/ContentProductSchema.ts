@@ -12,7 +12,7 @@ export const ContentProductSchema = s.object({
   ingredients: s.array(ContentProductIngredientSchema).required(),
   price: s.number().minimum(0.01).multipleOf(0.01).required(),
   image: s.string().maxLength(200).required(),
-  category: s.string().enum("cookies", "other").required(),
+  category: s.string().maxLength(80).required(),
   unitLabel: s.string().maxLength(60).required(),
 });
 

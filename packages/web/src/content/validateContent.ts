@@ -3,14 +3,15 @@ import {
   type ContentCatalog,
   ContentCatalogSchema
 } from "@cookids/domain/schemas/ContentCatalogSchema.js";
+import { assertCatalogCategories } from "@cookids/domain/schemas/assertCatalogCategories.js";
 import { type SiteContent, SiteContentSchema } from "@cookids/domain/schemas/SiteContentSchema.js";
 import {
   type DeliveryLocations,
   DeliveryLocationsSchema
 } from "@cookids/domain/schemas/DeliveryLocationsSchema.js";
 
-export function validateCatalog(content: unknown): Promise<ContentCatalog> {
-  return validate<ContentCatalog>(content, { type: ContentCatalogSchema });
+export async function validateCatalog(content: unknown): Promise<ContentCatalog> {
+  return assertCatalogCategories(await validate<ContentCatalog>(content, { type: ContentCatalogSchema }));
 }
 
 export function validateSiteContent(content: unknown): Promise<SiteContent> {

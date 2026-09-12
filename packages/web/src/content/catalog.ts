@@ -6,3 +6,4 @@ import type { Product } from "@cookids/domain/models/Product.js";
 const contentCatalog: ContentCatalog = await validateCatalog(catalogSource);
 
 export const catalog: Product[] = contentCatalog.products;
+export const categories = contentCatalog.categories;

@@ -3,27 +3,14 @@ import { mount } from "@vue/test-utils";
 import { nextTick } from "vue";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { CheckoutDetails } from "../types/CheckoutDetails.js";
-import type { EnrichedCartItem } from "../types/EnrichedCartItem.js";
 import type { OrderResponse } from "../types/OrderResponse.js";
 import CheckoutPage from "./CheckoutPage.vue";
-import OrderForm from "./OrderForm.vue";
-import OrderReview from "./OrderReview.vue";
+import OrderForm from "../components/OrderForm.vue";
+import OrderReview from "../components/OrderReview.vue";
+import { useCart } from "../composables/useCart.js";
+import { router } from "../router.js";
 
-const items: EnrichedCartItem[] = [{
-  productId: "cookie-cafe-noix",
-  quantity: 2,
-  total: 7,
-  product: {
-    id: "cookie-cafe-noix",
-    name: "Cookie café & noix",
-    description: "Un cookie gourmand.",
-    ingredients: [],
-    price: 3.5,
-    image: "/images/cookie-cafe-noix.jpg",
-    category: "cookies",
-    unitLabel: "pièce"
-  }
-}];
+const cart = useCart();
 
 const details: CheckoutDetails = {
   firstName: "Romain",
@@ -49,9 +36,15 @@ async function openDetails(wrapper: ReturnType<typeof mount>): Promise<void> {
   await nextTick();
 }
 
+function mountCheckoutPage(): ReturnType<typeof mount> {
+  return mount(CheckoutPage, { global: { plugins: [router] } });
+}
+
 describe("CheckoutPage", () => {
   beforeEach(() => {
     vi.stubGlobal("scrollTo", vi.fn());
+    cart.clear();
+    cart.setQuantity("cookie-cafe-noix", 2);
   });
 
   afterEach(() => {
@@ -59,7 +52,7 @@ describe("CheckoutPage", () => {
   });
 
   it("revient en haut à l’ouverture et à chaque changement d’étape", async () => {
-    const wrapper = mount(CheckoutPage, { props: { items, total: 7 } });
+    const wrapper = mountCheckoutPage();
     await nextTick();
     await nextTick();
 
@@ -73,7 +66,7 @@ describe("CheckoutPage", () => {
   });
 
   it("affiche quatre étapes dans le tunnel", () => {
-    const wrapper = mount(CheckoutPage, { props: { items, total: 7 } });
+    const wrapper = mountCheckoutPage();
 
     expect(wrapper.text()).toContain("Panier");
     expect(wrapper.text()).toContain("Coordonnées");
@@ -82,7 +75,7 @@ describe("CheckoutPage", () => {
   });
 
   it("affiche uniquement le formulaire à l’étape coordonnées", async () => {
-    const wrapper = mount(CheckoutPage, { props: { items, total: 7 } });
+    const wrapper = mountCheckoutPage();
     await openDetails(wrapper);
 
     expect(wrapper.get("h1").text()).toBe("Vos coordonnées");
@@ -91,7 +84,7 @@ describe("CheckoutPage", () => {
   });
 
   it("revient au panier depuis l’étape coordonnées", async () => {
-    const wrapper = mount(CheckoutPage, { props: { items, total: 7 } });
+    const wrapper = mountCheckoutPage();
     await openDetails(wrapper);
 
     const backButton = wrapper.findAll("button").find((button) => button.text() === "Revenir au panier");
@@ -104,7 +97,7 @@ describe("CheckoutPage", () => {
   });
 
   it("revient aux coordonnées depuis le récapitulatif", async () => {
-    const wrapper = mount(CheckoutPage, { props: { items, total: 7 } });
+    const wrapper = mountCheckoutPage();
     await openDetails(wrapper);
     wrapper.getComponent(OrderForm).vm.$emit("submit", details);
     await nextTick();
@@ -120,7 +113,7 @@ describe("CheckoutPage", () => {
   });
 
   it("déplace les récapitulatifs à l’étape 3 puis confirme sans les répéter", async () => {
-    const wrapper = mount(CheckoutPage, { props: { items, total: 7 } });
+    const wrapper = mountCheckoutPage();
     await openDetails(wrapper);
 
     wrapper.getComponent(OrderForm).vm.$emit("submit", details);
@@ -135,7 +128,6 @@ describe("CheckoutPage", () => {
 
     wrapper.getComponent(OrderReview).vm.$emit("success", order);
     await nextTick();
-    await wrapper.setProps({ items: [], total: 0 });
 
     expect(wrapper.text()).toContain("Ta commande est bien reçue.");
     expect(wrapper.text()).toContain("CKIDS-00042");

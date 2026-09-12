@@ -5,6 +5,7 @@ import { MailService } from "../mail/MailService.js";
 import { Order } from "../models/Order.js";
 import { OrderRepository } from "../repositories/OrderRepository.js";
 import { OrderValidationError } from "@cookids/domain/errors/OrderValidationError.js";
+import type { ContentCatalog } from "../schemas/ContentCatalogSchema.js";
 
 @Injectable()
 export class OrderService {
@@ -64,16 +65,40 @@ export class OrderService {
   }
 
   protected async resolveProducts(order: Order) {
-    const catalog = await this.catalogProvider.getProducts();
+    const catalog = await this.catalogProvider.getCatalog();
 
     for (const item of order.items) {
-      const product = catalog.find((product) => product.id === item.productId);
+      const product = catalog.products.find((product) => product.id === item.productId);
 
       if (!product) {
         throw new OrderValidationError("Un produit demandé n'existe pas.");
       }
 
       item.setProduct(product);
+    }
+
+    this.checkCategoryQuantityMultiples(order, catalog);
+  }
+
+  protected checkCategoryQuantityMultiples(order: Order, catalog: ContentCatalog) {
+    for (const category of catalog.categories) {
+      if (!category.quantityMultiple) continue;
+
+      const categoryProductIds = new Set(
+        catalog.products
+          .filter((product) => product.category === category.id)
+          .map((product) => product.id),
+      );
+      const quantity = order.items.reduce(
+        (total, item) => total + (categoryProductIds.has(item.productId) ? item.quantity : 0),
+        0,
+      );
+
+      if (quantity > 0 && quantity % category.quantityMultiple !== 0) {
+        throw new OrderValidationError(
+          `La quantité pour la catégorie « ${category.label} » doit être un multiple de ${category.quantityMultiple}.`,
+        );
+      }
     }
   }
 }

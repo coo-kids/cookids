@@ -8,11 +8,11 @@ describe("ordersApi", () => {
       body: JSON.stringify({
         customer: { firstName: "Camille", email: "camille@example.com" },
         deliveryLocation: "IFSSO_kgDOBOB43g",
-        items: [{ productId: "cookie-cafe-noix", quantity: 2 }]
+        items: [{ productId: "cookie-cafe-noix", quantity: 12 }]
       })
     }));
 
     expect(response.status).toBe(201);
-    await expect(response.json()).resolves.toMatchObject({ order: { total: 2 } });
+    await expect(response.json()).resolves.toMatchObject({ order: { total: 12 } });
   });
 });

@@ -1,5 +1,5 @@
-import type { Product } from "../models/Product.js";
+import type { ContentCatalog } from "../schemas/ContentCatalogSchema.js";
 
 export abstract class CatalogProvider {
-  abstract getProducts(): Promise<Product[]>;
+  abstract getCatalog(): Promise<ContentCatalog>;
 }

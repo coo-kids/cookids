@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import type { Component } from "vue";
+
 withDefaults(defineProps<{
   variant?: "primary" | "neutral" | "dark";
   size?: "default" | "icon" | "small";
   type?: "button" | "submit" | "reset";
-  as?: "button" | "a";
+  as?: "button" | "a" | Component;
 }>(), {
   variant: "primary",
   size: "default",

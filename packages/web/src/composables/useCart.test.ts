@@ -39,4 +39,14 @@ describe("useCart", () => {
     expect(cart.enrichedItems.value).toEqual([]);
   });
 
+  it("partage le même état entre les utilisations du composable", () => {
+    const product = catalog[0];
+    const anotherCart = useCart();
+
+    cart.setQuantity(product.id, 3);
+
+    expect(anotherCart.count.value).toBe(3);
+    expect(anotherCart.quantityFor(product.id)).toBe(3);
+  });
+
 });
