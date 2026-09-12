@@ -75,6 +75,21 @@ describe("CheckoutPage", () => {
     expect(wrapper.text()).toContain("Confirmation");
   });
 
+  it("étend les boutons du panier en colonne sur mobile et sur une ligne dès sm", () => {
+    const wrapper = mountCheckoutPage();
+    const continueLink = wrapper.findAll("a").find((link) => link.text() === "Continuer mes achats")!;
+    const validateButton = wrapper.findAll("button").find((button) => button.text() === "Valider mon panier")!;
+    expect(continueLink.attributes("href")).toBe("/#catalogue");
+    expect(continueLink.classes()).toContain("flex-1");
+    expect(validateButton.classes()).toContain("flex-1");
+    expect(continueLink.element.parentElement).toBe(validateButton.element.parentElement);
+    const classes = validateButton.element.parentElement!.classList;
+    expect(classes.contains("w-full")).toBe(true);
+    expect(classes.contains("flex-col")).toBe(true);
+    expect(classes.contains("sm:flex-row")).toBe(true);
+    wrapper.unmount();
+  });
+
   it("affiche uniquement le formulaire à l’étape coordonnées", async () => {
     const wrapper = mountCheckoutPage();
     await openDetails(wrapper);
