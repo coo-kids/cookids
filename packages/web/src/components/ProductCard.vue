@@ -11,11 +11,17 @@ defineEmits<{ changeQuantity: [quantity: number] }>();
   <article
     class="overflow-hidden rounded-[1.25rem] bg-white shadow-[0_8px_30px_rgba(76,44,25,.08)]"
   >
-    <img
-      class="block h-[250px] w-full object-cover max-md:h-[290px]"
-      :src="product.image"
-      :alt="product.name"
-    />
+    <div class="relative overflow-hidden">
+      <img
+        class="block h-[250px] w-full object-cover max-md:h-[290px]"
+        :src="product.image"
+        :alt="product.name"
+      />
+      <span
+        v-if="product.is_limited_edition === true"
+        class="pointer-events-none absolute right-[-3.5rem] top-10 w-60 rotate-45 bg-[#facc15] py-2 text-center font-sans text-sm font-bold text-cookids-ink shadow-md"
+      >Édition limitée</span>
+    </div>
 
     <div class="p-[1.2rem]">
       <div class="flex items-start justify-between gap-3">

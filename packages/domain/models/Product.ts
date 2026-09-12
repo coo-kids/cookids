@@ -12,6 +12,9 @@ export class ProductIngredient {
 
 export class Product {
   @Property()
+  is_limited_edition?: boolean;
+
+  @Property()
   @Required()
   id!: string;
 
