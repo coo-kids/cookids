@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { ChevronDown } from "lucide-vue-next";
 import type { CheckoutDetails } from "../types/CheckoutDetails.js";
 import { locations } from "../content/locations.js";
 import AppButton from "./AppButton.vue";
@@ -52,7 +53,15 @@ function submitDetails(): void {
 
     <section class="mt-10 border-t border-[#eadace] pt-8" aria-labelledby="delivery-details-title">
       <h2 id="delivery-details-title" class="text-[1.7rem]">Livraison</h2>
-      <label class="my-4 block font-sans text-[.92rem] font-bold">Lieu de livraison<select class="mt-[.4rem] block w-full rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 font-serif font-normal" v-model="deliveryLocation" @change="targetDeliveryDate = ''" required><option value="" disabled>Choisir un lieu</option><option v-for="location in locations" :key="location.id" :value="location.id">{{ location.label }}</option></select></label>
+      <label class="my-4 block font-sans text-[.92rem] font-bold">Lieu de livraison
+        <span class="relative mt-[.4rem] block">
+          <select class="block w-full appearance-none rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 pr-11 font-serif font-normal text-[#3f332d]" v-model="deliveryLocation" @change="targetDeliveryDate = ''" required>
+            <option value="" disabled>Choisir un lieu</option>
+            <option v-for="location in locations" :key="location.id" :value="location.id">{{ location.label }}</option>
+          </select>
+          <ChevronDown class="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#80685d]" :stroke-width="1.8" aria-hidden="true" />
+        </span>
+      </label>
       <label class="my-4 block font-sans text-[.92rem] font-bold">Date de livraison souhaitée
         <span v-if="hasFixedDeliveryDates" class="relative mt-[.4rem] block">
           <select class="block w-full appearance-none rounded-[.55rem] border border-[#d9c6b8] bg-white p-3 pr-11 font-serif font-normal text-[#3f332d]" v-model="targetDeliveryDate" required>
