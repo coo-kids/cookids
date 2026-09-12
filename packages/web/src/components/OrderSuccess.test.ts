@@ -15,7 +15,7 @@ describe("OrderSuccess", () => {
   it("confirme la commande sans répéter son récapitulatif", () => {
     const wrapper = mount(OrderSuccess, { props: { order } });
 
-    expect(wrapper.text()).toContain("Ta commande est bien reçue.");
+    expect(wrapper.text()).toContain("Votre commande est bien reçue.");
     expect(wrapper.text()).toContain("Votre numéro de commande : CKIDS-00042");
     expect(wrapper.text()).toContain("informations sur l’état d’avancement de votre commande");
     expect(wrapper.find("table").exists()).toBe(false);
