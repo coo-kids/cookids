@@ -44,7 +44,7 @@ describe("CheckoutPage", () => {
   beforeEach(() => {
     vi.stubGlobal("scrollTo", vi.fn());
     cart.clear();
-    cart.setQuantity("cookie-cafe-noix", 2);
+    cart.setQuantity("cookie-cafe-noix", 12);
   });
 
   afterEach(() => {

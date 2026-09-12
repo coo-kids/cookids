@@ -1,11 +1,30 @@
 <script setup lang="ts">
 import { catalog, categories } from "../content/catalog.js";
+import type { CategoryComposition } from "../composables/useCart.js";
 import AppButton from "./AppButton.vue";
+import CategoryCompositionStatus from "./CategoryCompositionStatus.vue";
 import ProductCard from "./ProductCard.vue";
-import { RouterLink } from "vue-router";
 
-defineProps<{ quantities: Record<string, number> }>();
-defineEmits<{ changeQuantity: [productId: string, quantity: number] }>();
+const props = withDefaults(defineProps<{
+  quantities: Record<string, number>;
+  categoryCompositions?: CategoryComposition[];
+  isCompositionValid?: boolean;
+  showCompositionErrors?: boolean;
+}>(), {
+  categoryCompositions: () => [],
+  isCompositionValid: true,
+  showCompositionErrors: false,
+});
+defineEmits<{
+  changeQuantity: [productId: string, quantity: number];
+  goToCheckout: [];
+}>();
+
+function hasInvalidComposition(categoryId: string): boolean {
+  return props.showCompositionErrors && props.categoryCompositions.some(
+    (composition) => composition.categoryId === categoryId && !composition.isValid,
+  );
+}
 </script>
 
 <template>
@@ -16,10 +35,24 @@ defineEmits<{ changeQuantity: [productId: string, quantity: number] }>();
         <h2 id="catalogue-title" class="my-2 text-[clamp(2.1rem,5vw,3.8rem)] leading-none tracking-[-.055em] md:whitespace-nowrap">Les gourmandises du moment</h2>
         <p class="max-w-[580px] leading-[1.5]">Les cookies pèsent entre 40 et 42 g crus. Ils sont vendus à l'unité.</p>
       </div>
-      <div v-for="category in categories" :key="category.id" class="mt-10 first:mt-0">
+      <div
+        v-for="category in categories"
+        :id="`category-${category.id}`"
+        :key="category.id"
+        class="mt-10 first:mt-0"
+      >
         <div class="mb-5">
-          <h3 class="m-0 text-2xl tracking-[-.035em]">{{ category.label }}</h3>
+          <div class="flex items-center justify-between gap-4">
+            <h3 class="m-0 text-2xl tracking-[-.035em]">{{ category.label }}</h3>
+            <CategoryCompositionStatus
+              compact
+              :compositions="categoryCompositions.filter((composition) => composition.categoryId === category.id)"
+            />
+          </div>
           <p v-if="category.quantityMultiple" class="mt-1 text-[#695149]">Composez votre sélection par multiple de {{ category.quantityMultiple }}.</p>
+          <p v-if="hasInvalidComposition(category.id)" class="mt-2 font-sans text-sm font-bold text-[#b3261e]" role="alert">
+            Complétez cette sélection pour atteindre {{ categoryCompositions.find((composition) => composition.categoryId === category.id)?.requiredQuantity }} éléments.
+          </p>
         </div>
         <div class="grid grid-cols-1 gap-[1.35rem] md:grid-cols-2 xl:grid-cols-3">
           <ProductCard
@@ -32,7 +65,7 @@ defineEmits<{ changeQuantity: [productId: string, quantity: number] }>();
         </div>
       </div>
       <div class="mt-10 flex justify-center">
-        <AppButton :as="RouterLink" :to="{ name: 'checkout' }">Commander</AppButton>
+        <AppButton @click="$emit('goToCheckout')">Commander</AppButton>
       </div>
     </div>
   </section>

@@ -1,9 +1,17 @@
 import { computed, ref } from "vue";
-import { catalog } from "../content/catalog.js";
+import { catalog, categories } from "../content/catalog.js";
 import type { CartItem } from "@cookids/domain/models/CartItem";
 
 const items = ref<CartItem[]>([]);
 const isCartOpen = ref(false);
+
+export type CategoryComposition = {
+  categoryId: string;
+  categoryLabel: string;
+  quantity: number;
+  requiredQuantity: number;
+  isValid: boolean;
+};
 
 export function useCart() {
   const count = computed(() =>
@@ -19,6 +27,31 @@ export function useCart() {
   );
   const total = computed(() =>
     enrichedItems.value.reduce((amount, item) => amount + item.total, 0),
+  );
+  const categoryCompositions = computed<CategoryComposition[]>(() =>
+    categories.flatMap((category) => {
+      if (!category.quantityMultiple) return [];
+
+      const quantity = enrichedItems.value.reduce(
+        (total, item) => total + (item.product.category === category.id ? item.quantity : 0),
+        0,
+      );
+      const requiredQuantity = Math.max(
+        category.quantityMultiple,
+        Math.ceil(quantity / category.quantityMultiple) * category.quantityMultiple,
+      );
+
+      return [{
+        categoryId: category.id,
+        categoryLabel: category.label,
+        quantity,
+        requiredQuantity,
+        isValid: quantity % category.quantityMultiple === 0,
+      }];
+    }),
+  );
+  const isCompositionValid = computed(() =>
+    categoryCompositions.value.every((composition) => composition.isValid),
   );
 
   function setQuantity(productId: string, quantity: number): void {
@@ -51,6 +84,8 @@ export function useCart() {
     count,
     enrichedItems,
     total,
+    categoryCompositions,
+    isCompositionValid,
     isCartOpen,
     setQuantity,
     quantityFor,

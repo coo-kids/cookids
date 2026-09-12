@@ -32,6 +32,7 @@ function goToStep(step: 1 | 2 | 3): void {
 }
 
 function showOrderForm(): void {
+  if (!cart.isCompositionValid.value) return;
   currentStep.value = 2;
 }
 
@@ -123,10 +124,16 @@ function handleSuccess(orderResult: OrderResponse): void {
           </div>
           <p v-if="cart.enrichedItems.value.length === 0" class="rounded-xl bg-white p-5 text-[#695149]">Votre panier est encore vide.</p>
           <template v-else>
-            <CheckoutSummary :items="cart.enrichedItems.value" :total="cart.total.value" editable @change-quantity="changeQuantity" />
+            <CheckoutSummary
+              :items="cart.enrichedItems.value"
+              :total="cart.total.value"
+              :category-compositions="cart.categoryCompositions.value"
+              editable
+              @change-quantity="changeQuantity"
+            />
             <div class="mt-8 flex flex-wrap gap-3">
               <AppButton :as="RouterLink" :to="{ name: 'home', hash: '#catalogue' }" variant="neutral">Continuer mes achats</AppButton>
-              <AppButton @click="showOrderForm">Valider mon panier</AppButton>
+              <AppButton :disabled="!cart.isCompositionValid.value" @click="showOrderForm">Valider mon panier</AppButton>
             </div>
           </template>
         </div>
@@ -148,6 +155,8 @@ function handleSuccess(orderResult: OrderResponse): void {
           :details="checkoutDetails"
           :items="cart.enrichedItems.value"
           :total="cart.total.value"
+          :category-compositions="cart.categoryCompositions.value"
+          :is-composition-valid="cart.isCompositionValid.value"
           :is-loading-preview="isLoaderPreviewVisible"
           @back="goToStep(2)"
           @success="handleSuccess"

@@ -6,13 +6,19 @@ import type { EnrichedCartItem } from "../types/EnrichedCartItem.js";
 import type { OrderResponse } from "../types/OrderResponse.js";
 import AppButton from "./AppButton.vue";
 import CheckoutSummary from "./CheckoutSummary.vue";
+import type { CategoryComposition } from "../composables/useCart.js";
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   details: CheckoutDetails;
   items: EnrichedCartItem[];
   total: number;
+  categoryCompositions?: CategoryComposition[];
+  isCompositionValid?: boolean;
   isLoadingPreview?: boolean;
-}>();
+}>(), {
+  categoryCompositions: () => [],
+  isCompositionValid: true,
+});
 const emit = defineEmits<{ back: []; success: [order: OrderResponse] }>();
 
 const errorMessage = ref("");
@@ -28,7 +34,7 @@ function formatDeliveryDate(date: string | undefined): string {
 }
 
 async function submitOrder(): Promise<void> {
-  if (isLoading.value || props.items.length === 0) return;
+  if (isLoading.value || props.items.length === 0 || !props.isCompositionValid) return;
   isSubmitting.value = true;
   errorMessage.value = "";
 
@@ -74,7 +80,7 @@ async function submitOrder(): Promise<void> {
 
     <section aria-labelledby="order-summary-title">
       <h2 id="order-summary-title" class="text-[1.7rem]">Votre commande</h2>
-      <CheckoutSummary :items="items" :total="total" />
+      <CheckoutSummary :items="items" :total="total" :category-compositions="categoryCompositions" />
     </section>
 
     <section class="mt-10" aria-labelledby="customer-summary-title">
@@ -99,7 +105,7 @@ async function submitOrder(): Promise<void> {
     <p v-if="errorMessage" class="font-sans text-[.9rem] font-bold text-[#b3261e]" role="alert">{{ errorMessage }}</p>
     <div class="mt-8 flex flex-col gap-3 sm:flex-row">
       <AppButton class="flex-1" variant="neutral" :disabled="isLoading" @click="emit('back')">Revenir aux coordonnées</AppButton>
-      <AppButton class="flex-1 disabled:cursor-wait" :disabled="isLoading || items.length === 0" @click="submitOrder">
+      <AppButton class="flex-1 disabled:cursor-wait" :disabled="isLoading || items.length === 0 || !isCompositionValid" @click="submitOrder">
         {{ isLoading ? "Envoi en cours…" : "Valider la commande" }}
       </AppButton>
     </div>

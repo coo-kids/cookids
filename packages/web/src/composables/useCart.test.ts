@@ -39,6 +39,30 @@ describe("useCart", () => {
     expect(cart.enrichedItems.value).toEqual([]);
   });
 
+  it("calcule la progression et la validité de chaque catégorie contrainte", () => {
+    const product = catalog[0];
+
+    cart.setQuantity(product.id, 13);
+
+    expect(cart.categoryCompositions.value).toContainEqual({
+      categoryId: "cookies",
+      categoryLabel: "Cookies",
+      quantity: 13,
+      requiredQuantity: 24,
+      isValid: false,
+    });
+    expect(cart.isCompositionValid.value).toBe(false);
+
+    cart.setQuantity(product.id, 12);
+
+    expect(cart.categoryCompositions.value[0]).toMatchObject({
+      quantity: 12,
+      requiredQuantity: 12,
+      isValid: true,
+    });
+    expect(cart.isCompositionValid.value).toBe(true);
+  });
+
   it("partage le même état entre les utilisations du composable", () => {
     const product = catalog[0];
     const anotherCart = useCart();
