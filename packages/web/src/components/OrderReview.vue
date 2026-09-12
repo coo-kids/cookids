@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { locations } from "../content/locations.js";
 import type { CheckoutDetails } from "../types/CheckoutDetails.js";
 import type { EnrichedCartItem } from "../types/EnrichedCartItem.js";
@@ -24,6 +24,9 @@ const emit = defineEmits<{ back: []; success: [order: OrderResponse] }>();
 const errorMessage = ref("");
 const isSubmitting = ref(false);
 const isLoading = computed(() => isSubmitting.value || props.isLoadingPreview === true);
+watch(isLoading, (loading) => {
+  if (loading) window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+}, { immediate: true, flush: "sync" });
 const deliveryLocationLabel = computed(
   () => locations.find((location) => location.id === props.details.deliveryLocation)?.label ?? props.details.deliveryLocation
 );
@@ -110,6 +113,7 @@ async function submitOrder(): Promise<void> {
       </AppButton>
     </div>
 
+    <Teleport to="body">
     <Transition
       enter-active-class="transition duration-200 ease-out"
       enter-from-class="opacity-0"
@@ -118,13 +122,14 @@ async function submitOrder(): Promise<void> {
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
-      <div v-if="isLoading" class="absolute inset-0 z-10 flex min-h-full items-center justify-center rounded-xl bg-[#fffaf4]/92 px-6 text-center backdrop-blur-sm" role="status" aria-live="polite">
+      <div v-if="isLoading" class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-[#fffaf4]/92 px-6 py-8 text-center backdrop-blur-sm" role="status" aria-live="polite">
         <div class="flex max-w-xs flex-col items-center gap-4">
-          <img class="h-56 w-auto animate-[bounce_3s_ease-in-out_infinite] object-contain" src="/images/pages/cookids-cook.png" alt="" aria-hidden="true" />
+          <img class="h-56 max-h-[35dvh] w-auto motion-safe:animate-[bounce_3s_ease-in-out_infinite] object-contain" src="/images/pages/cookids-cook.png" alt="" aria-hidden="true" />
           <p class="font-sans text-base font-bold text-cookids-ink">Nous enregistrons votre commande</p>
           <span class="size-10 animate-spin rounded-full border-4 border-cookids-coral/25 border-t-cookids-coral" aria-hidden="true" />
         </div>
       </div>
     </Transition>
+    </Teleport>
   </section>
 </template>
