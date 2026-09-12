@@ -145,7 +145,7 @@ describe("CheckoutPage", () => {
     wrapper.getComponent(OrderReview).vm.$emit("success", order);
     await nextTick();
 
-    expect(wrapper.text()).toContain("Ta commande est bien reçue.");
+    expect(wrapper.text()).toContain("Votre commande est bien reçue.");
     expect(wrapper.text()).toContain("CKIDS-00042");
     expect(wrapper.find("table").exists()).toBe(false);
   });
