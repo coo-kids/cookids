@@ -164,6 +164,35 @@ products:
     category: cookies
     unitLabel: 1 unité
 
+  - id: cookie-choco-coco
+    name: Cookie chocolat, coco & pécan
+    description: Chocolat, noix de coco et pécan
+    ingredients:
+      - label: Farine bio
+        is_allergen: true
+      - label: Beurre demi-sel
+        is_allergen: false
+      - label: Cassonnade
+        is_allergen: false
+      - label: Chocolat noir
+        is_allergen: false
+      - label: noix de coco râpée
+        is_allergen: true
+      - label: Œuf
+        is_allergen: true
+      - label: Sucre en poudre
+        is_allergen: false
+      - label: Noix de pécan
+        is_allergen: true
+      - label: Cacao en poudre non sucré
+        is_allergen: false
+      - label: Levure chimique
+        is_allergen: false
+    price: 1.00
+    image: /images/products/cookie-choco-coco-pecan.jpg
+    category: cookies
+    unitLabel: 1 unité
+
   - id: financiers-amandes
     name: Financiers aux amandes
     description: Moelleux aux amandes et à la vanille, vendus par 10.
