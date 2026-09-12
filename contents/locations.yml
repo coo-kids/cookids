@@ -25,6 +25,3 @@ locations:
   - id: IFSSO_kgDOBOB44A
     label: Montreuil - Croix de Chavaux
     fixedDeliveryDates: []
-  - id: IFSSO_kgDOBOM2Mw
-    label: Montparnasse
-    fixedDeliveryDates: []
