@@ -18,6 +18,9 @@ describe("OrderForm", () => {
     await wrapper.get('input[type="date"]').setValue("2026-10-01");
     await select.setValue("IFSSO_kgDOBOB43w");
     expect((wrapper.get('input[type="date"]').element as HTMLInputElement).value).toBe("");
+    wrapper.unmount();
+  });
+
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date(2026, 8, 19, 12));
