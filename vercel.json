@@ -11,6 +11,9 @@
     }
   ],
   "functions": {
+    "api/guestbook.ts": {
+      "includeFiles": "contents/*.yml"
+    },
     "api/orders.ts": {
       "includeFiles": "contents/*.yml"
     }

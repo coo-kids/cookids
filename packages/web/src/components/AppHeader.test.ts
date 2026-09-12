@@ -15,6 +15,22 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe("AppHeader", () => {
+  it("affiche livre et tirelire sans fond rond et conserve celui du panier", () => {
+    const wrapper = mount(AppHeader, { global: { plugins: [router] } });
+    for (const label of ["Voir le livre d’or", "Voir la cagnotte"]) {
+      const classes = wrapper.get(`a[aria-label="${label}"]`).classes();
+      expect(classes).not.toContain("rounded-full");
+      expect(classes.some((name) => name.startsWith("bg-") || name.startsWith("hover:bg-"))).toBe(false);
+      expect(classes).toContain("size-11");
+    }
+    expect(wrapper.get('a[aria-label="Voir le panier"]').classes()).toContain("bg-[#f4e8dc]");
+  });
+  it("ouvre le livre d’or depuis l’icône livre", () => {
+    const wrapper = mount(AppHeader, { global: { plugins: [router] } });
+    const link = wrapper.get('a[aria-label="Voir le livre d’or"]');
+    expect(link.attributes("href")).toBe("/livre-d-or");
+    expect(link.get("svg").classes()).toContain("lucide-book-open");
+  });
   it("affiche le lien cagnotte avec une tirelire immédiatement avant le panier", () => {
     const wrapper = mount(AppHeader, { global: { plugins: [router] } });
     const cagnotteLink = wrapper.get('a[aria-label="Voir la cagnotte"]');
