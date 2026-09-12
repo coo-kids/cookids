@@ -117,7 +117,7 @@ function handleSuccess(orderResult: OrderResponse): void {
         <div v-if="currentStep === 1" key="cart">
           <div class="mb-8 flex items-center justify-between gap-6">
             <div>
-              <p class="font-sans text-sm font-bold uppercase tracking-[.12em] text-cookids-coral">Votre sélection</p>
+              <p class="font-sans text-sm font-bold uppercase tracking-[.12em] text-cookids-coral">Étape 1 sur 4</p>
               <h1 class="m-0 text-4xl leading-tight sm:text-5xl">{{ siteContent.orderTitle }}</h1>
             </div>
             <img class="relative -top-5 -mb-10 hidden h-[7.5rem] w-auto shrink-0 object-contain opacity-90 lg:block" src="/images/pages/cookids-staked.png" alt="" aria-hidden="true" />
