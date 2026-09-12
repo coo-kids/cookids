@@ -30,12 +30,12 @@ const cart = useCart();
         >
           <SocialIcon :icon="socialLink.icon" class="size-[21px]" />
         </a>
-        <AppButton :as="RouterLink" :to="{ name: 'guestbook' }" variant="neutral" size="icon" aria-label="Voir le livre d’or" title="Voir le livre d’or">
+        <RouterLink :to="{ name: 'guestbook' }" class="inline-flex size-11 items-center justify-center text-cookids-ink transition-colors hover:text-cookids-coral focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cookids-coral focus-visible:ring-offset-2" aria-label="Voir le livre d’or" title="Voir le livre d’or">
           <BookOpen :size="21" :stroke-width="2" aria-hidden="true" />
-        </AppButton>
-        <AppButton :as="RouterLink" :to="{ name: 'cagnotte' }" variant="neutral" size="icon" aria-label="Voir la cagnotte" title="Voir la cagnotte">
+        </RouterLink>
+        <RouterLink :to="{ name: 'cagnotte' }" class="inline-flex size-11 items-center justify-center text-cookids-ink transition-colors hover:text-cookids-coral focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cookids-coral focus-visible:ring-offset-2" aria-label="Voir la cagnotte" title="Voir la cagnotte">
           <PiggyBank :size="21" :stroke-width="2" aria-hidden="true" />
-        </AppButton>
+        </RouterLink>
         <div class="relative">
           <AppButton :as="RouterLink" :to="{ name: 'checkout' }" variant="neutral" size="icon" aria-label="Voir le panier">
             <ShoppingBag :size="21" :stroke-width="2" aria-hidden="true" />
