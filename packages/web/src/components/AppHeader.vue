@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ShoppingBag } from "lucide-vue-next";
 import AppButton from "./AppButton.vue";
+import SocialIcon from "./SocialIcon.vue";
 import { useScrollState } from "../composables/useScrollState.js";
+import { siteContent } from "../content/site.js";
 
 defineProps<{ cartCount: number }>();
 const { isScrolled } = useScrollState();
@@ -13,11 +15,25 @@ const { isScrolled } = useScrollState();
       <a href="#catalogue" aria-label="Cookids, voir le catalogue">
         <img class="h-auto w-32" src="/logo-optimized.webp" alt="Cookids">
       </a>
-      <div class="relative">
-        <AppButton as="a" href="#commande" variant="neutral" size="icon" aria-label="Voir le panier">
-          <ShoppingBag :size="21" :stroke-width="2" aria-hidden="true" />
-        </AppButton>
-        <span v-if="cartCount > 0" class="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-cookids-coral font-sans text-xs font-bold text-white" aria-hidden="true">{{ cartCount }}</span>
+      <div class="flex items-center gap-1">
+        <a
+          v-for="socialLink in siteContent.socialLinks"
+          :key="socialLink.href"
+          :href="socialLink.href"
+          :title="socialLink.title"
+          :aria-label="socialLink.title"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex size-11 items-center justify-center rounded-full text-cookids-ink transition-colors hover:bg-[#f4e8dc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cookids-coral focus-visible:ring-offset-2"
+        >
+          <SocialIcon :icon="socialLink.icon" class="size-[21px]" />
+        </a>
+        <div class="relative">
+          <AppButton as="a" href="#commande" variant="neutral" size="icon" aria-label="Voir le panier">
+            <ShoppingBag :size="21" :stroke-width="2" aria-hidden="true" />
+          </AppButton>
+          <span v-if="cartCount > 0" class="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-cookids-coral font-sans text-xs font-bold text-white" aria-hidden="true">{{ cartCount }}</span>
+        </div>
       </div>
     </div>
   </header>

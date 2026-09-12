@@ -12,4 +12,14 @@ describe("AppHeader", () => {
     expect(wrapper.find("#cart-drawer").exists()).toBe(false);
     expect(wrapper.text()).toContain("2");
   });
+
+  it("dimensionne les icônes sociales comme celle du panier", () => {
+    const wrapper = mount(AppHeader, { props: { cartCount: 0 } });
+    const socialIcons = wrapper.findAll('a[aria-label^="Contacter Cookids"], a[aria-label^="Suivre Cookids"]');
+
+    expect(socialIcons).toHaveLength(2);
+    for (const socialIcon of socialIcons) {
+      expect(socialIcon.get("svg").classes()).toContain("size-[21px]");
+    }
+  });
 });
