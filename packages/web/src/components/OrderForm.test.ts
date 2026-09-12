@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { mount } from "@vue/test-utils";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import OrderForm from "./OrderForm.vue";
 
 describe("OrderForm", () => {
@@ -18,6 +18,53 @@ describe("OrderForm", () => {
     await wrapper.get('input[type="date"]').setValue("2026-10-01");
     await select.setValue("IFSSO_kgDOBOB43w");
     expect((wrapper.get('input[type="date"]').element as HTMLInputElement).value).toBe("");
+    wrapper.unmount();
+  });
+
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date(2026, 8, 19, 12));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("limite le calendrier à demain et invalide une date passée", async () => {
+    const wrapper = mount(OrderForm);
+    const input = wrapper.get('input[type="date"]');
+    expect(input.attributes("min")).toBe("2026-09-20");
+    await input.setValue("2026-09-19");
+    expect((input.element as HTMLInputElement).value).toBe("");
+    await input.setValue("2026-09-20");
+    expect((input.element as HTMLInputElement).value).toBe("2026-09-20");
+    wrapper.unmount();
+  });
+
+  it("calcule demain au changement d’année en heure locale", () => {
+    vi.setSystemTime(new Date(2026, 11, 31, 23, 30));
+    const wrapper = mount(OrderForm);
+    expect(wrapper.get('input[type="date"]').attributes("min")).toBe("2027-01-01");
+    wrapper.unmount();
+  });
+
+  it("retire les dates d’aujourd’hui et passées de la liste", async () => {
+    const wrapper = mount(OrderForm);
+    await wrapper.get("select").setValue("IFSSO_kgDOBOB43A");
+    const dateSelect = wrapper.findAll("select")[1]!;
+    expect(dateSelect.findAll("option").map((option) => option.attributes("value"))).toEqual(["", "2026-09-26"]);
+    wrapper.unmount();
+  });
+
+  it("ne propose pas un calendrier libre quand les dates fixes sont épuisées", async () => {
+    vi.setSystemTime(new Date(2026, 8, 27, 12));
+    const wrapper = mount(OrderForm);
+    await wrapper.get("select").setValue("IFSSO_kgDOBOB43A");
+    expect(wrapper.findAll("select")[1]!.attributes("disabled")).toBeDefined();
+    expect(wrapper.find('input[type="date"]').exists()).toBe(false);
+    expect(wrapper.text()).toContain("Aucune date de livraison disponible");
+    await wrapper.get("form").trigger("submit");
+    expect(wrapper.emitted("submit")).toBeUndefined();
     wrapper.unmount();
   });
 
