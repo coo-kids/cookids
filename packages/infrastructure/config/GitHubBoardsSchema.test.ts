@@ -83,6 +83,10 @@ describe("GitHubBoardsSchema", () => {
           },
           "statuses": {
             "properties": {
+              "completed": {
+                "minLength": 1,
+                "type": "string",
+              },
               "pending": {
                 "minLength": 1,
                 "type": "string",
@@ -90,6 +94,7 @@ describe("GitHubBoardsSchema", () => {
             },
             "required": [
               "pending",
+              "completed",
             ],
             "type": "object",
           },
