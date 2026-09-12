@@ -18,4 +18,4 @@ Une commande terminée sans `totalCookies`, avec une valeur négative ou non ent
 
 Si le total change, un commit sur main déclenche le déploiement. Sinon aucun commit n'est créé. Relancer l'Action remplace le total : il n'est jamais incrémenté à partir de l'ancien compteur.
 
-Le workflow n'est pas lancé automatiquement et ne crée pas de bouton sur la page principale.
+Le workflow n'est pas lancé automatiquement. Le header propose un lien vers la cagnotte avec une icône tirelire, immédiatement à gauche du panier.

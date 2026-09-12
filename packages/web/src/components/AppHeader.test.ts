@@ -15,6 +15,15 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe("AppHeader", () => {
+  it("affiche le lien cagnotte avec une tirelire immédiatement avant le panier", () => {
+    const wrapper = mount(AppHeader, { global: { plugins: [router] } });
+    const cagnotteLink = wrapper.get('a[aria-label="Voir la cagnotte"]');
+    expect(cagnotteLink.attributes("href")).toBe("/cagnotte");
+    expect(cagnotteLink.get("svg").classes()).toContain("lucide-piggy-bank");
+    expect(cagnotteLink.get("svg").attributes("aria-hidden")).toBe("true");
+    expect(cagnotteLink.element.nextElementSibling).toBe(wrapper.get('a[aria-label="Voir le panier"]').element.parentElement);
+  });
+
   it("ouvre directement le tunnel depuis le bouton panier", () => {
     cart.setQuantity("cookie-cafe-noix", 2);
     const wrapper = mount(AppHeader, { global: { plugins: [router] } });
