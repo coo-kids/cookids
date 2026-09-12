@@ -131,9 +131,9 @@ function handleSuccess(orderResult: OrderResponse): void {
               editable
               @change-quantity="changeQuantity"
             />
-            <div class="mt-8 flex flex-wrap gap-3">
-              <AppButton :as="RouterLink" :to="{ name: 'home', hash: '#catalogue' }" variant="neutral">Continuer mes achats</AppButton>
-              <AppButton :disabled="!cart.isCompositionValid.value" @click="showOrderForm">Valider mon panier</AppButton>
+            <div class="mt-8 flex w-full flex-col gap-3 sm:flex-row">
+              <AppButton class="flex-1" :as="RouterLink" :to="{ name: 'home', hash: '#catalogue' }" variant="neutral">Continuer mes achats</AppButton>
+              <AppButton class="flex-1" :disabled="!cart.isCompositionValid.value" @click="showOrderForm">Valider mon panier</AppButton>
             </div>
           </template>
         </div>
