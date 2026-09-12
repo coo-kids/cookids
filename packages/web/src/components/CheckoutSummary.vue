@@ -29,15 +29,20 @@ function categoryComposition(categoryId: string): CategoryComposition | undefine
 </script>
 
 <template>
-  <div class="overflow-hidden rounded-2xl border border-[#eadace] bg-white">
-    <table class="w-full border-collapse text-left">
+  <div class="min-w-0 max-w-full overflow-hidden rounded-2xl border border-[#eadace] bg-white">
+    <table class="w-full table-fixed border-collapse text-left sm:table-auto">
+      <colgroup>
+        <col />
+        <col class="w-16 sm:w-auto" />
+        <col class="w-24 sm:w-auto" />
+      </colgroup>
       <thead
         class="bg-[#fff5ec] font-sans text-xs font-bold uppercase tracking-[.08em] text-[#805b4c]"
       >
         <tr>
-          <th class="px-4 py-3">Article</th>
-          <th class="px-4 py-3 text-center">Qté</th>
-          <th class="px-4 py-3 text-right">Total</th>
+          <th class="px-2 py-3 sm:px-4">Article</th>
+          <th class="px-2 py-3 text-center sm:px-4">Qté</th>
+          <th class="px-2 py-3 text-right sm:px-4">Total</th>
         </tr>
       </thead>
       <tbody>
@@ -62,14 +67,14 @@ function categoryComposition(categoryId: string): CategoryComposition | undefine
             :key="item.productId"
             class="border-t border-[#f0dfd1]"
           >
-            <td class="px-4 py-3">
+            <td class="break-words px-2 py-3 sm:px-4">
               <div class="flex items-center gap-3">
                 <img
                   :src="item.product.image"
                   :alt="item.product.name"
-                  class="size-12 shrink-0 rounded-lg object-cover"
+                  class="hidden size-12 shrink-0 rounded-lg object-cover sm:block"
                 />
-                <div>
+                <div class="min-w-0">
                   <span class="block font-bold">{{ item.product.name }}</span>
                   <span class="text-sm text-[#80685d]"
                     >{{ formatEuro(item.product.price) }} {{ item.product.unitLabel }}</span
@@ -77,15 +82,16 @@ function categoryComposition(categoryId: string): CategoryComposition | undefine
                 </div>
               </div>
             </td>
-            <td class="px-4 py-3 text-center">
+            <td class="px-2 py-3 text-center sm:px-4">
               <QuantitySelector
                 v-if="editable"
+                class="flex-col sm:flex-row"
                 :quantity="item.quantity"
                 @change="$emit('changeQuantity', item.productId, $event)"
               />
               <template v-else>{{ item.quantity }}</template>
             </td>
-            <td class="px-4 py-3 text-right font-bold">
+            <td class="whitespace-nowrap px-2 py-3 text-right text-sm font-bold sm:px-4 sm:text-base">
               {{ formatEuro(item.total) }}
             </td>
           </tr>
@@ -93,8 +99,8 @@ function categoryComposition(categoryId: string): CategoryComposition | undefine
       </tbody>
       <tfoot class="border-t-2 border-[#eadace] bg-[#fffaf4]">
         <tr>
-          <td class="px-4 py-4 font-bold" colspan="2">Total</td>
-          <td class="px-4 py-4 text-right text-lg font-bold text-cookids-coral">
+          <td class="px-2 py-4 font-bold sm:px-4" colspan="2">Total</td>
+          <td class="whitespace-nowrap px-2 py-4 text-right text-sm font-bold text-cookids-coral sm:px-4 sm:text-lg">
             {{ formatEuro(total) }}
           </td>
         </tr>
