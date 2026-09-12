@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { CheckoutDetails } from "../types/CheckoutDetails.js";
 import type { OrderResponse } from "../types/OrderResponse.js";
 import CheckoutPage from "./CheckoutPage.vue";
+import { siteContent } from "../content/site.js";
 import OrderForm from "../components/OrderForm.vue";
 import OrderReview from "../components/OrderReview.vue";
 import { useCart } from "../composables/useCart.js";
@@ -92,7 +93,7 @@ describe("CheckoutPage", () => {
     await backButton!.trigger("click");
     await nextTick();
 
-    expect(wrapper.get("h1").text()).toBe("Finaliser la commande");
+    expect(wrapper.get("h1").text()).toBe(siteContent.orderTitle);
     expect(wrapper.get("table").text()).toContain("Cookie café & noix");
   });
 

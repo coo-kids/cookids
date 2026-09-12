@@ -49,15 +49,16 @@ describe("OrderForm", () => {
   });
 
   it("retire les dates d’aujourd’hui et passées de la liste", async () => {
+    vi.setSystemTime(new Date(2026, 8, 24, 12));
     const wrapper = mount(OrderForm);
     await wrapper.get("select").setValue("IFSSO_kgDOBOB43A");
     const dateSelect = wrapper.findAll("select")[1]!;
-    expect(dateSelect.findAll("option").map((option) => option.attributes("value"))).toEqual(["", "2026-09-26"]);
+    expect(dateSelect.findAll("option").map((option) => option.attributes("value"))).toEqual(["", "2026-10-29", "2026-11-26", "2026-12-21"]);
     wrapper.unmount();
   });
 
   it("ne propose pas un calendrier libre quand les dates fixes sont épuisées", async () => {
-    vi.setSystemTime(new Date(2026, 8, 27, 12));
+    vi.setSystemTime(new Date(2026, 11, 21, 12));
     const wrapper = mount(OrderForm);
     await wrapper.get("select").setValue("IFSSO_kgDOBOB43A");
     expect(wrapper.findAll("select")[1]!.attributes("disabled")).toBeDefined();
