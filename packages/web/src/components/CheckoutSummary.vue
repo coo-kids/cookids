@@ -33,7 +33,7 @@ function categoryComposition(categoryId: string): CategoryComposition | undefine
     <table class="w-full table-fixed border-collapse text-left sm:table-auto">
       <colgroup>
         <col />
-        <col class="w-16 sm:w-auto" />
+        <col :class="editable ? 'w-30 sm:w-auto' : 'w-16 sm:w-auto'" />
         <col class="w-24 sm:w-auto" />
       </colgroup>
       <thead
@@ -85,7 +85,7 @@ function categoryComposition(categoryId: string): CategoryComposition | undefine
             <td class="px-2 py-3 text-center sm:px-4">
               <QuantitySelector
                 v-if="editable"
-                class="flex-col sm:flex-row"
+                class="flex-row gap-0.5 p-0.5 sm:gap-1.5 sm:p-1"
                 :quantity="item.quantity"
                 @change="$emit('changeQuantity', item.productId, $event)"
               />
