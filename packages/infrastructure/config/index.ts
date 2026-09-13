@@ -13,20 +13,14 @@ import { DeliveryLocationProvider } from "@cookids/domain/content/DeliveryLocati
 import { OrderRepository } from "@cookids/domain/repositories/OrderRepository.js";
 import { MailService } from "@cookids/domain/mail/MailService.js";
 import { loadGitHubBoards } from "./loadGitHubBoards.js";
-import { loadGuestbook } from "./loadGuestbook.js";
-import { GuestbookRepository } from "@cookids/domain/repositories/GuestbookRepository.js";
-import { GitHubGuestbookRepository } from "../repositories/GitHubGuestbookRepository.js";
-import { FakeGuestbookRepository } from "../repositories/FakeGuestbookRepository.js";
 
 const githubBoards = await loadGitHubBoards();
 
 injector().settings.set({
   githubBoards,
-  guestbook: await loadGuestbook(),
   envs: loadEnvironment(),
   lazyProviders: true,
   imports: [
-    { token: GuestbookRepository, useClass: process.env.NODE_ENV === "test" ? FakeGuestbookRepository : GitHubGuestbookRepository },
     {
       token: CatalogProvider,
       useClass: NodeCatalogProvider
