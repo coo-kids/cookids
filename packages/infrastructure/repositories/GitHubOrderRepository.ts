@@ -12,7 +12,7 @@ type Issue = Awaited<ReturnType<Octokit["rest"]["issues"]["create"]>>;
 
 @Injectable()
 export class GitHubOrderRepository extends OrderRepository {
-  protected catalogProvider = inject(CatalogProvider);
+  protected catalogProvider = inject<CatalogProvider>(CatalogProvider);
 
   /** Crée l'issue GitHub, renseigne ses métadonnées de projet et retourne son numéro. */
   async save(order: Order): Promise<{ id: number }> {

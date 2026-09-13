@@ -1,9 +1,34 @@
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { catalog, categories } from "../content/catalog.js";
 import type { CartItem } from "@cookids/domain/models/CartItem";
 
-const items = ref<CartItem[]>([]);
+const CART_STORAGE_KEY = "cookids:cart";
+
+function loadItems(): CartItem[] {
+  if (typeof localStorage === "undefined") return [];
+
+  try {
+    const stored = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) ?? "[]");
+    if (!Array.isArray(stored)) return [];
+
+    return stored.filter((item): item is CartItem =>
+      typeof item === "object" && item !== null &&
+      typeof item.productId === "string" && catalog.some((product) => product.id === item.productId) &&
+      Number.isInteger(item.quantity) && item.quantity > 0 && item.quantity <= 48,
+    );
+  } catch {
+    return [];
+  }
+}
+
+const items = ref<CartItem[]>(loadItems());
 const isCartOpen = ref(false);
+
+watch(items, (value) => {
+  if (typeof localStorage !== "undefined") {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(value));
+  }
+}, { deep: true, flush: "sync" });
 
 export type CategoryComposition = {
   categoryId: string;
@@ -78,6 +103,7 @@ export function useCart() {
 
   function clear(): void {
     items.value = [];
+    if (typeof localStorage !== "undefined") localStorage.removeItem(CART_STORAGE_KEY);
   }
 
   return {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ChevronDown } from "lucide-vue-next";
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref, watch, watchEffect } from "vue";
 import type { CheckoutDetails } from "../types/CheckoutDetails.js";
 import { locations } from "../content/locations.js";
 import AppButton from "./AppButton.vue";
@@ -9,7 +9,7 @@ const props = defineProps<{
   initialValues?: CheckoutDetails;
   showTitle?: boolean;
 }>();
-const emit = defineEmits<{ back: []; submit: [details: CheckoutDetails] }>();
+const emit = defineEmits<{ back: []; change: [details: CheckoutDetails]; submit: [details: CheckoutDetails] }>();
 
 const firstName = ref(props.initialValues?.firstName ?? "");
 const lastName = ref(props.initialValues?.lastName ?? "");
@@ -37,6 +37,24 @@ const availableDeliveryDates = computed(() =>
   (selectedDeliveryLocation.value?.fixedDeliveryDates ?? []).filter(
     (date) => date >= minimumDeliveryDate,
   ),
+);
+
+function currentDetails(): CheckoutDetails {
+  return {
+    firstName: firstName.value,
+    lastName: lastName.value || undefined,
+    email: email.value,
+    phoneNumber: phoneNumber.value || undefined,
+    deliveryLocation: deliveryLocation.value,
+    targetDeliveryDate: targetDeliveryDate.value || undefined,
+    deliveryComment: deliveryComment.value || undefined,
+  };
+}
+
+watch(
+  [firstName, lastName, email, phoneNumber, deliveryLocation, targetDeliveryDate, deliveryComment],
+  () => emit("change", currentDetails()),
+  { flush: "sync" },
 );
 
 watchEffect(() => {
@@ -74,15 +92,7 @@ function submitDetails(): void {
   )
     return;
 
-  emit("submit", {
-    firstName: firstName.value,
-    lastName: lastName.value || undefined,
-    email: email.value,
-    phoneNumber: phoneNumber.value || undefined,
-    deliveryLocation: deliveryLocation.value,
-    targetDeliveryDate: targetDeliveryDate.value || undefined,
-    deliveryComment: deliveryComment.value || undefined,
-  });
+  emit("submit", currentDetails());
 }
 </script>
 

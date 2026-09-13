@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { beforeEach, describe, expect, it } from "vitest";
 import { catalog } from "../content/catalog.js";
 import { useCart } from "./useCart.js";
@@ -71,6 +72,18 @@ describe("useCart", () => {
 
     expect(anotherCart.count.value).toBe(3);
     expect(anotherCart.quantityFor(product.id)).toBe(3);
+  });
+
+  it("persiste le panier et supprime le brouillon au nettoyage", () => {
+    const product = catalog[0];
+
+    cart.setQuantity(product.id, 2);
+    expect(JSON.parse(localStorage.getItem("cookids:cart") ?? "[]")).toEqual([
+      { productId: product.id, quantity: 2 },
+    ]);
+
+    cart.clear();
+    expect(localStorage.getItem("cookids:cart")).toBeNull();
   });
 
 });
