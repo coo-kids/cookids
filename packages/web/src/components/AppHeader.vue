@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BookOpen, PiggyBank, ShoppingBag } from "lucide-vue-next";
+import { PiggyBank, ShoppingBag } from "lucide-vue-next";
 import AppButton from "./AppButton.vue";
 import SocialIcon from "./SocialIcon.vue";
 import { useScrollState } from "../composables/useScrollState.js";
@@ -30,9 +30,6 @@ const cart = useCart();
         >
           <SocialIcon :icon="socialLink.icon" class="size-[21px]" />
         </a>
-        <RouterLink :to="{ name: 'guestbook' }" class="inline-flex size-11 items-center justify-center text-cookids-ink transition-colors hover:text-cookids-coral focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cookids-coral focus-visible:ring-offset-2" aria-label="Voir le livre d’or" title="Voir le livre d’or">
-          <BookOpen :size="21" :stroke-width="2" aria-hidden="true" />
-        </RouterLink>
         <RouterLink :to="{ name: 'cagnotte' }" class="inline-flex size-11 items-center justify-center text-cookids-ink transition-colors hover:text-cookids-coral focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cookids-coral focus-visible:ring-offset-2" aria-label="Voir la cagnotte" title="Voir la cagnotte">
           <PiggyBank :size="21" :stroke-width="2" aria-hidden="true" />
         </RouterLink>
