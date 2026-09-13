@@ -46,6 +46,18 @@ describe("OrderForm", () => {
     wrapper.unmount();
   });
 
+  it("transmet un brouillon à chaque saisie", async () => {
+    const wrapper = mount(OrderForm);
+
+    await wrapper.get('input[autocomplete="given-name"]').setValue("Alice");
+    await wrapper.get('input[autocomplete="email"]').setValue("alice@example.com");
+
+    expect(wrapper.emitted("change")?.at(-1)?.[0]).toMatchObject({
+      firstName: "Alice",
+      email: "alice@example.com",
+    });
+  });
+
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date(2026, 8, 19, 12));

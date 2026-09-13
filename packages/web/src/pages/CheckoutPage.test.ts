@@ -9,9 +9,11 @@ import { siteContent } from "../content/site.js";
 import OrderForm from "../components/OrderForm.vue";
 import OrderReview from "../components/OrderReview.vue";
 import { useCart } from "../composables/useCart.js";
+import { useCheckoutDraft } from "../composables/useCheckoutDraft.js";
 import { router } from "../router.js";
 
 const cart = useCart();
+const checkoutDraft = useCheckoutDraft();
 
 const details: CheckoutDetails = {
   firstName: "Romain",
@@ -45,6 +47,7 @@ describe("CheckoutPage", () => {
   beforeEach(() => {
     vi.stubGlobal("scrollTo", vi.fn());
     cart.clear();
+    checkoutDraft.clear();
     cart.setQuantity("cookie-cafe-noix", 12);
   });
 
@@ -148,5 +151,19 @@ describe("CheckoutPage", () => {
     expect(wrapper.text()).toContain("Votre commande est bien reçue.");
     expect(wrapper.text()).toContain("CKIDS-00042");
     expect(wrapper.find("table").exists()).toBe(false);
+    expect(localStorage.getItem("cookids:cart")).toBeNull();
+    expect(localStorage.getItem("cookids:checkout-draft")).toBeNull();
+  });
+
+  it("conserve les coordonnées saisies dans le brouillon", async () => {
+    const wrapper = mountCheckoutPage();
+    await openDetails(wrapper);
+
+    wrapper.getComponent(OrderForm).vm.$emit("change", details);
+
+    expect(JSON.parse(localStorage.getItem("cookids:checkout-draft") ?? "null")).toMatchObject({
+      details,
+      step: 2,
+    });
   });
 });

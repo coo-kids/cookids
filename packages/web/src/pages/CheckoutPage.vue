@@ -10,12 +10,14 @@ import OrderForm from "../components/OrderForm.vue";
 import OrderReview from "../components/OrderReview.vue";
 import OrderSuccess from "../components/OrderSuccess.vue";
 import { useCart } from "../composables/useCart.js";
+import { useCheckoutDraft } from "../composables/useCheckoutDraft.js";
 import { RouterLink, useRouter } from "vue-router";
 
 const cart = useCart();
+const checkoutDraft = useCheckoutDraft();
 const router = useRouter();
-const currentStep = ref<1 | 2 | 3 | 4>(1);
-const checkoutDetails = ref<CheckoutDetails | null>(null);
+const currentStep = ref<1 | 2 | 3 | 4>(cart.count.value > 0 ? checkoutDraft.step.value : 1);
+const checkoutDetails = checkoutDraft.details;
 const isLoaderPreviewVisible = ref(false);
 const isConfirmationPreviewVisible = ref(false);
 const order = ref<OrderResponse | null>(null);
@@ -28,17 +30,24 @@ watch(currentStep, async () => {
 
 function goToStep(step: 1 | 2 | 3): void {
   currentStep.value = step;
+  checkoutDraft.saveStep(step);
   isLoaderPreviewVisible.value = false;
 }
 
 function showOrderForm(): void {
   if (!cart.isCompositionValid.value) return;
   currentStep.value = 2;
+  checkoutDraft.saveStep(2);
+}
+
+function saveCheckoutDetails(details: CheckoutDetails): void {
+  checkoutDraft.saveDetails(details);
 }
 
 function reviewOrder(details: CheckoutDetails): void {
-  checkoutDetails.value = details;
+  checkoutDraft.saveDetails(details);
   currentStep.value = 3;
+  checkoutDraft.saveStep(3);
 }
 
 function showConfirmationPreview(): void {
@@ -73,6 +82,7 @@ function handleSuccess(orderResult: OrderResponse): void {
   isLoaderPreviewVisible.value = false;
   isConfirmationPreviewVisible.value = false;
   cart.clear();
+  checkoutDraft.clear();
 }
 </script>
 
@@ -146,7 +156,7 @@ function handleSuccess(orderResult: OrderResponse): void {
             </div>
             <img class="relative -top-5 -mb-10 hidden h-[7.5rem] w-auto shrink-0 object-contain opacity-90 lg:block" src="/images/pages/cookids-staked.png" alt="" aria-hidden="true" />
           </div>
-          <OrderForm :initial-values="checkoutDetails ?? undefined" :show-title="false" @back="goToStep(1)" @submit="reviewOrder" />
+          <OrderForm :initial-values="checkoutDetails ?? undefined" :show-title="false" @back="goToStep(1)" @change="saveCheckoutDetails" @submit="reviewOrder" />
         </div>
 
         <OrderReview
