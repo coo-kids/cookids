@@ -39,8 +39,8 @@ function formatOrderNumber(orderId: number | undefined): string {
       <p
         class="mx-auto mt-3 max-w-lg font-sans text-[.95rem] leading-relaxed text-[#695149]"
       >
-        Vous recevrez dans votre boîte mail les informations sur l’état
-        d’avancement de votre commande.
+        Vous recevrez dans votre boîte mail un rappel de votre commande et les
+        moyens de paiement (vérifiez vos spams).
       </p>
     </div>
     <AppButton class="w-full" @click="$emit('close')"

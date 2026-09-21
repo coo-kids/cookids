@@ -3,6 +3,18 @@ import { mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import OrderForm from "./OrderForm.vue";
 
+vi.mock("../content/locations.js", () => ({
+  locations: [
+    {
+      id: "fixed-dates-location",
+      label: "Lieu avec dates fixes",
+      fixedDeliveryDates: ["2026-09-24", "2026-10-29", "2026-11-26", "2026-12-21"],
+    },
+    { id: "IFSSO_kgDOBOB43g", label: "Le Perreux-sur-Marne", fixedDeliveryDates: [] },
+    { id: "IFSSO_kgDOBOB43w", label: "Neuilly-Plaisance", fixedDeliveryDates: [] },
+  ],
+}));
+
 describe("OrderForm", () => {
   it("grise la date sans lieu et refuse de valider un lieu inconnu", async () => {
     const wrapper = mount(OrderForm, { props: { initialValues: { firstName: "Alice", email: "alice@example.com", deliveryLocation: "inconnu", targetDeliveryDate: "2026-10-01" } } });
@@ -21,7 +33,7 @@ describe("OrderForm", () => {
   it("utilise la même flèche pour les deux listes déroulantes", async () => {
     const wrapper = mount(OrderForm);
     expect(wrapper.get('input[type="date"]').attributes("disabled")).toBeDefined();
-    await wrapper.get("select").setValue("IFSSO_kgDOBOB43A");
+    await wrapper.get("select").setValue("fixed-dates-location");
     const selects = wrapper.findAll("select");
     for (const select of selects) {
       expect(select.classes()).toContain("appearance-none");
@@ -89,7 +101,7 @@ describe("OrderForm", () => {
   it("retire les dates d’aujourd’hui et passées de la liste", async () => {
     vi.setSystemTime(new Date(2026, 8, 24, 12));
     const wrapper = mount(OrderForm);
-    await wrapper.get("select").setValue("IFSSO_kgDOBOB43A");
+    await wrapper.get("select").setValue("fixed-dates-location");
     const dateSelect = wrapper.findAll("select")[1]!;
     expect(dateSelect.findAll("option").map((option) => option.attributes("value"))).toEqual(["", "2026-10-29", "2026-11-26", "2026-12-21"]);
     wrapper.unmount();
@@ -98,7 +110,7 @@ describe("OrderForm", () => {
   it("ne propose pas un calendrier libre quand les dates fixes sont épuisées", async () => {
     vi.setSystemTime(new Date(2026, 11, 21, 12));
     const wrapper = mount(OrderForm);
-    await wrapper.get("select").setValue("IFSSO_kgDOBOB43A");
+    await wrapper.get("select").setValue("fixed-dates-location");
     expect(wrapper.findAll("select")[1]!.attributes("disabled")).toBeDefined();
     expect(wrapper.find('input[type="date"]').exists()).toBe(false);
     expect(wrapper.text()).toContain("Aucune date de livraison disponible");
