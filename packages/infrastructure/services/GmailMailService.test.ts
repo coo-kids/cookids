@@ -29,7 +29,12 @@ describe("GmailMailService", () => {
     });
 
     expect(createTransport).toHaveBeenCalledWith({ service: "gmail", auth: { user: "hello@cookids.test", pass: "test-app-password" } });
-    expect(sendMail).toHaveBeenCalledWith(expect.objectContaining({ from: "hello@cookids.test", to: "camille@example.com", subject: "Confirmation de votre commande #42", html: expect.stringContaining("la boîte de 12") }));
+    expect(sendMail).toHaveBeenCalledWith(expect.objectContaining({
+      from: "hello@cookids.test",
+      to: "camille@example.com",
+      subject: "Confirmation de votre commande #42",
+      html: expect.stringMatching(/la boîte de 12[\s\S]*Wero[\s\S]*PayPal[\s\S]*Virement bancaire/),
+    }));
   });
 
   it("rejette une configuration Gmail incomplète", async () => {

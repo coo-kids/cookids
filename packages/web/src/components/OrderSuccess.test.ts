@@ -17,7 +17,8 @@ describe("OrderSuccess", () => {
 
     expect(wrapper.text()).toContain("Votre commande est bien reçue.");
     expect(wrapper.text()).toContain("Votre numéro de commande : CKIDS-00042");
-    expect(wrapper.text()).toContain("informations sur l’état d’avancement de votre commande");
+    expect(wrapper.text()).toContain("un rappel de votre commande et les moyens de paiement");
+    expect(wrapper.text()).toContain("vérifiez vos spams");
     expect(wrapper.find("table").exists()).toBe(false);
     expect(wrapper.get('img[src="/images/pages/cookids-thanks.png"]').attributes("src")).toBe("/images/pages/cookids-thanks.png");
   });
