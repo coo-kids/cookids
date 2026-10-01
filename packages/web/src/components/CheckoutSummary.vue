@@ -64,7 +64,7 @@ function categoryComposition(categoryId: string): CategoryComposition | undefine
           </tr>
           <tr
             v-for="item in itemsForCategory(category.id)"
-            :key="item.productId"
+            :key="item.key"
             class="border-t border-[#f0dfd1]"
           >
             <td class="break-words px-2 py-3 sm:px-4">
@@ -76,6 +76,7 @@ function categoryComposition(categoryId: string): CategoryComposition | undefine
                 />
                 <div class="min-w-0">
                   <span class="block font-bold">{{ item.product.name }}</span>
+                  <span v-if="item.toppingLabels?.length" class="block text-sm text-[#80685d]">{{ item.toppingLabels.join(" · ") }}</span>
                   <span class="text-sm text-[#80685d]"
                     >{{ formatEuro(item.product.price) }} {{ item.product.unitLabel }}</span
                   >
@@ -88,7 +89,7 @@ function categoryComposition(categoryId: string): CategoryComposition | undefine
                 class="flex-row gap-0.5 p-0.5 sm:gap-1.5 sm:p-1"
                 :quantity="item.quantity"
                 :step="item.product.quantityMultiple ?? 1"
-                @change="$emit('changeQuantity', item.productId, $event)"
+                @change="$emit('changeQuantity', item.key, $event)"
               />
               <template v-else>{{ item.quantity }}</template>
             </td>

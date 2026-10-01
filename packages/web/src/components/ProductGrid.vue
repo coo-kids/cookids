@@ -4,6 +4,7 @@ import type { CategoryComposition } from "../composables/useCart.js";
 import AppButton from "./AppButton.vue";
 import CategoryCompositionStatus from "./CategoryCompositionStatus.vue";
 import ProductCard from "./ProductCard.vue";
+import CustomProductCard from "./CustomProductCard.vue";
 
 const props = withDefaults(defineProps<{
   quantities: Record<string, number>;
@@ -17,6 +18,7 @@ const props = withDefaults(defineProps<{
 });
 defineEmits<{
   changeQuantity: [productId: string, quantity: number];
+  addCustomizedProduct: [productId: string, toppingIds: string[]];
   goToCheckout: [];
 }>();
 
@@ -55,8 +57,14 @@ function hasInvalidComposition(categoryId: string): boolean {
           </p>
         </div>
         <div class="grid grid-cols-1 gap-[1.35rem] md:grid-cols-2 xl:grid-cols-3">
+          <CustomProductCard
+            v-for="product in catalog.filter((product) => product.category === category.id && product.availableToppings)"
+            :key="product.id"
+            :product="product"
+            @add="$emit('addCustomizedProduct', product.id, $event)"
+          />
           <ProductCard
-            v-for="product in catalog.filter((product) => product.category === category.id)"
+            v-for="product in catalog.filter((product) => product.category === category.id && !product.availableToppings)"
             :key="product.id"
             :product="product"
             :quantity="quantities[product.id] ?? 0"

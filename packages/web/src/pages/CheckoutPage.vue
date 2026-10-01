@@ -72,8 +72,8 @@ function hideConfirmationPreview(): void {
   isConfirmationPreviewVisible.value = false;
 }
 
-function changeQuantity(productId: string, quantity: number): void {
-  cart.setQuantity(productId, quantity);
+function changeQuantity(itemKey: string, quantity: number): void {
+  cart.setItemQuantity(itemKey, quantity);
 }
 
 function handleSuccess(orderResult: OrderResponse): void {

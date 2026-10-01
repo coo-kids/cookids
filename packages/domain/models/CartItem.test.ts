@@ -18,6 +18,12 @@ describe("CartItem", () => {
             "multipleOf": 1,
             "type": "integer",
           },
+          "toppingIds": {
+            "items": {
+              "type": "string",
+            },
+            "type": "array",
+          },
         },
         "required": [
           "productId",

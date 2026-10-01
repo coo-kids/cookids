@@ -10,7 +10,7 @@ export class GmailMailService extends MailService {
     const rows = order.items
       .map(
         (item) =>
-          `<tr><td>${item.productName}</td><td>${item.quantity}</td><td>${item.unitLabel}</td><td>${item.total.toFixed(2)} €</td></tr>`,
+          `<tr><td>${item.productName}${item.toppingLabels?.length ? `<br><small>Toppings : ${item.toppingLabels.join(", ")}</small>` : ""}</td><td>${item.quantity}</td><td>${item.unitLabel}</td><td>${item.total.toFixed(2)} €</td></tr>`,
       )
       .join("");
 

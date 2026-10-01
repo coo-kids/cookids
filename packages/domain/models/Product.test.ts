@@ -24,8 +24,35 @@ describe("Product", () => {
             ],
             "type": "object",
           },
+          "ProductTopping": {
+            "properties": {
+              "id": {
+                "minLength": 1,
+                "type": "string",
+              },
+              "is_allergen": {
+                "type": "boolean",
+              },
+              "label": {
+                "minLength": 1,
+                "type": "string",
+              },
+            },
+            "required": [
+              "label",
+              "is_allergen",
+              "id",
+            ],
+            "type": "object",
+          },
         },
         "properties": {
+          "availableToppings": {
+            "items": {
+              "$ref": "#/definitions/ProductTopping",
+            },
+            "type": "array",
+          },
           "category": {
             "minLength": 1,
             "type": "string",
@@ -50,6 +77,16 @@ describe("Product", () => {
           },
           "is_limited_edition": {
             "type": "boolean",
+          },
+          "maximumToppings": {
+            "minimum": 1,
+            "multipleOf": 1,
+            "type": "integer",
+          },
+          "minimumToppings": {
+            "minimum": 1,
+            "multipleOf": 1,
+            "type": "integer",
           },
           "name": {
             "minLength": 1,

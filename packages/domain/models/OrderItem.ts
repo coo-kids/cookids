@@ -1,4 +1,4 @@
-import { Groups, Integer, Maximum, Minimum, Property, Required } from "@tsed/schema";
+import { CollectionOf, Groups, Integer, Maximum, Minimum, Property, Required } from "@tsed/schema";
 import type { Product } from "@cookids/domain/models/Product.js";
 
 export class OrderItem {
@@ -30,6 +30,15 @@ export class OrderItem {
   quantity!: number;
 
   @Property()
+  @CollectionOf(String)
+  toppingIds?: string[];
+
+  @Property()
+  @CollectionOf(String)
+  @Groups("!create")
+  toppingLabels?: string[];
+
+  @Property()
   @Required()
   @Minimum(0)
   @Groups("!create")
@@ -41,6 +50,7 @@ export class OrderItem {
     this.productName = product.name;
     this.unitPrice = product.price;
     this.unitLabel = product.unitLabel;
+    this.toppingLabels = this.toppingIds?.map((id) => product.availableToppings?.find((topping) => topping.id === id)?.label).filter((label): label is string => Boolean(label));
     return this;
   }
 }

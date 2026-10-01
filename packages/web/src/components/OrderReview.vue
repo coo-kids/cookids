@@ -57,7 +57,7 @@ async function submitOrder(): Promise<void> {
           ? new Date(`${props.details.targetDeliveryDate}T00:00:00.000Z`).toISOString()
           : undefined,
         deliveryComment: props.details.deliveryComment,
-        items: props.items.map(({ productId, quantity }) => ({ productId, quantity }))
+        items: props.items.map(({ productId, quantity, toppingIds }) => ({ productId, quantity, toppingIds }))
       })
     });
     const payload = await response.json();

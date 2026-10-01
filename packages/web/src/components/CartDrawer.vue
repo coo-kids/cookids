@@ -18,7 +18,7 @@ defineEmits<{ close: []; changeQuantity: [productId: string, quantity: number]; 
       <div class="flex items-center justify-between"><h2 class="m-0 text-[2rem]">Votre panier</h2><AppButton variant="neutral" size="small" aria-label="Fermer le panier" @click="$emit('close')"><X :size="20" aria-hidden="true" /></AppButton></div>
       <p v-if="items.length === 0" class="text-[#695149]">Votre panier est encore vide.</p>
       <template v-else>
-        <ul class="list-none p-0"><CartItemRow v-for="item in items" :key="item.productId" v-bind="item" @change-quantity="$emit('changeQuantity', item.productId, $event)" /></ul>
+        <ul class="list-none p-0"><template v-for="item in items" :key="item.key"><CartItemRow v-bind="item" @change-quantity="$emit('changeQuantity', item.key, $event)" /></template></ul>
         <p class="flex justify-between border-t border-[#eadace] py-4 text-[1.2rem]"><span>Total</span><strong>{{ formatEuro(total) }}</strong></p>
         <AppButton class="w-full" @click="$emit('checkout')">Passer la commande</AppButton>
       </template>
