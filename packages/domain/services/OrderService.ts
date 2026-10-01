@@ -77,7 +77,20 @@ export class OrderService {
       item.setProduct(product);
     }
 
+    this.checkProductQuantityMultiples(order, catalog);
     this.checkCategoryQuantityMultiples(order, catalog);
+  }
+
+  protected checkProductQuantityMultiples(order: Order, catalog: ContentCatalog) {
+    for (const item of order.items) {
+      const product = catalog.products.find((product) => product.id === item.productId);
+
+      if (product?.quantityMultiple && item.quantity % product.quantityMultiple !== 0) {
+        throw new OrderValidationError(
+          `« ${product.name} » doit être commandé par multiple de ${product.quantityMultiple}.`,
+        );
+      }
+    }
   }
 
   protected checkCategoryQuantityMultiples(order: Order, catalog: ContentCatalog) {

@@ -1,5 +1,5 @@
 import { s } from "@tsed/schema";
-import { ContentProductCategorySchema } from "./ContentProductCategorySchema.js";
+import { ContentProductCategorySchema, type ContentProductCategory } from "./ContentProductCategorySchema.js";
 import { ContentProductSchema, type ContentProduct } from "./ContentProductSchema.js";
 
 export const ContentCatalogSchema = s.object({
@@ -7,6 +7,7 @@ export const ContentCatalogSchema = s.object({
   products: s.array(ContentProductSchema).minItems(1).required()
 });
 
-export type ContentCatalog = Omit<s.infer<typeof ContentCatalogSchema>, "products"> & {
+export type ContentCatalog = Omit<s.infer<typeof ContentCatalogSchema>, "categories" | "products"> & {
+  categories: ContentProductCategory[];
   products: ContentProduct[];
 };

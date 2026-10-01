@@ -9,10 +9,15 @@ const octokitOptions = vi.fn();
 const graphql = vi.fn();
 const catalogProvider = {
   getCatalog: vi.fn().mockResolvedValue({
-    categories: [],
+    categories: [
+      { id: "cookies", countsAsCookies: true },
+      { id: "boxed-favorites", countsAsCookies: true },
+      { id: "financiers" },
+    ],
     products: [
       { id: "cookie", category: "cookies" },
       { id: "special", category: "cookies" },
+      { id: "boxed-favorite", category: "boxed-favorites" },
       { id: "cookie-named-financier", category: "financiers" },
     ],
   }),
@@ -107,14 +112,14 @@ describe("GitHubOrderRepository", () => {
   });
 
   it.each([
-    { quantities: [12, 24, 10], expected: 36 },
-    { quantities: [0, 0, 10], expected: 0 },
+    { quantities: [12, 24, 15, 10], expected: 51 },
+    { quantities: [0, 0, 15, 10], expected: 15 },
   ])("renseigne $expected cookies sans compter les autres catégories", async ({ quantities, expected }) => {
     const { GitHubOrderRepository } = await import("./GitHubOrderRepository.js");
     const repository = await DITest.invoke<GitHubOrderRepositoryType>(GitHubOrderRepository, [
       { token: CatalogProvider, use: catalogProvider },
     ]);
-    const ids = ["cookie", "special", "cookie-named-financier"];
+    const ids = ["cookie", "special", "boxed-favorite", "cookie-named-financier"];
     await repository.save({
       createdAt: new Date(),
       customer: { firstName: "Camille", email: "camille@example.com" },

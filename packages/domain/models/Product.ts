@@ -1,4 +1,4 @@
-import { Minimum, Property, Required } from "@tsed/schema";
+import { Integer, Minimum, Property, Required } from "@tsed/schema";
 
 export class ProductIngredient {
   @Property()
@@ -46,4 +46,9 @@ export class Product {
   @Property()
   @Required()
   unitLabel!: string;
+
+  @Property()
+  @Integer()
+  @Minimum(1)
+  quantityMultiple?: number;
 }

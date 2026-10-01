@@ -23,4 +23,17 @@ describe("QuantitySelector", () => {
     await wrapper.setProps({ quantity: 48 });
     expect(wrapper.get('[aria-label="Ajouter une unité"]').attributes("disabled")).toBeDefined();
   });
+
+  it("ajoute et retire une boîte entière sans dépasser la limite", async () => {
+    const wrapper = mount(QuantitySelector, { props: { quantity: 0, step: 15 } });
+    const plus = wrapper.get('[aria-label="Ajouter 15 unités"]');
+
+    await plus.trigger("click");
+    await wrapper.setProps({ quantity: 15 });
+    await wrapper.get('[aria-label="Retirer 15 unités"]').trigger("click");
+
+    expect(wrapper.emitted("change")).toEqual([[15], [0]]);
+    await wrapper.setProps({ quantity: 45 });
+    expect(plus.attributes("disabled")).toBeDefined();
+  });
 });

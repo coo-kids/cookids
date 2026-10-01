@@ -36,20 +36,20 @@ function hasInvalidComposition(categoryId: string): boolean {
         <p class="max-w-[580px] leading-[1.5]">Les cookies pèsent entre 40 et 42 g crus. Ils sont vendus à l'unité.</p>
       </div>
       <div
-        v-for="category in categories"
+        v-for="category in categories.filter((category) => catalog.some((product) => product.category === category.id))"
         :id="`category-${category.id}`"
         :key="category.id"
-        class="mt-10 first:mt-0"
+        class="mt-14 first:mt-0"
       >
-        <div class="mb-5">
+        <div class="mb-6 rounded-2xl border border-[#eadace] bg-[#fff5ec] px-5 py-4 sm:px-6 sm:py-5">
           <div class="flex items-center justify-between gap-4">
-            <h3 class="m-0 text-2xl tracking-[-.035em]">{{ category.label }}</h3>
+            <h3 class="m-0 text-3xl leading-none tracking-[-.04em] text-cookids-ink sm:text-4xl">{{ category.label }}</h3>
             <CategoryCompositionStatus
               compact
               :compositions="categoryCompositions.filter((composition) => composition.categoryId === category.id)"
             />
           </div>
-          <p v-if="category.quantityMultiple" class="mt-1 text-[#695149]">Composez votre sélection par multiple de {{ category.quantityMultiple }}.</p>
+          <p v-if="category.quantityMultiple" class="mb-0 mt-2 text-[#695149]">Composez votre sélection par multiple de {{ category.quantityMultiple }}.</p>
           <p v-if="hasInvalidComposition(category.id)" class="mt-2 font-sans text-sm font-bold text-[#b3261e]" role="alert">
             Complétez cette sélection pour atteindre {{ categoryCompositions.find((composition) => composition.categoryId === category.id)?.requiredQuantity }} éléments.
           </p>

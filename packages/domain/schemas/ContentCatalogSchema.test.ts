@@ -10,6 +10,9 @@ describe("ContentCatalogSchema", () => {
           "categories": {
             "items": {
               "properties": {
+                "countsAsCookies": {
+                  "type": "boolean",
+                },
                 "id": {
                   "maxLength": 80,
                   "minLength": 1,
@@ -86,6 +89,11 @@ describe("ContentCatalogSchema", () => {
                   "minimum": 0.01,
                   "multipleOf": 0.01,
                   "type": "number",
+                },
+                "quantityMultiple": {
+                  "minimum": 1,
+                  "multipleOf": 1,
+                  "type": "integer",
                 },
                 "unitLabel": {
                   "maxLength": 60,

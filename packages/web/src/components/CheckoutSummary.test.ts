@@ -26,4 +26,5 @@ describe("CheckoutSummary", () => {
     expect(wrapper.find("button").exists()).toBe(false);
     expect(wrapper.get("tbody").text()).toContain("12");
   });
+
 });

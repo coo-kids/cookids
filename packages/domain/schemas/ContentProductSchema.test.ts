@@ -18,6 +18,11 @@ describe("ContentProductSchema", () => {
     await expect(validate(product, { type: ContentProductSchema })).resolves.toMatchObject(product);
   });
 
+  it("accepte une quantité minimale configurable", async () => {
+    await expect(validate({ ...product, quantityMultiple: 15 }, { type: ContentProductSchema })).resolves.toMatchObject({ quantityMultiple: 15 });
+    await expect(validate({ ...product, quantityMultiple: 0 }, { type: ContentProductSchema })).rejects.toThrow();
+  });
+
   it("refuse une valeur non booléenne", async () => {
     await expect(validate({ ...product, is_limited_edition: {} }, { type: ContentProductSchema })).rejects.toThrow();
   });
@@ -78,6 +83,11 @@ describe("ContentProductSchema", () => {
             "minimum": 0.01,
             "multipleOf": 0.01,
             "type": "number",
+          },
+          "quantityMultiple": {
+            "minimum": 1,
+            "multipleOf": 1,
+            "type": "integer",
           },
           "unitLabel": {
             "maxLength": 60,

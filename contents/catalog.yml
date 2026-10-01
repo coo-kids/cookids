@@ -2,8 +2,12 @@ categories:
   - id: cookies
     label: Cookies
     quantityMultiple: 12
+    countsAsCookies: true
+  - id: boxed-favorites
+    label: Les favoris en boîte
+    countsAsCookies: true
   - id: financiers
-    label: Financiers
+    label: Les autres gourmandises
 
 products:
   # Ajouter is_limited_edition: true à un produit pour afficher le bandeau.
@@ -140,6 +144,10 @@ products:
         is_allergen: false
     price: 1.00
     image: /images/products/cookie-triple-noisette.jpg
+    # Exemple pour déplacer ce cookie dans « Les favoris en boîte » et le vendre par 15 :
+    # category: boxed-favorites
+    # unitLabel: 1 cookie
+    # quantityMultiple: 15
     category: cookies
     unitLabel: 1 unité
 

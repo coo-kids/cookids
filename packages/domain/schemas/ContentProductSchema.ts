@@ -14,6 +14,7 @@ export const ContentProductSchema = s.object({
   image: s.string().maxLength(200).required(),
   category: s.string().maxLength(80).required(),
   unitLabel: s.string().maxLength(60).required(),
+  quantityMultiple: s.number().integer().minimum(1),
   is_limited_edition: s.boolean(),
 });
 
@@ -21,6 +22,7 @@ export type ContentProductIngredient = s.infer<
   typeof ContentProductIngredientSchema
 >;
 
-export type ContentProduct = Omit<s.infer<typeof ContentProductSchema>, "is_limited_edition"> & {
+export type ContentProduct = Omit<s.infer<typeof ContentProductSchema>, "is_limited_edition" | "quantityMultiple"> & {
   is_limited_edition?: boolean;
+  quantityMultiple?: number;
 };

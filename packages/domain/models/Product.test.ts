@@ -59,6 +59,11 @@ describe("Product", () => {
             "minimum": 1,
             "type": "number",
           },
+          "quantityMultiple": {
+            "minimum": 1,
+            "multipleOf": 1,
+            "type": "integer",
+          },
           "unitLabel": {
             "minLength": 1,
             "type": "string",
