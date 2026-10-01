@@ -6,6 +6,7 @@ import type { OrderResponse } from "../types/OrderResponse.js";
 import AppButton from "../components/AppButton.vue";
 import CheckoutSummary from "../components/CheckoutSummary.vue";
 import CheckoutStepper from "../components/CheckoutStepper.vue";
+import ClearCartButton from "../components/ClearCartButton.vue";
 import OrderForm from "../components/OrderForm.vue";
 import OrderReview from "../components/OrderReview.vue";
 import OrderSuccess from "../components/OrderSuccess.vue";
@@ -74,6 +75,12 @@ function hideConfirmationPreview(): void {
 
 function changeQuantity(itemKey: string, quantity: number): void {
   cart.setItemQuantity(itemKey, quantity);
+}
+
+async function clearCart(): Promise<void> {
+  cart.clear();
+  checkoutDraft.clear();
+  await router.push({ name: "home", hash: "#catalogue" });
 }
 
 function handleSuccess(orderResult: OrderResponse): void {
@@ -145,6 +152,9 @@ function handleSuccess(orderResult: OrderResponse): void {
               <AppButton class="flex-1" :as="RouterLink" :to="{ name: 'home', hash: '#catalogue' }" variant="neutral">Continuer mes achats</AppButton>
               <AppButton class="flex-1" :disabled="!cart.isCompositionValid.value" @click="showOrderForm">Valider mon panier</AppButton>
             </div>
+            <div class="mt-4 flex justify-center">
+              <ClearCartButton @confirm="clearCart" />
+            </div>
           </template>
         </div>
 
@@ -181,4 +191,5 @@ function handleSuccess(orderResult: OrderResponse): void {
       </Transition>
     </section>
   </main>
+
 </template>
