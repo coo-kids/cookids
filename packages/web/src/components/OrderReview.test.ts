@@ -6,6 +6,7 @@ import type { EnrichedCartItem } from "../types/EnrichedCartItem.js";
 import OrderReview from "./OrderReview.vue";
 
 const items: EnrichedCartItem[] = [{
+  key: "cookie-cafe-noix",
   productId: "cookie-cafe-noix",
   quantity: 2,
   total: 7,

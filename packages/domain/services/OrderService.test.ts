@@ -37,9 +37,29 @@ class TestCatalogProvider extends CatalogProvider {
       categories: [
         { id: "cookies", label: "Cookies", quantityMultiple: 12 },
         { id: "boxed-favorites", label: "Les favoris en boîte", quantityMultiple: undefined },
+        { id: "custom-cookies", label: "Cookies sur mesure", quantityMultiple: undefined },
         { id: "financiers", label: "Financiers", quantityMultiple: undefined },
       ],
       products: [
+      {
+        id: "custom-cookie-box",
+        name: "Ma boîte personnalisée",
+        description: "",
+        ingredients: [],
+        price: 1.5,
+        image: "/images/cookie-chocolat.jpg",
+        category: "custom-cookies",
+        unitLabel: "1 cookie",
+        quantityMultiple: 12,
+        minimumToppings: 1,
+        maximumToppings: 3,
+        availableToppings: [
+          { id: "chocolat-noir", label: "Chocolat noir", is_allergen: false },
+          { id: "noisettes", label: "Noisettes", is_allergen: true },
+          { id: "cafe", label: "Café", is_allergen: false },
+          { id: "coco", label: "Coco", is_allergen: true },
+        ],
+      },
       {
         id: "cookie-cafe-noix",
         name: "Cookie café & noix",
@@ -111,7 +131,7 @@ async function createFixture(): Promise<{
 }
 
 function createOrderInput(overrides: {
-  items?: Array<{ productId: string; quantity: number }>;
+  items?: Array<{ productId: string; quantity: number; toppingIds?: string[] }>;
   targetDeliveryDate?: Date;
 } = {}): Order {
   return deserialize<Order>({
@@ -197,6 +217,32 @@ describe("OrderService", () => {
       createOrderInput({ items: [{ productId: "cookie-triple-noisette", quantity: 15 }] }),
     );
     expect(order.total).toBe(15);
+  });
+
+  it("valide une boîte personnalisée et résout les noms de toppings", async () => {
+    const { service } = await createFixture();
+    const order = await service.create(createOrderInput({ items: [{
+      productId: "custom-cookie-box",
+      quantity: 12,
+      toppingIds: ["chocolat-noir", "cafe"],
+    }] }));
+
+    expect(order.total).toBe(18);
+    expect(order.items[0]?.toppingLabels).toEqual(["Chocolat noir", "Café"]);
+  });
+
+  it.each([
+    { toppingIds: [], label: "aucun topping" },
+    { toppingIds: ["chocolat-noir", "noisettes", "cafe", "coco"], label: "plus de trois toppings" },
+    { toppingIds: ["inconnu"], label: "un topping inconnu" },
+    { toppingIds: ["cafe", "cafe"], label: "un topping en double" },
+  ])("rejette $label", async ({ toppingIds }) => {
+    const { service } = await createFixture();
+    await expect(service.create(createOrderInput({ items: [{
+      productId: "custom-cookie-box",
+      quantity: 12,
+      toppingIds,
+    }] }))).rejects.toThrow("entre 1 et 3 toppings autorisés");
   });
 
   it("rejette une date absente lorsqu'un lieu impose des dates fixes", async () => {

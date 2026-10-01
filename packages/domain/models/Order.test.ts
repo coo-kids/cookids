@@ -52,6 +52,18 @@ describe("Order", () => {
                 "multipleOf": 1,
                 "type": "integer",
               },
+              "toppingIds": {
+                "items": {
+                  "type": "string",
+                },
+                "type": "array",
+              },
+              "toppingLabels": {
+                "items": {
+                  "type": "string",
+                },
+                "type": "array",
+              },
               "total": {
                 "minimum": 0,
                 "type": "number",

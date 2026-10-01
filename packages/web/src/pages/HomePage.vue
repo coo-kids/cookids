@@ -36,6 +36,7 @@ async function goToCheckout(): Promise<void> {
     :is-composition-valid="cart.isCompositionValid.value"
     :show-composition-errors="showCompositionErrors"
     @change-quantity="cart.setQuantity"
+    @add-customized-product="cart.addCustomizedProduct"
     @go-to-checkout="goToCheckout"
   />
 </template>

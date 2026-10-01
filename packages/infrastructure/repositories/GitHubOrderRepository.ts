@@ -175,7 +175,7 @@ export class GitHubOrderRepository extends OrderRepository {
 
   /** Met en forme le détail de la commande pour le corps Markdown de l'issue. */
   protected formatBody(order: Order): string {
-    const rows = order.items.map((item) => `| ${item.productName} | ${item.quantity} | ${item.unitLabel} | ${item.unitPrice.toFixed(2)} € | ${item.total.toFixed(2)} € |`).join("\n");
+    const rows = order.items.map((item) => `| ${item.productName}${item.toppingLabels?.length ? `<br>Toppings : ${item.toppingLabels.join(", ")}` : ""} | ${item.quantity} | ${item.unitLabel} | ${item.unitPrice.toFixed(2)} € | ${item.total.toFixed(2)} € |`).join("\n");
     const deliveryComment = order.deliveryComment
       ? `\n\n## Livraison\n\n**Commentaire :** ${order.deliveryComment}`
       : "";

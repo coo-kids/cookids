@@ -12,12 +12,14 @@ const catalogProvider = {
     categories: [
       { id: "cookies", countsAsCookies: true },
       { id: "boxed-favorites", countsAsCookies: true },
+      { id: "custom-cookies", countsAsCookies: true },
       { id: "financiers" },
     ],
     products: [
       { id: "cookie", category: "cookies" },
       { id: "special", category: "cookies" },
       { id: "boxed-favorite", category: "boxed-favorites" },
+      { id: "custom-cookie-box", category: "custom-cookies" },
       { id: "cookie-named-financier", category: "financiers" },
     ],
   }),
@@ -112,14 +114,14 @@ describe("GitHubOrderRepository", () => {
   });
 
   it.each([
-    { quantities: [12, 24, 15, 10], expected: 51 },
-    { quantities: [0, 0, 15, 10], expected: 15 },
+    { quantities: [12, 24, 15, 12, 10], expected: 63 },
+    { quantities: [0, 0, 15, 12, 10], expected: 27 },
   ])("renseigne $expected cookies sans compter les autres catégories", async ({ quantities, expected }) => {
     const { GitHubOrderRepository } = await import("./GitHubOrderRepository.js");
     const repository = await DITest.invoke<GitHubOrderRepositoryType>(GitHubOrderRepository, [
       { token: CatalogProvider, use: catalogProvider },
     ]);
-    const ids = ["cookie", "special", "boxed-favorite", "cookie-named-financier"];
+    const ids = ["cookie", "special", "boxed-favorite", "custom-cookie-box", "cookie-named-financier"];
     await repository.save({
       createdAt: new Date(),
       customer: { firstName: "Camille", email: "camille@example.com" },

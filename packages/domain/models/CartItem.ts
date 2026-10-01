@@ -1,4 +1,4 @@
-import { Integer, Maximum, Minimum, Property, Required } from "@tsed/schema";
+import { CollectionOf, Integer, Maximum, Minimum, Property, Required } from "@tsed/schema";
 
 export class CartItem {
   @Property()
@@ -11,4 +11,8 @@ export class CartItem {
   @Minimum(1)
   @Maximum(48)
   quantity!: number;
+
+  @Property()
+  @CollectionOf(String)
+  toppingIds?: string[];
 }

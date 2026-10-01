@@ -6,12 +6,54 @@ categories:
   - id: boxed-favorites
     label: Les favoris en boîte
     countsAsCookies: true
+  - id: custom-cookies
+    label: Cookies sur mesure
+    countsAsCookies: true
   - id: financiers
     label: Les autres gourmandises
 
 products:
   # Ajouter is_limited_edition: true à un produit pour afficher le bandeau.
   # Si le champ est absent ou vaut false, aucun bandeau n'est affiché.
+  - id: custom-cookie-box
+    name: Ma boîte personnalisée
+    description: Une boîte de 12 cookies avec une composition identique, à choisir parmi les toppings proposés.
+    ingredients:
+      - label: Farine bio
+        is_allergen: true
+      - label: Beurre
+        is_allergen: false
+      - label: Cassonnade
+        is_allergen: false
+      - label: Sucre blanc
+        is_allergen: false
+      - label: Œuf
+        is_allergen: true
+      - label: Levure chimique
+        is_allergen: false
+    price: 1.50
+    image: /images/products/cookie-chocolat.jpg
+    category: custom-cookies
+    unitLabel: 1 cookie
+    quantityMultiple: 12
+    minimumToppings: 1
+    maximumToppings: 3
+    availableToppings:
+      - { id: mms, label: "M&M’s", is_allergen: true }
+      - { id: chocolat-noir, label: Chocolat noir, is_allergen: false }
+      - { id: chocolat-lait, label: Chocolat au lait, is_allergen: true }
+      - { id: chocolat-blanc, label: Chocolat blanc, is_allergen: true }
+      - { id: noisettes, label: Noisettes, is_allergen: true }
+      - { id: noix-pecan, label: Noix de pécan, is_allergen: true }
+      - { id: noix, label: Noix, is_allergen: true }
+      - { id: noix-macadamia, label: Noix de macadamia, is_allergen: true }
+      - { id: pistaches, label: Pistaches, is_allergen: true }
+      - { id: cranberries, label: Cranberries, is_allergen: false }
+      - { id: cafe, label: Café, is_allergen: false }
+      - { id: coco, label: Coco, is_allergen: true }
+      - { id: amandes, label: Amandes, is_allergen: true }
+      - { id: raisins-secs, label: Raisins secs, is_allergen: false }
+
   - id: cookie-cafe-noix
     name: Cookie café & noix
     description: Café, chocolat noir et noix.
