@@ -5,20 +5,24 @@ import AppButton from "./AppButton.vue";
 import CategoryCompositionStatus from "./CategoryCompositionStatus.vue";
 import ProductCard from "./ProductCard.vue";
 import CustomProductCard from "./CustomProductCard.vue";
+import ClearCartButton from "./ClearCartButton.vue";
 
 const props = withDefaults(defineProps<{
   quantities: Record<string, number>;
   categoryCompositions?: CategoryComposition[];
   isCompositionValid?: boolean;
   showCompositionErrors?: boolean;
+  hasItems?: boolean;
 }>(), {
   categoryCompositions: () => [],
   isCompositionValid: true,
   showCompositionErrors: false,
+  hasItems: false,
 });
 defineEmits<{
   changeQuantity: [productId: string, quantity: number];
   addCustomizedProduct: [productId: string, toppingIds: string[]];
+  clearCart: [];
   goToCheckout: [];
 }>();
 
@@ -74,6 +78,9 @@ function hasInvalidComposition(categoryId: string): boolean {
       </div>
       <div class="mt-10 flex justify-center">
         <AppButton @click="$emit('goToCheckout')">Commander</AppButton>
+      </div>
+      <div v-if="hasItems" class="mt-3 flex justify-center">
+        <ClearCartButton @confirm="$emit('clearCart')" />
       </div>
     </div>
   </section>
