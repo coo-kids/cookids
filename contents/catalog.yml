@@ -7,7 +7,7 @@ categories:
     label: Les favoris en boîte
     countsAsCookies: true
   - id: financiers
-    label: Financiers
+    label: Les autres gourmandises
 
 products:
   # Ajouter is_limited_edition: true à un produit pour afficher le bandeau.
