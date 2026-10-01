@@ -26,8 +26,8 @@ describe("ProductCard", () => {
     });
 
     expect(wrapper.text()).toContain("Vendu par 15");
-    expect(wrapper.text()).toContain(formatEuro(15));
-    expect(wrapper.text()).toContain(`${formatEuro(1)} le cookie`);
+    expect(wrapper.get("strong.whitespace-nowrap").text()).toBe(formatEuro(1));
+    expect(wrapper.text()).toContain(`${formatEuro(1)} l’unité`);
     expect(wrapper.getComponent(QuantitySelector).props("step")).toBe(15);
   });
 });

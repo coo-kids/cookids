@@ -271,7 +271,7 @@ products:
     unitLabel: 1 unité
 
   - id: financiers-amandes
-    name: Financiers aux amandes (vendus par 10)
+    name: Financiers aux amandes
     description: Moelleux aux amandes et à la vanille, vendus par 10.
     ingredients:
       - label: Blancs d'œuf
@@ -286,7 +286,8 @@ products:
         is_allergen: true
       - label: Gousse de vanille
         is_allergen: false
-    price: 5.00
+    price: 0.50
     image: /images/products/financiers-amandes.jpg
     category: financiers
-    unitLabel: le lot de 10
+    unitLabel: 1 financier
+    quantityMultiple: 10

@@ -7,6 +7,7 @@ describe("useCart", () => {
   const cart = useCart();
   const classicProduct = catalog.find((product) => product.id === "cookie-cafe-noix")!;
   const customProduct = catalog.find((product) => product.id === "custom-cookie-box")!;
+  const financierProduct = catalog.find((product) => product.id === "financiers-amandes")!;
 
   beforeEach(() => {
     cart.clear();
@@ -87,6 +88,15 @@ describe("useCart", () => {
 
     cart.clear();
     expect(localStorage.getItem("cookids:cart")).toBeNull();
+  });
+
+  it("ajoute les financiers par groupes de 10 au prix unitaire", () => {
+    cart.setQuantity(financierProduct.id, 1);
+    expect(cart.quantityFor(financierProduct.id)).toBe(0);
+
+    cart.setQuantity(financierProduct.id, 10);
+    expect(cart.quantityFor(financierProduct.id)).toBe(10);
+    expect(cart.total.value).toBe(5);
   });
 
   it("conserve séparément plusieurs compositions et regroupe les boîtes identiques", () => {

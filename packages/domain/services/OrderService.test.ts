@@ -96,10 +96,11 @@ class TestCatalogProvider extends CatalogProvider {
         name: "Financiers aux amandes",
         description: "",
         ingredients: [],
-        price: 5,
+        price: 0.5,
         image: "/images/financiers-amandes.jpg",
         category: "financiers",
-        unitLabel: "le lot de 10",
+        unitLabel: "1 financier",
+        quantityMultiple: 10,
       },
     ],
     };
@@ -144,7 +145,7 @@ function createOrderInput(overrides: {
     deliveryLocation: "rosa-parks",
     items: overrides.items ?? [
       { productId: "cookie-cafe-noix", quantity: 12 },
-      { productId: "financiers-amandes", quantity: 1 }
+      { productId: "financiers-amandes", quantity: 10 }
     ],
     targetDeliveryDate: overrides.targetDeliveryDate
   }, { type: Order, groups: ["create"], strictGroups: true, useAlias: false });
@@ -196,11 +197,15 @@ describe("OrderService", () => {
     expect(order.total).toBe(12);
   });
 
-  it("accepte librement une catégorie sans règle de composition", async () => {
+  it("impose le conditionnement par 10 des financiers", async () => {
     const { service } = await createFixture();
 
+    await expect(
+      service.create(createOrderInput({ items: [{ productId: "financiers-amandes", quantity: 1 }] })),
+    ).rejects.toThrow("multiple de 10");
+
     const order = await service.create(
-      createOrderInput({ items: [{ productId: "financiers-amandes", quantity: 1 }] }),
+      createOrderInput({ items: [{ productId: "financiers-amandes", quantity: 10 }] }),
     );
 
     expect(order.total).toBe(5);

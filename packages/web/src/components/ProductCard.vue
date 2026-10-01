@@ -27,7 +27,7 @@ defineEmits<{ changeQuantity: [quantity: number] }>();
       <div class="flex items-start justify-between gap-3">
         <h3 class="m-0 text-[1.35rem] leading-[1.1]">{{ product.name }}</h3>
         <strong class="whitespace-nowrap text-[#b85131]">
-          {{ formatEuro(product.price * (product.quantityMultiple ?? 1)) }}
+          {{ formatEuro(product.price) }}
         </strong>
       </div>
 
@@ -48,7 +48,7 @@ defineEmits<{ changeQuantity: [quantity: number] }>();
 
       <div class="mt-4 flex w-full items-center justify-between gap-4">
         <small>
-          {{ product.quantityMultiple ? `Vendu par ${product.quantityMultiple} · ${formatEuro(product.price)} le cookie` : product.unitLabel }}
+          {{ product.quantityMultiple ? `Vendu par ${product.quantityMultiple} · ${formatEuro(product.price)} l’unité` : product.unitLabel }}
         </small>
         <QuantitySelector
           :quantity="quantity"
