@@ -39,8 +39,8 @@ describe("ProductGrid", () => {
 
     expect(headings.map((heading) => heading.text())).toEqual([
       "Cookies",
-      "Cookies sur mesure",
       "Les autres gourmandises",
+      "Cookies sur mesure",
     ]);
     expect(wrapper.text()).not.toContain("Les favoris en boîte");
     for (const heading of headings) {

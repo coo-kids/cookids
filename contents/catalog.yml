@@ -6,18 +6,18 @@ categories:
   - id: boxed-favorites
     label: Les favoris en boîte
     countsAsCookies: true
+  - id: financiers
+    label: Les autres gourmandises
   - id: custom-cookies
     label: Cookies sur mesure
     countsAsCookies: true
-  - id: financiers
-    label: Les autres gourmandises
 
 products:
   # Ajouter is_limited_edition: true à un produit pour afficher le bandeau.
   # Si le champ est absent ou vaut false, aucun bandeau n'est affiché.
   - id: custom-cookie-box
     name: Ma boîte personnalisée
-    description: Une boîte de 12 cookies avec une composition identique, à choisir parmi les toppings proposés.
+    description: La recette de notre cookie chocolat, sans le chocolat habituel et avec les toppings de votre choix. Composez une boîte de 12 cookies identiques avec 1 à 3 toppings.
     ingredients:
       - label: Farine bio
         is_allergen: true
