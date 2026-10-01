@@ -12,6 +12,7 @@ import OrderSuccess from "../components/OrderSuccess.vue";
 import { useCart } from "../composables/useCart.js";
 import { useCheckoutDraft } from "../composables/useCheckoutDraft.js";
 import { RouterLink, useRouter } from "vue-router";
+import { Trash2, X } from "lucide-vue-next";
 
 const cart = useCart();
 const checkoutDraft = useCheckoutDraft();
@@ -20,6 +21,7 @@ const currentStep = ref<1 | 2 | 3 | 4>(cart.count.value > 0 ? checkoutDraft.step
 const checkoutDetails = checkoutDraft.details;
 const isLoaderPreviewVisible = ref(false);
 const isConfirmationPreviewVisible = ref(false);
+const isClearCartConfirmationVisible = ref(false);
 const order = ref<OrderResponse | null>(null);
 const isPreviewMode = import.meta.env.DEV;
 
@@ -74,6 +76,13 @@ function hideConfirmationPreview(): void {
 
 function changeQuantity(itemKey: string, quantity: number): void {
   cart.setItemQuantity(itemKey, quantity);
+}
+
+async function clearCart(): Promise<void> {
+  cart.clear();
+  checkoutDraft.clear();
+  isClearCartConfirmationVisible.value = false;
+  await router.push({ name: "home", hash: "#catalogue" });
 }
 
 function handleSuccess(orderResult: OrderResponse): void {
@@ -145,6 +154,16 @@ function handleSuccess(orderResult: OrderResponse): void {
               <AppButton class="flex-1" :as="RouterLink" :to="{ name: 'home', hash: '#catalogue' }" variant="neutral">Continuer mes achats</AppButton>
               <AppButton class="flex-1" :disabled="!cart.isCompositionValid.value" @click="showOrderForm">Valider mon panier</AppButton>
             </div>
+            <div class="mt-4 flex justify-center">
+              <button
+                type="button"
+                class="inline-flex min-h-11 items-center gap-2 rounded-full px-4 py-2 font-sans text-sm font-bold text-[#695149] transition-colors hover:bg-[#f4e8dc] hover:text-cookids-coral focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cookids-coral focus-visible:ring-offset-2"
+                @click="isClearCartConfirmationVisible = true"
+              >
+                <Trash2 :size="18" aria-hidden="true" />
+                Vider le panier
+              </button>
+            </div>
           </template>
         </div>
 
@@ -181,4 +200,35 @@ function handleSuccess(orderResult: OrderResponse): void {
       </Transition>
     </section>
   </main>
+
+  <Teleport to="body">
+    <div
+      v-if="isClearCartConfirmationVisible"
+      class="fixed inset-0 z-50 grid place-items-center bg-cookids-ink/40 p-4 backdrop-blur-[2px]"
+      role="presentation"
+      @click.self="isClearCartConfirmationVisible = false"
+    >
+      <section
+        class="w-full max-w-md rounded-2xl bg-[#fffaf4] p-6 shadow-[0_24px_80px_rgba(47,33,27,.3)]"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="clear-cart-title"
+        aria-describedby="clear-cart-description"
+      >
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h2 id="clear-cart-title" class="m-0 text-2xl">Vider le panier ?</h2>
+            <p id="clear-cart-description" class="mb-0 mt-3 text-[#695149]">Cette action supprimera tous les produits ainsi que les informations déjà saisies.</p>
+          </div>
+          <AppButton variant="neutral" size="small" aria-label="Fermer" @click="isClearCartConfirmationVisible = false">
+            <X :size="18" aria-hidden="true" />
+          </AppButton>
+        </div>
+        <div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+          <AppButton variant="neutral" @click="isClearCartConfirmationVisible = false">Annuler</AppButton>
+          <AppButton @click="clearCart">Oui, vider le panier</AppButton>
+        </div>
+      </section>
+    </div>
+  </Teleport>
 </template>

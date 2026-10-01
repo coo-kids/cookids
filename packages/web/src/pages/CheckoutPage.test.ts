@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import { nextTick } from "vue";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { CheckoutDetails } from "../types/CheckoutDetails.js";
@@ -91,6 +91,26 @@ describe("CheckoutPage", () => {
     expect(classes.contains("flex-col")).toBe(true);
     expect(classes.contains("sm:flex-row")).toBe(true);
     wrapper.unmount();
+  });
+
+  it("demande confirmation puis vide le panier, le brouillon et revient au catalogue", async () => {
+    checkoutDraft.saveDetails(details);
+    const wrapper = mountCheckoutPage();
+
+    const clearButton = wrapper.findAll("button").find((button) => button.text() === "Vider le panier")!;
+    await clearButton.trigger("click");
+
+    const dialog = document.body.querySelector('[role="dialog"]')!;
+    expect(dialog.textContent).toContain("Cette action supprimera tous les produits ainsi que les informations déjà saisies.");
+    const confirmButton = Array.from(dialog.querySelectorAll("button")).find((button) => button.textContent?.includes("Oui, vider le panier"))!;
+    confirmButton.click();
+    await flushPromises();
+
+    expect(cart.count.value).toBe(0);
+    expect(localStorage.getItem("cookids:cart")).toBeNull();
+    expect(localStorage.getItem("cookids:checkout-draft")).toBeNull();
+    expect(router.currentRoute.value).toMatchObject({ name: "home", hash: "#catalogue" });
+    expect(document.body.querySelector('[role="dialog"]')).toBeNull();
   });
 
   it("affiche uniquement le formulaire à l’étape coordonnées", async () => {
