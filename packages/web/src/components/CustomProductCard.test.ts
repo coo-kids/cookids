@@ -12,6 +12,7 @@ describe("CustomProductCard", () => {
     const toppings = wrapper.findAll('button[aria-pressed]');
 
     expect(addButton.attributes("disabled")).toBeDefined();
+    expect(wrapper.get("h3").text()).toBe("Ma boîte personnalisée (x 12)");
     await toppings[0]!.trigger("click");
     await toppings[1]!.trigger("click");
     await toppings[2]!.trigger("click");

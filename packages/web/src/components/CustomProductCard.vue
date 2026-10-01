@@ -32,7 +32,7 @@ function addBox(): void {
       <img class="h-64 w-full object-cover md:h-full" :src="product.image" :alt="product.name" />
       <div class="p-6">
         <div class="flex flex-wrap items-start justify-between gap-3">
-          <div><h3 class="m-0 text-2xl">{{ product.name }}</h3><p class="mb-0 mt-2 text-[#695149]">{{ product.description }}</p></div>
+          <div><h3 class="m-0 text-2xl">{{ product.name }}<template v-if="product.quantityMultiple"> (x {{ product.quantityMultiple }})</template></h3><p class="mb-0 mt-2 text-[#695149]">{{ product.description }}</p></div>
           <strong class="text-lg text-[#b85131]">{{ formatEuro(product.price * (product.quantityMultiple ?? 1)) }} la boîte</strong>
         </div>
         <p class="mb-3 mt-5 font-sans text-sm font-bold">Choisissez de {{ minimum }} à {{ maximum }} toppings — {{ selectedIds.length }}/{{ maximum }}</p>
