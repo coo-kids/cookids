@@ -48,9 +48,8 @@ defineEmits<{ changeQuantity: [quantity: number] }>();
         </template>
       </p>
 
-      <div class="mt-4 flex w-full items-center justify-between gap-4">
-        <span v-if="product.quantityMultiple" class="font-sans text-base font-bold text-[#695149]">{{ product.quantityMultiple }} unités</span>
-        <small v-else>{{ product.unitLabel }}</small>
+      <div :class="['mt-4 flex w-full items-center gap-4', product.quantityMultiple ? 'justify-end' : 'justify-between']">
+        <small v-if="!product.quantityMultiple">{{ product.unitLabel }}</small>
         <QuantitySelector
           :quantity="quantity"
           :step="product.quantityMultiple ?? 1"

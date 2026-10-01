@@ -26,7 +26,7 @@ describe("ProductCard", () => {
     });
 
     expect(wrapper.get("h3").text()).toBe("Cookie (x 15)");
-    expect(wrapper.text()).toContain("15 unités");
+    expect(wrapper.text()).not.toContain("15 unités");
     expect(wrapper.get("strong.whitespace-nowrap").text()).toBe(formatEuro(1));
     expect(wrapper.text()).not.toContain(`${formatEuro(1)} l’unité`);
     expect(wrapper.getComponent(QuantitySelector).props("step")).toBe(15);
