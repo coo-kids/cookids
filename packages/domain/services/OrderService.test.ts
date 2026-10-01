@@ -36,6 +36,7 @@ class TestCatalogProvider extends CatalogProvider {
     return {
       categories: [
         { id: "cookies", label: "Cookies", quantityMultiple: 12 },
+        { id: "boxed-favorites", label: "Les favoris en boîte", quantityMultiple: undefined },
         { id: "financiers", label: "Financiers", quantityMultiple: undefined },
       ],
       products: [
@@ -58,6 +59,17 @@ class TestCatalogProvider extends CatalogProvider {
         image: "/images/cookie-chocolat-noir.jpg",
         category: "cookies",
         unitLabel: "1 unité",
+      },
+      {
+        id: "cookie-triple-noisette",
+        name: "Cookie triple noisette",
+        description: "",
+        ingredients: [],
+        price: 1,
+        image: "/images/cookie-triple-noisette.jpg",
+        category: "boxed-favorites",
+        unitLabel: "1 cookie",
+        quantityMultiple: 15,
       },
       {
         id: "financiers-amandes",
@@ -172,6 +184,19 @@ describe("OrderService", () => {
     );
 
     expect(order.total).toBe(5);
+  });
+
+  it("impose le conditionnement défini sur un favori", async () => {
+    const { service } = await createFixture();
+
+    await expect(
+      service.create(createOrderInput({ items: [{ productId: "cookie-triple-noisette", quantity: 14 }] })),
+    ).rejects.toThrow("multiple de 15");
+
+    const order = await service.create(
+      createOrderInput({ items: [{ productId: "cookie-triple-noisette", quantity: 15 }] }),
+    );
+    expect(order.total).toBe(15);
   });
 
   it("rejette une date absente lorsqu'un lieu impose des dates fixes", async () => {

@@ -52,8 +52,11 @@ export class GitHubOrderRepository extends OrderRepository {
   protected async setCustomFieldValues(issue: Issue, order: Order) {
     const client = this.getClient();
     const catalog = await this.catalogProvider.getCatalog();
+    const cookieCategoryIds = new Set(catalog.categories
+      .filter((category) => category.countsAsCookies)
+      .map((category) => category.id));
     const cookieProductIds = new Set(catalog.products
-      .filter((product) => product.category === "cookies")
+      .filter((product) => cookieCategoryIds.has(product.category))
       .map((product) => product.id));
     const totalCookies = order.items.reduce((total, item) =>
       total + (cookieProductIds.has(item.productId) ? item.quantity : 0), 0);

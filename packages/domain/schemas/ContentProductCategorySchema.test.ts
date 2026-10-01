@@ -7,6 +7,9 @@ describe("ContentProductCategorySchema", () => {
     expect(compile(ContentProductCategorySchema)).toMatchInlineSnapshot(`
       {
         "properties": {
+          "countsAsCookies": {
+            "type": "boolean",
+          },
           "id": {
             "maxLength": 80,
             "minLength": 1,

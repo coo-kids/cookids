@@ -74,6 +74,20 @@ describe("useCart", () => {
     expect(anotherCart.quantityFor(product.id)).toBe(3);
   });
 
+  it("n'accepte que des boîtes entières pour un favori", () => {
+    const favorite = catalog.find((product) => product.id === "cookie-triple-noisette")!;
+
+    cart.setQuantity(favorite.id, 14);
+    expect(cart.quantityFor(favorite.id)).toBe(0);
+
+    cart.setQuantity(favorite.id, 15);
+    expect(cart.quantityFor(favorite.id)).toBe(15);
+    expect(cart.total.value).toBe(15);
+
+    cart.setQuantity(favorite.id, 60);
+    expect(cart.quantityFor(favorite.id)).toBe(45);
+  });
+
   it("persiste le panier et supprime le brouillon au nettoyage", () => {
     const product = catalog[0];
 

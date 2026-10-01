@@ -2,6 +2,8 @@ import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 import type { Product } from "@cookids/domain/models/Product";
 import ProductCard from "./ProductCard.vue";
+import QuantitySelector from "./QuantitySelector.vue";
+import { formatEuro } from "@cookids/domain/utils/formatEuro";
 
 const product: Product = {
   id: "cookie", name: "Cookie", description: "Un cookie",
@@ -16,5 +18,16 @@ describe("ProductCard", () => {
     });
     expect(wrapper.text().includes("Édition limitée")).toBe(is_limited_edition === true);
     expect(wrapper.get("img").attributes("alt")).toBe(product.name);
+  });
+
+  it("affiche le conditionnement et configure le sélecteur", () => {
+    const wrapper = mount(ProductCard, {
+      props: { product: { ...product, quantityMultiple: 15 }, quantity: 0 },
+    });
+
+    expect(wrapper.text()).toContain("Vendu par 15");
+    expect(wrapper.text()).toContain(formatEuro(15));
+    expect(wrapper.text()).toContain(`${formatEuro(1)} le cookie`);
+    expect(wrapper.getComponent(QuantitySelector).props("step")).toBe(15);
   });
 });

@@ -87,6 +87,7 @@ function categoryComposition(categoryId: string): CategoryComposition | undefine
                 v-if="editable"
                 class="flex-row gap-0.5 p-0.5 sm:gap-1.5 sm:p-1"
                 :quantity="item.quantity"
+                :step="item.product.quantityMultiple ?? 1"
                 @change="$emit('changeQuantity', item.productId, $event)"
               />
               <template v-else>{{ item.quantity }}</template>

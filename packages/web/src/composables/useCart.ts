@@ -11,11 +11,14 @@ function loadItems(): CartItem[] {
     const stored = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) ?? "[]");
     if (!Array.isArray(stored)) return [];
 
-    return stored.filter((item): item is CartItem =>
-      typeof item === "object" && item !== null &&
-      typeof item.productId === "string" && catalog.some((product) => product.id === item.productId) &&
-      Number.isInteger(item.quantity) && item.quantity > 0 && item.quantity <= 48,
-    );
+    return stored.filter((item): item is CartItem => {
+      if (typeof item !== "object" || item === null || typeof item.productId !== "string") return false;
+      const product = catalog.find((product) => product.id === item.productId);
+      return Boolean(
+        product && Number.isInteger(item.quantity) && item.quantity > 0 && item.quantity <= 48 &&
+        (!product.quantityMultiple || item.quantity % product.quantityMultiple === 0),
+      );
+    });
   } catch {
     return [];
   }
@@ -80,7 +83,11 @@ export function useCart() {
   );
 
   function setQuantity(productId: string, quantity: number): void {
-    const nextQuantity = Math.max(0, Math.min(48, quantity));
+    const product = catalog.find((product) => product.id === productId);
+    const quantityMultiple = product?.quantityMultiple ?? 1;
+    const maximumQuantity = Math.floor(48 / quantityMultiple) * quantityMultiple;
+    const nextQuantity = Math.max(0, Math.min(maximumQuantity, quantity));
+    if (nextQuantity % quantityMultiple !== 0) return;
     const itemIndex = items.value.findIndex(
       (item) => item.productId === productId,
     );
