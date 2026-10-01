@@ -144,9 +144,12 @@ products:
         is_allergen: false
     price: 1.00
     image: /images/products/cookie-triple-noisette.jpg
-    category: boxed-favorites
-    unitLabel: 1 cookie
-    quantityMultiple: 15
+    # Exemple pour déplacer ce cookie dans « Les favoris en boîte » et le vendre par 15 :
+    # category: boxed-favorites
+    # unitLabel: 1 cookie
+    # quantityMultiple: 15
+    category: cookies
+    unitLabel: 1 unité
 
   - id: cookie-chocolat-sesame
     name: Cookie chocolat & sésame

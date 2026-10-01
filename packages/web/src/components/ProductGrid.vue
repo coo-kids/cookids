@@ -36,7 +36,7 @@ function hasInvalidComposition(categoryId: string): boolean {
         <p class="max-w-[580px] leading-[1.5]">Les cookies pèsent entre 40 et 42 g crus. Ils sont vendus à l'unité.</p>
       </div>
       <div
-        v-for="category in categories"
+        v-for="category in categories.filter((category) => catalog.some((product) => product.category === category.id))"
         :id="`category-${category.id}`"
         :key="category.id"
         class="mt-14 first:mt-0"

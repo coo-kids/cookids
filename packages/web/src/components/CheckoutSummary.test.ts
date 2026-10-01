@@ -27,13 +27,4 @@ describe("CheckoutSummary", () => {
     expect(wrapper.get("tbody").text()).toContain("12");
   });
 
-  it("modifie un favori par boîte entière", async () => {
-    const favorite = catalog.find((product) => product.id === "cookie-triple-noisette")!;
-    const favoriteItem = { productId: favorite.id, product: favorite, quantity: 15, total: 15 };
-    const wrapper = mount(CheckoutSummary, { props: { items: [favoriteItem], total: 15, editable: true } });
-
-    await wrapper.get('[aria-label="Ajouter 15 unités"]').trigger("click");
-
-    expect(wrapper.emitted("changeQuantity")).toEqual([[favorite.id, 30]]);
-  });
 });

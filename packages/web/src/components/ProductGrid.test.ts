@@ -39,9 +39,9 @@ describe("ProductGrid", () => {
 
     expect(headings.map((heading) => heading.text())).toEqual([
       "Cookies",
-      "Les favoris en boîte",
       "Les autres gourmandises",
     ]);
+    expect(wrapper.text()).not.toContain("Les favoris en boîte");
     for (const heading of headings) {
       expect(heading.classes()).toContain("text-3xl");
       expect(heading.classes()).toContain("sm:text-4xl");
