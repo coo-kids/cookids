@@ -10,6 +10,12 @@ export class ProductIngredient {
   is_allergen!: boolean;
 }
 
+export class ProductTopping extends ProductIngredient {
+  @Property()
+  @Required()
+  id!: string;
+}
+
 export class Product {
   @Property()
   is_limited_edition?: boolean;
@@ -51,4 +57,17 @@ export class Product {
   @Integer()
   @Minimum(1)
   quantityMultiple?: number;
+
+  @Property(() => ProductTopping)
+  availableToppings?: ProductTopping[];
+
+  @Property()
+  @Integer()
+  @Minimum(1)
+  minimumToppings?: number;
+
+  @Property()
+  @Integer()
+  @Minimum(1)
+  maximumToppings?: number;
 }

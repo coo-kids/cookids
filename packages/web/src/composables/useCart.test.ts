@@ -5,6 +5,8 @@ import { useCart } from "./useCart.js";
 
 describe("useCart", () => {
   const cart = useCart();
+  const classicProduct = catalog.find((product) => product.id === "cookie-cafe-noix")!;
+  const customProduct = catalog.find((product) => product.id === "custom-cookie-box")!;
 
   beforeEach(() => {
     cart.clear();
@@ -12,7 +14,7 @@ describe("useCart", () => {
   });
 
   it("calcule les articles enrichis et le total", () => {
-    const product = catalog[0];
+    const product = classicProduct;
 
     cart.setQuantity(product.id, 2);
 
@@ -20,6 +22,7 @@ describe("useCart", () => {
     expect(cart.quantityFor(product.id)).toBe(2);
     expect(cart.enrichedItems.value).toEqual([
       {
+        key: product.id,
         product,
         productId: product.id,
         quantity: 2,
@@ -30,7 +33,7 @@ describe("useCart", () => {
   });
 
   it("borne les quantités et retire un article à zéro", () => {
-    const product = catalog[0];
+    const product = classicProduct;
 
     cart.setQuantity(product.id, 99);
     expect(cart.quantityFor(product.id)).toBe(48);
@@ -41,7 +44,7 @@ describe("useCart", () => {
   });
 
   it("calcule la progression et la validité de chaque catégorie contrainte", () => {
-    const product = catalog[0];
+    const product = classicProduct;
 
     cart.setQuantity(product.id, 13);
 
@@ -65,7 +68,7 @@ describe("useCart", () => {
   });
 
   it("partage le même état entre les utilisations du composable", () => {
-    const product = catalog[0];
+    const product = classicProduct;
     const anotherCart = useCart();
 
     cart.setQuantity(product.id, 3);
@@ -75,7 +78,7 @@ describe("useCart", () => {
   });
 
   it("persiste le panier et supprime le brouillon au nettoyage", () => {
-    const product = catalog[0];
+    const product = classicProduct;
 
     cart.setQuantity(product.id, 2);
     expect(JSON.parse(localStorage.getItem("cookids:cart") ?? "[]")).toEqual([
@@ -84,6 +87,21 @@ describe("useCart", () => {
 
     cart.clear();
     expect(localStorage.getItem("cookids:cart")).toBeNull();
+  });
+
+  it("conserve séparément plusieurs compositions et regroupe les boîtes identiques", () => {
+    cart.addCustomizedProduct(customProduct.id, ["chocolat-noir"]);
+    cart.addCustomizedProduct(customProduct.id, ["noix-pecan", "chocolat-lait"]);
+    cart.addCustomizedProduct(customProduct.id, ["chocolat-noir"]);
+
+    expect(cart.enrichedItems.value).toHaveLength(2);
+    expect(cart.enrichedItems.value.map(({ quantity }) => quantity)).toEqual([24, 12]);
+    expect(cart.enrichedItems.value.map(({ toppingLabels }) => toppingLabels)).toEqual([
+      ["Chocolat noir"],
+      ["Chocolat au lait", "Noix de pécan"],
+    ]);
+    expect(cart.count.value).toBe(36);
+    expect(cart.total.value).toBe(54);
   });
 
 });

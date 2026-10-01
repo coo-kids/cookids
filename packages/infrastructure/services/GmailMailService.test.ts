@@ -23,7 +23,7 @@ describe("GmailMailService", () => {
       createdAt: new Date(),
       customer: { firstName: "Camille", email: "camille@example.com" },
       deliveryLocation: "rosa-parks",
-      items: [Object.assign(new OrderItem(), { productId: "cookie", productName: "Cookie", unitPrice: 12, unitLabel: "la boîte de 12", quantity: 2 })],
+      items: [Object.assign(new OrderItem(), { productId: "cookie", productName: "Cookie", unitPrice: 12, unitLabel: "la boîte de 12", quantity: 2, toppingLabels: ["Chocolat noir", "Café"] })],
       total: 24,
       status: "new"
     });
@@ -35,6 +35,7 @@ describe("GmailMailService", () => {
       subject: "Confirmation de votre commande #42",
       html: expect.stringMatching(/la boîte de 12[\s\S]*Wero[\s\S]*PayPal[\s\S]*Virement bancaire/),
     }));
+    expect(sendMail.mock.calls[0]?.[0].html).toContain("Chocolat noir, Café");
   });
 
   it("rejette une configuration Gmail incomplète", async () => {

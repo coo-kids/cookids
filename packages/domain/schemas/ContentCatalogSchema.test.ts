@@ -37,6 +37,33 @@ describe("ContentCatalogSchema", () => {
           "products": {
             "items": {
               "properties": {
+                "availableToppings": {
+                  "items": {
+                    "properties": {
+                      "id": {
+                        "maxLength": 80,
+                        "minLength": 1,
+                        "type": "string",
+                      },
+                      "is_allergen": {
+                        "type": "boolean",
+                      },
+                      "label": {
+                        "maxLength": 120,
+                        "minLength": 1,
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "id",
+                      "label",
+                      "is_allergen",
+                    ],
+                    "type": "object",
+                  },
+                  "minItems": 1,
+                  "type": "array",
+                },
                 "category": {
                   "maxLength": 80,
                   "minLength": 1,
@@ -79,6 +106,16 @@ describe("ContentCatalogSchema", () => {
                 },
                 "is_limited_edition": {
                   "type": "boolean",
+                },
+                "maximumToppings": {
+                  "minimum": 1,
+                  "multipleOf": 1,
+                  "type": "integer",
+                },
+                "minimumToppings": {
+                  "minimum": 1,
+                  "multipleOf": 1,
+                  "type": "integer",
                 },
                 "name": {
                   "maxLength": 120,

@@ -6,6 +6,7 @@ export interface OrderResponse {
     productName: string;
     quantity: number;
     unitLabel: string;
+    toppingLabels?: string[];
     total: number;
   }>;
 }
