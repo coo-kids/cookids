@@ -20,6 +20,13 @@ describe("ProductCard", () => {
     expect(wrapper.get("img").attributes("alt")).toBe(product.name);
   });
 
+  it("masque la mention 1 unité pour les cookies vendus individuellement", () => {
+    const wrapper = mount(ProductCard, { props: { product, quantity: 0 } });
+
+    expect(wrapper.text()).not.toContain("1 unité");
+    expect(wrapper.getComponent(QuantitySelector).props("step")).toBe(1);
+  });
+
   it("affiche le conditionnement et configure le sélecteur", () => {
     const wrapper = mount(ProductCard, {
       props: { product: { ...product, quantityMultiple: 15 }, quantity: 0 },
