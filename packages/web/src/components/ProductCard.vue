@@ -25,7 +25,9 @@ defineEmits<{ changeQuantity: [quantity: number] }>();
 
     <div class="p-[1.2rem]">
       <div class="flex items-start justify-between gap-3">
-        <h3 class="m-0 text-[1.35rem] leading-[1.1]">{{ product.name }}</h3>
+        <h3 class="m-0 text-[1.35rem] leading-[1.1]">
+          {{ product.name }}<template v-if="product.quantityMultiple"> (x {{ product.quantityMultiple }})</template>
+        </h3>
         <strong class="whitespace-nowrap text-[#b85131]">
           {{ formatEuro(product.price) }}
         </strong>
@@ -47,9 +49,8 @@ defineEmits<{ changeQuantity: [quantity: number] }>();
       </p>
 
       <div class="mt-4 flex w-full items-center justify-between gap-4">
-        <small>
-          {{ product.quantityMultiple ? `Vendu par ${product.quantityMultiple} · ${formatEuro(product.price)} l’unité` : product.unitLabel }}
-        </small>
+        <span v-if="product.quantityMultiple" class="font-sans text-base font-bold text-[#695149]">{{ product.quantityMultiple }} unités</span>
+        <small v-else>{{ product.unitLabel }}</small>
         <QuantitySelector
           :quantity="quantity"
           :step="product.quantityMultiple ?? 1"

@@ -25,9 +25,10 @@ describe("ProductCard", () => {
       props: { product: { ...product, quantityMultiple: 15 }, quantity: 0 },
     });
 
-    expect(wrapper.text()).toContain("Vendu par 15");
+    expect(wrapper.get("h3").text()).toBe("Cookie (x 15)");
+    expect(wrapper.text()).toContain("15 unités");
     expect(wrapper.get("strong.whitespace-nowrap").text()).toBe(formatEuro(1));
-    expect(wrapper.text()).toContain(`${formatEuro(1)} l’unité`);
+    expect(wrapper.text()).not.toContain(`${formatEuro(1)} l’unité`);
     expect(wrapper.getComponent(QuantitySelector).props("step")).toBe(15);
   });
 });
