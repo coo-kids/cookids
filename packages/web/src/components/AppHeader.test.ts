@@ -33,7 +33,7 @@ describe("AppHeader", () => {
   });
 
   it("ouvre directement le tunnel depuis le bouton panier", () => {
-    cart.setQuantity("cookie-cafe-noix", 2);
+    cart.setQuantity("cookie-chocolat-noir", 2);
     const wrapper = mount(AppHeader, { global: { plugins: [router] } });
     const cartLink = wrapper.get('a[aria-label="Voir le panier"]');
 

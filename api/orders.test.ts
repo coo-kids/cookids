@@ -8,7 +8,7 @@ describe("ordersApi", () => {
       body: JSON.stringify({
         customer: { firstName: "Camille", email: "camille@example.com" },
         deliveryLocation: "IFSSO_kgDOBOB43g",
-        items: [{ productId: "cookie-cafe-noix", quantity: 12 }]
+        items: [{ productId: "cookie-chocolat-noir", quantity: 12 }]
       })
     }));
 

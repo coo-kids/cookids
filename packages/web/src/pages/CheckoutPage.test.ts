@@ -48,7 +48,7 @@ describe("CheckoutPage", () => {
     vi.stubGlobal("scrollTo", vi.fn());
     cart.clear();
     checkoutDraft.clear();
-    cart.setQuantity("cookie-cafe-noix", 12);
+    cart.setQuantity("cookie-chocolat-noir", 12);
   });
 
   afterEach(() => {
@@ -132,7 +132,7 @@ describe("CheckoutPage", () => {
     await nextTick();
 
     expect(wrapper.get("h1").text()).toBe(siteContent.orderTitle);
-    expect(wrapper.get("table").text()).toContain("Cookie café & noix");
+    expect(wrapper.get("table").text()).toContain("Cookie au chocolat noir");
   });
 
   it("revient aux coordonnées depuis le récapitulatif", async () => {
@@ -159,7 +159,7 @@ describe("CheckoutPage", () => {
     await nextTick();
 
     expect(wrapper.get("h1").text()).toBe("Récapitulatif");
-    expect(wrapper.get("table").text()).toContain("Cookie café & noix");
+    expect(wrapper.get("table").text()).toContain("Cookie au chocolat noir");
     expect(wrapper.text()).toContain("romain@example.com");
     expect(wrapper.text()).toContain("Livraison");
     expect(wrapper.text()).toContain("Merci de sonner à l’arrivée");

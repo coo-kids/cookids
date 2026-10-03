@@ -5,7 +5,7 @@ import { useCart } from "./useCart.js";
 
 describe("useCart", () => {
   const cart = useCart();
-  const classicProduct = catalog.find((product) => product.id === "cookie-cafe-noix")!;
+  const classicProduct = catalog.find((product) => product.id === "cookie-chocolat-noir")!;
   const customProduct = catalog.find((product) => product.id === "custom-cookie-box")!;
   const financierProduct = catalog.find((product) => product.id === "financiers-amandes")!;
 
