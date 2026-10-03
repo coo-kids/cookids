@@ -19,7 +19,7 @@ describe("handleOrderRequest", () => {
         targetDeliveryDate: "2026-10-01T00:00:00.000Z",
         deliveryComment: " Merci de sonner à l’arrivée ",
         items: [{
-          productId: "cookie-cafe-noix",
+          productId: "cookie-chocolat-noir",
           quantity: 12,
           productName: "Prix falsifié",
           unitPrice: 999,

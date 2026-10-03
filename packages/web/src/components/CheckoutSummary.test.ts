@@ -4,7 +4,7 @@ import CheckoutSummary from "./CheckoutSummary.vue";
 import { catalog } from "../content/catalog.js";
 import { formatEuro } from "@cookids/domain/utils/formatEuro";
 describe("CheckoutSummary", () => {
-  const product = catalog.find((candidate) => candidate.id === "cookie-cafe-noix")!;
+  const product = catalog.find((candidate) => candidate.id === "cookie-chocolat-noir")!;
   const item = { key: product.id, productId: product.id, product, quantity: 12, total: 12 };
   it("masque les images sur mobile et réserve de la place aux prix et quantités", () => {
     const wrapper = mount(CheckoutSummary, { props: { items: [item], total: 12, editable: true } });
