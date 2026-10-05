@@ -6,7 +6,7 @@ categories:
   - id: boxed-favorites
     label: Les favoris en boîte
     countsAsCookies: true
-  - id: financiers
+  - id: autres
     label: Les autres gourmandises
   - id: custom-cookies
     label: Cookies sur mesure
@@ -21,13 +21,13 @@ products:
     ingredients:
       - label: Farine bio
         is_allergen: true
-      - label: Beurre
+      - label: Beurre doux
         is_allergen: false
       - label: Cassonnade
         is_allergen: false
       - label: Sucre blanc
         is_allergen: false
-      - label: Œuf
+      - label: Œuf plein air
         is_allergen: true
       - label: Levure chimique
         is_allergen: false
@@ -79,7 +79,7 @@ products:
   #   price: 1.00
   #   image: /images/products/cookie-cafe-noix.jpg
   #   category: cookies
-  #   unitLabel: 1 unité
+  #   unitLabel: 1 cookie
 
   - id: cookie-pistache-cranberries
     name: Cookie pistache & cranberries
@@ -93,20 +93,20 @@ products:
         is_allergen: false
       - label: Sucre blanc
         is_allergen: false
-      - label: Œuf
+      - label: Œuf plein air
         is_allergen: true
       - label: Pistaches
         is_allergen: true
       - label: Cranberries
         is_allergen: false
-      - label: Pâte de pistache
+      - label: Pâte de pistache maison
         is_allergen: true
       - label: Levure chimique
         is_allergen: false
     price: 1.00
     image: /images/products/cookie-pistache-cranberries.jpg
     category: cookies
-    unitLabel: 1 unité
+    unitLabel: 1 cookie
 
   - id: cookie-pecan-chocolat
     name: Cookie pécan & chocolat
@@ -122,7 +122,7 @@ products:
         is_allergen: false
       - label: Noix de pécan
         is_allergen: true
-      - label: Œuf
+      - label: Œuf plein air
         is_allergen: true
       - label: Levure chimique
         is_allergen: false
@@ -131,7 +131,7 @@ products:
     price: 1.00
     image: /images/products/cookie-chocolat-noix-pecan.jpg
     category: cookies
-    unitLabel: 1 unité
+    unitLabel: 1 cookie
 
   - id: cookie-chocolat-noir
     name: Cookie au chocolat noir
@@ -141,13 +141,13 @@ products:
         is_allergen: true
       - label: Chocolat noir
         is_allergen: false
-      - label: Beurre
+      - label: Beurre doux
         is_allergen: false
       - label: Cassonnade
         is_allergen: false
       - label: Sucre blanc
         is_allergen: false
-      - label: Œuf
+      - label: Œuf plein air
         is_allergen: true
       - label: Levure chimique
         is_allergen: false
@@ -160,7 +160,7 @@ products:
     price: 1.00
     image: /images/products/cookie-chocolat.jpg
     category: cookies
-    unitLabel: 1 unité
+    unitLabel: 1 cookie
 
   - id: cookie-triple-noisette
     name: Cookie triple noisette
@@ -174,7 +174,7 @@ products:
         is_allergen: false
       - label: Noisette
         is_allergen: true
-      - label: Œuf
+      - label: Œuf plein air
         is_allergen: true
       - label: Cassonnade
         is_allergen: false
@@ -191,7 +191,7 @@ products:
     # unitLabel: 1 cookie
     # quantityMultiple: 15
     category: cookies
-    unitLabel: 1 unité
+    unitLabel: 1 cookie
 
   - id: cookie-chocolat-sesame
     name: Cookie chocolat & sésame
@@ -205,7 +205,7 @@ products:
         is_allergen: false
       - label: Cassonnade
         is_allergen: false
-      - label: Œuf
+      - label: Œuf plein air
         is_allergen: true
       - label: Graines de sésame blanc
         is_allergen: true
@@ -214,7 +214,7 @@ products:
     price: 1.00
     image: /images/products/cookie-chocolat-sesame.jpg
     category: cookies
-    unitLabel: 1 unité
+    unitLabel: 1 cookie
 
   # - id: cookie-choco-coco
   #   name: Cookie chocolat, coco & pécan
@@ -243,7 +243,7 @@ products:
   #   price: 1.00
   #   image: /images/products/cookie-choco-coco-pecan.jpg
   #   category: cookies
-  #   unitLabel: 1 unité
+  #   unitLabel: 1 cookie
 
   - id: cookie-tout-cacahuete
     name: Cookie tout cacahuète
@@ -259,7 +259,7 @@ products:
         is_allergen: false
       - label: Beurre demi-sel
         is_allergen: false
-      - label: Œuf
+      - label: Œuf plein air
         is_allergen: true
       - label: Sucre en poudre
         is_allergen: false
@@ -268,13 +268,13 @@ products:
     price: 1.00
     image: /images/products/cookie-tout-cacahuete.jpg
     category: cookies
-    unitLabel: 1 unité
+    unitLabel: 1 cookie
 
   - id: financiers-amandes
     name: Financiers aux amandes
     description: Moelleux aux amandes et à la vanille, vendus par 10.
     ingredients:
-      - label: Blancs d'œuf
+      - label: Blancs d'œuf plein air
         is_allergen: true
       - label: Beurre doux
         is_allergen: false
@@ -288,6 +288,50 @@ products:
         is_allergen: false
     price: 0.50
     image: /images/products/financiers-amandes.jpg
-    category: financiers
+    category: autres
     unitLabel: 1 financier
     quantityMultiple: 10
+
+  - id: amaretti-pistache
+    name: Amaretti à la pistache
+    description: Amaretti à la pistache, vendus par 10
+    ingredients:
+      - label: Poudre d'amande
+        is_allergen: true
+      - label: Sucre en poudre
+        is_allergen: false
+      - label: Blanc d'oeuf plein air
+        is_allergen: false
+      - label: Pâte de pistache maison
+        is_allergen: true
+      - label: Sucre glace
+        is_allergen: false
+      - label: Pistache
+        is_allergen: true
+      - label: Sel
+        is_allergen: false
+    price: 0.60
+    image: /images/products/amaretti-pistache.jpg
+    category: autres
+    unitLabel: 1 amaretti
+    quantityMultiple: 10
+
+  - id: biscuits-halloween
+    name: Biscuits à la vanille Halloween
+    description: Biscuits à la vanille Halloween, vendus par 10
+    ingredients:
+      - label: Farine de blé bio
+        is_allergen: true
+      - label: Beurre doux
+        is_allergen: false
+      - label: Cassonnade
+        is_allergen: false
+      - label: Gousse de vanille
+        is_allergen: false
+      - label: Sel
+        is_allergen: false
+    price: 0.40
+    image: /images/products/biscuits-halloween.jpg
+    category: autres
+    unitLabel: 1 biscuit
+    quantityMultiple: 15

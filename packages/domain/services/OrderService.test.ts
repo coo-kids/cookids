@@ -36,73 +36,81 @@ class TestCatalogProvider extends CatalogProvider {
     return {
       categories: [
         { id: "cookies", label: "Cookies", quantityMultiple: 12 },
-        { id: "boxed-favorites", label: "Les favoris en boîte", quantityMultiple: undefined },
-        { id: "custom-cookies", label: "Cookies sur mesure", quantityMultiple: undefined },
+        {
+          id: "boxed-favorites",
+          label: "Les favoris en boîte",
+          quantityMultiple: undefined,
+        },
+        {
+          id: "custom-cookies",
+          label: "Cookies sur mesure",
+          quantityMultiple: undefined,
+        },
         { id: "financiers", label: "Financiers", quantityMultiple: undefined },
       ],
       products: [
-      {
-        id: "custom-cookie-box",
-        name: "Ma boîte personnalisée",
-        description: "",
-        ingredients: [],
-        price: 1.5,
-        image: "/images/cookie-chocolat.jpg",
-        category: "custom-cookies",
-        unitLabel: "1 cookie",
-        quantityMultiple: 12,
-        minimumToppings: 1,
-        maximumToppings: 3,
-        availableToppings: [
-          { id: "chocolat-noir", label: "Chocolat noir", is_allergen: false },
-          { id: "noisettes", label: "Noisettes", is_allergen: true },
-          { id: "cafe", label: "Café", is_allergen: false },
-          { id: "coco", label: "Coco", is_allergen: true },
-        ],
-      },
-      {
-        id: "cookie-cafe-noix",
-        name: "Cookie café & noix",
-        description: "",
-        ingredients: [],
-        price: 1,
-        image: "/images/cookie-cafe-noix.jpg",
-        category: "cookies",
-        unitLabel: "1 unité",
-      },
-      {
-        id: "cookie-chocolat-noir",
-        name: "Cookie au chocolat noir",
-        description: "",
-        ingredients: [],
-        price: 1,
-        image: "/images/cookie-chocolat-noir.jpg",
-        category: "cookies",
-        unitLabel: "1 unité",
-      },
-      {
-        id: "cookie-triple-noisette",
-        name: "Cookie triple noisette",
-        description: "",
-        ingredients: [],
-        price: 1,
-        image: "/images/cookie-triple-noisette.jpg",
-        category: "boxed-favorites",
-        unitLabel: "1 cookie",
-        quantityMultiple: 15,
-      },
-      {
-        id: "financiers-amandes",
-        name: "Financiers aux amandes",
-        description: "",
-        ingredients: [],
-        price: 0.5,
-        image: "/images/financiers-amandes.jpg",
-        category: "financiers",
-        unitLabel: "1 financier",
-        quantityMultiple: 10,
-      },
-    ],
+        {
+          id: "custom-cookie-box",
+          name: "Ma boîte personnalisée",
+          description: "",
+          ingredients: [],
+          price: 1.5,
+          image: "/images/cookie-chocolat.jpg",
+          category: "custom-cookies",
+          unitLabel: "1 cookie",
+          quantityMultiple: 12,
+          minimumToppings: 1,
+          maximumToppings: 3,
+          availableToppings: [
+            { id: "chocolat-noir", label: "Chocolat noir", is_allergen: false },
+            { id: "noisettes", label: "Noisettes", is_allergen: true },
+            { id: "cafe", label: "Café", is_allergen: false },
+            { id: "coco", label: "Coco", is_allergen: true },
+          ],
+        },
+        {
+          id: "cookie-cafe-noix",
+          name: "Cookie café & noix",
+          description: "",
+          ingredients: [],
+          price: 1,
+          image: "/images/cookie-cafe-noix.jpg",
+          category: "cookies",
+          unitLabel: "1 unité",
+        },
+        {
+          id: "cookie-chocolat-noir",
+          name: "Cookie au chocolat noir",
+          description: "",
+          ingredients: [],
+          price: 1,
+          image: "/images/cookie-chocolat-noir.jpg",
+          category: "cookies",
+          unitLabel: "1 unité",
+        },
+        {
+          id: "cookie-triple-noisette",
+          name: "Cookie triple noisette",
+          description: "",
+          ingredients: [],
+          price: 1,
+          image: "/images/cookie-triple-noisette.jpg",
+          category: "boxed-favorites",
+          unitLabel: "1 cookie",
+          quantityMultiple: 15,
+        },
+        {
+          id: "financiers-amandes",
+          name: "Financiers aux amandes",
+          description: "",
+          ingredients: [],
+          price: 0.5,
+          image: "/images/financiers-amandes.jpg",
+          category: "autres",
+          unitLabel: "1 financier",
+          quantityMultiple: 10,
+        },
+      ],
     };
   }
 }
@@ -126,35 +134,50 @@ async function createFixture(): Promise<{
     { token: OrderRepository, use: repository },
     { token: MailService, use: mailService },
     { token: CatalogProvider, use: new TestCatalogProvider() },
-    { token: DeliveryLocationProvider, use: new TestDeliveryLocationProvider() },
+    {
+      token: DeliveryLocationProvider,
+      use: new TestDeliveryLocationProvider(),
+    },
   ]);
   return { service, repository, mailService };
 }
 
-function createOrderInput(overrides: {
-  items?: Array<{ productId: string; quantity: number; toppingIds?: string[] }>;
-  targetDeliveryDate?: Date;
-} = {}): Order {
-  return deserialize<Order>({
-    customer: {
-      firstName: "Camille",
-      lastName: "Dupont",
-      email: "camille@example.com",
-      phoneNumber: "0600000000"
+function createOrderInput(
+  overrides: {
+    items?: Array<{
+      productId: string;
+      quantity: number;
+      toppingIds?: string[];
+    }>;
+    targetDeliveryDate?: Date;
+  } = {},
+): Order {
+  return deserialize<Order>(
+    {
+      customer: {
+        firstName: "Camille",
+        lastName: "Dupont",
+        email: "camille@example.com",
+        phoneNumber: "0600000000",
+      },
+      deliveryLocation: "rosa-parks",
+      items: overrides.items ?? [
+        { productId: "cookie-cafe-noix", quantity: 12 },
+        { productId: "financiers-amandes", quantity: 10 },
+      ],
+      targetDeliveryDate: overrides.targetDeliveryDate,
     },
-    deliveryLocation: "rosa-parks",
-    items: overrides.items ?? [
-      { productId: "cookie-cafe-noix", quantity: 12 },
-      { productId: "financiers-amandes", quantity: 10 }
-    ],
-    targetDeliveryDate: overrides.targetDeliveryDate
-  }, { type: Order, groups: ["create"], strictGroups: true, useAlias: false });
+    { type: Order, groups: ["create"], strictGroups: true, useAlias: false },
+  );
 }
 
 const validOrder = createOrderInput();
 
 describe("OrderService", () => {
-  afterEach(() => { DITest.reset(); fixedDeliveryDates = []; });
+  afterEach(() => {
+    DITest.reset();
+    fixedDeliveryDates = [];
+  });
 
   it("crée une commande normalisée et recalcule son total", async () => {
     const { service, repository, mailService } = await createFixture();
@@ -170,7 +193,9 @@ describe("OrderService", () => {
   it("rejette un produit inexistant", async () => {
     const { service } = await createFixture();
     await expect(
-      service.create(createOrderInput({ items: [{ productId: "inconnu", quantity: 1 }] })),
+      service.create(
+        createOrderInput({ items: [{ productId: "inconnu", quantity: 1 }] }),
+      ),
     ).rejects.toThrow("n'existe pas");
   });
 
@@ -178,7 +203,11 @@ describe("OrderService", () => {
     const { service } = await createFixture();
 
     await expect(
-      service.create(createOrderInput({ items: [{ productId: "cookie-cafe-noix", quantity: 11 }] })),
+      service.create(
+        createOrderInput({
+          items: [{ productId: "cookie-cafe-noix", quantity: 11 }],
+        }),
+      ),
     ).rejects.toThrow("multiple de 12");
   });
 
@@ -201,11 +230,17 @@ describe("OrderService", () => {
     const { service } = await createFixture();
 
     await expect(
-      service.create(createOrderInput({ items: [{ productId: "financiers-amandes", quantity: 1 }] })),
+      service.create(
+        createOrderInput({
+          items: [{ productId: "financiers-amandes", quantity: 1 }],
+        }),
+      ),
     ).rejects.toThrow("multiple de 10");
 
     const order = await service.create(
-      createOrderInput({ items: [{ productId: "financiers-amandes", quantity: 10 }] }),
+      createOrderInput({
+        items: [{ productId: "financiers-amandes", quantity: 10 }],
+      }),
     );
 
     expect(order.total).toBe(5);
@@ -215,22 +250,34 @@ describe("OrderService", () => {
     const { service } = await createFixture();
 
     await expect(
-      service.create(createOrderInput({ items: [{ productId: "cookie-triple-noisette", quantity: 14 }] })),
+      service.create(
+        createOrderInput({
+          items: [{ productId: "cookie-triple-noisette", quantity: 14 }],
+        }),
+      ),
     ).rejects.toThrow("multiple de 15");
 
     const order = await service.create(
-      createOrderInput({ items: [{ productId: "cookie-triple-noisette", quantity: 15 }] }),
+      createOrderInput({
+        items: [{ productId: "cookie-triple-noisette", quantity: 15 }],
+      }),
     );
     expect(order.total).toBe(15);
   });
 
   it("valide une boîte personnalisée et résout les noms de toppings", async () => {
     const { service } = await createFixture();
-    const order = await service.create(createOrderInput({ items: [{
-      productId: "custom-cookie-box",
-      quantity: 12,
-      toppingIds: ["chocolat-noir", "cafe"],
-    }] }));
+    const order = await service.create(
+      createOrderInput({
+        items: [
+          {
+            productId: "custom-cookie-box",
+            quantity: 12,
+            toppingIds: ["chocolat-noir", "cafe"],
+          },
+        ],
+      }),
+    );
 
     expect(order.total).toBe(18);
     expect(order.items[0]?.toppingLabels).toEqual(["Chocolat noir", "Café"]);
@@ -238,35 +285,62 @@ describe("OrderService", () => {
 
   it.each([
     { toppingIds: [], label: "aucun topping" },
-    { toppingIds: ["chocolat-noir", "noisettes", "cafe", "coco"], label: "plus de trois toppings" },
+    {
+      toppingIds: ["chocolat-noir", "noisettes", "cafe", "coco"],
+      label: "plus de trois toppings",
+    },
     { toppingIds: ["inconnu"], label: "un topping inconnu" },
     { toppingIds: ["cafe", "cafe"], label: "un topping en double" },
   ])("rejette $label", async ({ toppingIds }) => {
     const { service } = await createFixture();
-    await expect(service.create(createOrderInput({ items: [{
-      productId: "custom-cookie-box",
-      quantity: 12,
-      toppingIds,
-    }] }))).rejects.toThrow("entre 1 et 3 toppings autorisés");
+    await expect(
+      service.create(
+        createOrderInput({
+          items: [
+            {
+              productId: "custom-cookie-box",
+              quantity: 12,
+              toppingIds,
+            },
+          ],
+        }),
+      ),
+    ).rejects.toThrow("entre 1 et 3 toppings autorisés");
   });
 
   it("rejette une date absente lorsqu'un lieu impose des dates fixes", async () => {
     fixedDeliveryDates = ["2026-09-19"];
     const { service } = await createFixture();
-    await expect(service.create(validOrder)).rejects.toThrow("La date de livraison n'est pas disponible pour ce lieu.");
+    await expect(service.create(validOrder)).rejects.toThrow(
+      "La date de livraison n'est pas disponible pour ce lieu.",
+    );
   });
 
   it("accepte une date fixe autorisée", async () => {
     fixedDeliveryDates = ["2026-09-19"];
     const { service } = await createFixture();
-    const order = await service.create(createOrderInput({ targetDeliveryDate: new Date("2026-09-19T00:00:00.000Z") }));
-    expect(order.targetDeliveryDate?.toISOString()).toBe("2026-09-19T00:00:00.000Z");
+    const order = await service.create(
+      createOrderInput({
+        targetDeliveryDate: new Date("2026-09-19T00:00:00.000Z"),
+      }),
+    );
+    expect(order.targetDeliveryDate?.toISOString()).toBe(
+      "2026-09-19T00:00:00.000Z",
+    );
   });
 
   it("rejette une date fixe non autorisée", async () => {
     fixedDeliveryDates = ["2026-09-19"];
     const { service } = await createFixture();
-    await expect(service.create(createOrderInput({ targetDeliveryDate: new Date("2026-09-20T00:00:00.000Z") }))).rejects.toThrow("La date de livraison n'est pas disponible pour ce lieu.");
+    await expect(
+      service.create(
+        createOrderInput({
+          targetDeliveryDate: new Date("2026-09-20T00:00:00.000Z"),
+        }),
+      ),
+    ).rejects.toThrow(
+      "La date de livraison n'est pas disponible pour ce lieu.",
+    );
   });
 
   it("propage les défaillances du repository", async () => {
@@ -275,7 +349,6 @@ describe("OrderService", () => {
     await expect(repositoryFailure.service.create(validOrder)).rejects.toThrow(
       "repository failed",
     );
-
   });
 
   it("conserve la commande lorsque l'email de confirmation échoue", async () => {

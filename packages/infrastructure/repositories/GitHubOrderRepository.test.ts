@@ -4,7 +4,9 @@ import { CatalogProvider } from "@cookids/domain/catalog/CatalogProvider.js";
 import type { GitHubOrderRepository as GitHubOrderRepositoryType } from "./GitHubOrderRepository.js";
 import { OrderItem } from "@cookids/domain/models/OrderItem.js";
 
-const issueCreate = vi.fn().mockResolvedValue({ data: { node_id: "issue-node-id", number: 42 } });
+const issueCreate = vi
+  .fn()
+  .mockResolvedValue({ data: { node_id: "issue-node-id", number: 42 } });
 const octokitOptions = vi.fn();
 const graphql = vi.fn();
 const catalogProvider = {
@@ -13,14 +15,14 @@ const catalogProvider = {
       { id: "cookies", countsAsCookies: true },
       { id: "boxed-favorites", countsAsCookies: true },
       { id: "custom-cookies", countsAsCookies: true },
-      { id: "financiers" },
+      { id: "autres" },
     ],
     products: [
       { id: "cookie", category: "cookies" },
       { id: "special", category: "cookies" },
       { id: "boxed-favorite", category: "boxed-favorites" },
       { id: "custom-cookie-box", category: "custom-cookies" },
-      { id: "cookie-named-financier", category: "financiers" },
+      { id: "cookie-named-financier", category: "autres" },
     ],
   }),
 };
@@ -33,7 +35,7 @@ vi.mock("octokit", () => ({
 
     rest = { issues: { create: issueCreate } };
     graphql = graphql;
-  }
+  },
 }));
 
 describe("GitHubOrderRepository", () => {
@@ -41,9 +43,15 @@ describe("GitHubOrderRepository", () => {
     issueCreate.mockClear();
     octokitOptions.mockClear();
     graphql.mockReset();
-    graphql.mockResolvedValueOnce({}).mockResolvedValueOnce({}).mockResolvedValueOnce({ addProjectV2ItemById: { item: { id: "project-item-id" } } }).mockResolvedValueOnce({});
+    graphql
+      .mockResolvedValueOnce({})
+      .mockResolvedValueOnce({})
+      .mockResolvedValueOnce({
+        addProjectV2ItemById: { item: { id: "project-item-id" } },
+      })
+      .mockResolvedValueOnce({});
     injector().settings.set("envs", {
-      GITHUB_TOKEN: "test-token"
+      GITHUB_TOKEN: "test-token",
     });
     injector().settings.set("githubBoards", {
       repository: "cookids-commands",
@@ -59,98 +67,159 @@ describe("GitHubOrderRepository", () => {
         targetDate: "target-date-field-id",
         totalPrice: "total-field-id",
         totalCookies: "total-cookies-field-id",
-        status: "status-field-id"
+        status: "status-field-id",
       },
       statuses: { pending: "pending-option-id" },
-      issueType: "commands-type-id"
+      issueType: "commands-type-id",
     });
   });
 
   it("crée l'issue, l'ajoute au projet et définit son statut initial", async () => {
-    const { GitHubOrderRepository } = await import("./GitHubOrderRepository.js");
-    const repository = await DITest.invoke<GitHubOrderRepositoryType>(GitHubOrderRepository, [
-      { token: CatalogProvider, use: catalogProvider },
-    ]);
+    const { GitHubOrderRepository } =
+      await import("./GitHubOrderRepository.js");
+    const repository = await DITest.invoke<GitHubOrderRepositoryType>(
+      GitHubOrderRepository,
+      [{ token: CatalogProvider, use: catalogProvider }],
+    );
 
     await repository.save({
       createdAt: new Date(),
       customer: { firstName: "Camille", email: "camille@example.com" },
       deliveryLocation: "rosa-parks-option-id",
       deliveryComment: "Merci de sonner à l’arrivée",
-      items: [Object.assign(new OrderItem(), { productId: "cookie", productName: "Cookie", unitPrice: 12, unitLabel: "la boîte de 12", quantity: 2 })],
+      items: [
+        Object.assign(new OrderItem(), {
+          productId: "cookie",
+          productName: "Cookie",
+          unitPrice: 12,
+          unitLabel: "la boîte de 12",
+          quantity: 2,
+        }),
+      ],
       total: 24,
-      status: "new"
+      status: "new",
     });
 
-    expect(issueCreate).toHaveBeenCalledWith(expect.objectContaining({
-      owner: "coo-kids",
-      repo: "cookids-commands",
-      assignees: ["syline"],
-      title: "Commande - Camille - 24,00 €",
-      body: expect.stringContaining("la boîte de 12")
-    }));
+    expect(issueCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        owner: "coo-kids",
+        repo: "cookids-commands",
+        assignees: ["syline"],
+        title: "Commande - Camille - 24,00 €",
+        body: expect.stringContaining("la boîte de 12"),
+      }),
+    );
     expect(issueCreate.mock.calls[0]?.[0].body).toContain("## Livraison");
-    expect(issueCreate.mock.calls[0]?.[0].body).toContain("**Commentaire :** Merci de sonner à l’arrivée");
-    expect(octokitOptions).toHaveBeenCalledWith(expect.objectContaining({
-      request: {
-        headers: {
-          "X-GitHub-Api-Version": "2026-03-10"
-        }
-      }
-    }));
-    expect(graphql).toHaveBeenNthCalledWith(1, expect.stringContaining("updateIssueIssueType"), expect.objectContaining({ issueId: "issue-node-id" }));
-    expect(graphql).toHaveBeenNthCalledWith(2, expect.stringContaining("setIssueFieldValue"), expect.objectContaining({ issueId: "issue-node-id" }));
+    expect(issueCreate.mock.calls[0]?.[0].body).toContain(
+      "**Commentaire :** Merci de sonner à l’arrivée",
+    );
+    expect(octokitOptions).toHaveBeenCalledWith(
+      expect.objectContaining({
+        request: {
+          headers: {
+            "X-GitHub-Api-Version": "2026-03-10",
+          },
+        },
+      }),
+    );
+    expect(graphql).toHaveBeenNthCalledWith(
+      1,
+      expect.stringContaining("updateIssueIssueType"),
+      expect.objectContaining({ issueId: "issue-node-id" }),
+    );
+    expect(graphql).toHaveBeenNthCalledWith(
+      2,
+      expect.stringContaining("setIssueFieldValue"),
+      expect.objectContaining({ issueId: "issue-node-id" }),
+    );
     expect(graphql.mock.calls[1][1]).toMatchObject({
       issueFields: expect.arrayContaining([
         { fieldId: "first-name-field-id", textValue: "Camille" },
         { fieldId: "email-field-id", textValue: "camille@example.com" },
-        { fieldId: "location-field-id", singleSelectOptionId: "rosa-parks-option-id" },
+        {
+          fieldId: "location-field-id",
+          singleSelectOptionId: "rosa-parks-option-id",
+        },
         { fieldId: "total-field-id", numberValue: 24 },
-        { fieldId: "total-cookies-field-id", numberValue: 2 }
-      ])
+        { fieldId: "total-cookies-field-id", numberValue: 2 },
+      ]),
     });
-    expect(graphql).toHaveBeenNthCalledWith(3, expect.stringContaining("addProjectV2ItemById"), { projectId: "project-id", contentId: "issue-node-id" });
-    expect(graphql).toHaveBeenNthCalledWith(4, expect.stringContaining("updateProjectV2ItemFieldValue"), expect.objectContaining({ optionId: "pending-option-id" }));
+    expect(graphql).toHaveBeenNthCalledWith(
+      3,
+      expect.stringContaining("addProjectV2ItemById"),
+      { projectId: "project-id", contentId: "issue-node-id" },
+    );
+    expect(graphql).toHaveBeenNthCalledWith(
+      4,
+      expect.stringContaining("updateProjectV2ItemFieldValue"),
+      expect.objectContaining({ optionId: "pending-option-id" }),
+    );
   });
 
   it.each([
     { quantities: [12, 24, 15, 12, 10], expected: 63 },
     { quantities: [0, 0, 15, 12, 10], expected: 27 },
-  ])("renseigne $expected cookies sans compter les autres catégories", async ({ quantities, expected }) => {
-    const { GitHubOrderRepository } = await import("./GitHubOrderRepository.js");
-    const repository = await DITest.invoke<GitHubOrderRepositoryType>(GitHubOrderRepository, [
-      { token: CatalogProvider, use: catalogProvider },
-    ]);
-    const ids = ["cookie", "special", "boxed-favorite", "custom-cookie-box", "cookie-named-financier"];
-    await repository.save({
-      createdAt: new Date(),
-      customer: { firstName: "Camille", email: "camille@example.com" },
-      deliveryLocation: "rosa-parks-option-id",
-      items: ids.flatMap((productId, index) => quantities[index] ? [Object.assign(new OrderItem(), {
-        productId, productName: productId, quantity: quantities[index], unitPrice: 1, unitLabel: "1 unité",
-      })] : []),
-      total: quantities.reduce((sum, quantity) => sum + quantity, 0),
-      status: "new",
-    });
-    expect(graphql.mock.calls[1][1].issueFields).toContainEqual({
-      fieldId: "total-cookies-field-id", numberValue: expected,
-    });
-  });
+  ])(
+    "renseigne $expected cookies sans compter les autres catégories",
+    async ({ quantities, expected }) => {
+      const { GitHubOrderRepository } =
+        await import("./GitHubOrderRepository.js");
+      const repository = await DITest.invoke<GitHubOrderRepositoryType>(
+        GitHubOrderRepository,
+        [{ token: CatalogProvider, use: catalogProvider }],
+      );
+      const ids = [
+        "cookie",
+        "special",
+        "boxed-favorite",
+        "custom-cookie-box",
+        "cookie-named-financier",
+      ];
+      await repository.save({
+        createdAt: new Date(),
+        customer: { firstName: "Camille", email: "camille@example.com" },
+        deliveryLocation: "rosa-parks-option-id",
+        items: ids.flatMap((productId, index) =>
+          quantities[index]
+            ? [
+                Object.assign(new OrderItem(), {
+                  productId,
+                  productName: productId,
+                  quantity: quantities[index],
+                  unitPrice: 1,
+                  unitLabel: "1 unité",
+                }),
+              ]
+            : [],
+        ),
+        total: quantities.reduce((sum, quantity) => sum + quantity, 0),
+        status: "new",
+      });
+      expect(graphql.mock.calls[1][1].issueFields).toContainEqual({
+        fieldId: "total-cookies-field-id",
+        numberValue: expected,
+      });
+    },
+  );
 
   it("rejette une configuration GitHub incomplète", async () => {
     injector().settings.set("envs", {});
-    const { GitHubOrderRepository } = await import("./GitHubOrderRepository.js");
+    const { GitHubOrderRepository } =
+      await import("./GitHubOrderRepository.js");
 
-    const repository = await DITest.invoke<GitHubOrderRepositoryType>(GitHubOrderRepository, [
-      { token: CatalogProvider, use: catalogProvider },
-    ]);
-    await expect(repository.save({
-      createdAt: new Date(),
-      customer: { firstName: "Camille", email: "camille@example.com" },
-      deliveryLocation: "rosa-parks-option-id",
-      items: [],
-      total: 0,
-      status: "new"
-    })).rejects.toThrow("GitHub commands configuration is incomplete.");
+    const repository = await DITest.invoke<GitHubOrderRepositoryType>(
+      GitHubOrderRepository,
+      [{ token: CatalogProvider, use: catalogProvider }],
+    );
+    await expect(
+      repository.save({
+        createdAt: new Date(),
+        customer: { firstName: "Camille", email: "camille@example.com" },
+        deliveryLocation: "rosa-parks-option-id",
+        items: [],
+        total: 0,
+        status: "new",
+      }),
+    ).rejects.toThrow("GitHub commands configuration is incomplete.");
   });
 });
