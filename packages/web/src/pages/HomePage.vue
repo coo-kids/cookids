@@ -46,14 +46,8 @@ async function goToCheckout(): Promise<void> {
   <HeroSection/>
   <GroupOrderControls
     :is-grouped="cart.isGrouped.value"
-    :participants="cart.participants.value"
-    :active-participant-id="cart.activeParticipantId.value"
     @enable="cart.enableGroupedOrder"
     @disable="cart.disableGroupedOrder"
-    @add-participant="cart.addParticipant"
-    @remove-participant="cart.removeParticipant"
-    @select-participant="cart.activeParticipantId.value = $event"
-    @update-label="cart.updateParticipantLabel"
   />
   <ProductGrid
     :quantities="quantities"
@@ -64,10 +58,15 @@ async function goToCheckout(): Promise<void> {
     :has-items="cart.count.value > 0"
     :participant-labels-valid="cart.hasValidParticipantLabels.value"
     :grouped="cart.isGrouped.value"
-    :active-participant-label="cart.activeParticipant.value?.label"
+    :participants="cart.participants.value"
+    :active-participant-id="cart.activeParticipantId.value"
     @change-quantity="cart.setQuantity"
     @add-customized-product="cart.addCustomizedProduct"
     @clear-cart="clearCart"
     @go-to-checkout="goToCheckout"
+    @add-participant="cart.addParticipant"
+    @remove-participant="cart.removeParticipant"
+    @select-participant="cart.activeParticipantId.value = $event"
+    @update-participant-label="cart.updateParticipantLabel"
   />
 </template>

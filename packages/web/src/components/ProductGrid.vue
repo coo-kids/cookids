@@ -6,6 +6,8 @@ import CategoryCompositionStatus from "./CategoryCompositionStatus.vue";
 import ProductCard from "./ProductCard.vue";
 import CustomProductCard from "./CustomProductCard.vue";
 import ClearCartButton from "./ClearCartButton.vue";
+import GroupOrderTabs from "./GroupOrderTabs.vue";
+import type { CartParticipant } from "../types/CartParticipant.js";
 
 const props = withDefaults(defineProps<{
   quantities: Record<string, number>;
@@ -14,9 +16,10 @@ const props = withDefaults(defineProps<{
   showCompositionErrors?: boolean;
   hasItems?: boolean;
   participantLabelsValid?: boolean;
-  activeParticipantLabel?: string;
   grouped?: boolean;
   minimumCompositions?: MinimumComposition[];
+  participants?: CartParticipant[];
+  activeParticipantId?: string;
 }>(), {
   categoryCompositions: () => [],
   isCompositionValid: true,
@@ -25,13 +28,22 @@ const props = withDefaults(defineProps<{
   participantLabelsValid: true,
   grouped: false,
   minimumCompositions: () => [],
+  participants: () => [],
 });
-defineEmits<{
+const emit = defineEmits<{
   changeQuantity: [productId: string, quantity: number];
   addCustomizedProduct: [productId: string, toppingIds: string[]];
   clearCart: [];
   goToCheckout: [];
+  addParticipant: [];
+  removeParticipant: [participantId: string];
+  selectParticipant: [participantId: string];
+  updateParticipantLabel: [participantId: string, label: string];
 }>();
+
+function updateParticipantLabel(participantId: string, label: string): void {
+  emit("updateParticipantLabel", participantId, label);
+}
 
 function hasInvalidComposition(categoryId: string): boolean {
   return props.showCompositionErrors && props.categoryCompositions.some(
@@ -47,9 +59,15 @@ function hasInvalidComposition(categoryId: string): boolean {
         <p class="m-0 font-sans text-[.78rem] font-bold uppercase tracking-[.14em] text-[#b85131]">Le catalogue</p>
         <h2 id="catalogue-title" class="my-2 text-[clamp(2.1rem,5vw,3.8rem)] leading-none tracking-[-.055em] md:whitespace-nowrap">Les gourmandises du moment</h2>
         <p class="max-w-[580px] leading-[1.5]">Les cookies pèsent entre 40 et 42 g crus. Ils sont vendus à l'unité.</p>
-        <p v-if="grouped" class="mt-4 inline-flex rounded-full bg-[#fff0e5] px-4 py-2 font-sans text-sm font-bold text-cookids-coral">
-          Sélection pour {{ activeParticipantLabel?.trim() || "le participant à nommer" }}
-        </p>
+        <GroupOrderTabs
+          v-if="grouped"
+          :participants="participants"
+          :active-participant-id="activeParticipantId"
+          @add-participant="$emit('addParticipant')"
+          @remove-participant="$emit('removeParticipant', $event)"
+          @select-participant="$emit('selectParticipant', $event)"
+          @update-label="updateParticipantLabel"
+        />
         <div v-if="grouped && minimumCompositions.length" class="mt-3 flex flex-wrap gap-2 text-sm">
           <span
             v-for="composition in minimumCompositions"
