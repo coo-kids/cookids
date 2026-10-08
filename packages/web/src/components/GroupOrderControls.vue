@@ -50,7 +50,7 @@ defineEmits<{
               :class="['rounded-full border px-3 py-2 font-sans text-sm font-bold', participant.id === activeParticipantId ? 'border-cookids-coral bg-[#fff0e5] text-cookids-coral' : 'border-[#d9c6b8] bg-white text-[#695149]']"
               @click="$emit('selectParticipant', participant.id)"
             >{{ participant.label.trim() || `Participant ${index + 1}` }}</button>
-            <AppButton size="small" variant="neutral" @click="$emit('addParticipant')"><Plus :size="16" aria-hidden="true" /> Ajouter</AppButton>
+            <AppButton class="shrink-0 gap-1 whitespace-nowrap" size="compact" variant="neutral" @click="$emit('addParticipant')"><Plus :size="16" aria-hidden="true" />Ajouter</AppButton>
           </div>
 
           <div v-for="(participant, index) in participants.filter(({ id }) => id === activeParticipantId)" :key="participant.id" class="mt-3 flex items-end gap-2">

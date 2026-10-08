@@ -13,6 +13,17 @@ describe("GroupOrderControls", () => {
     expect(wrapper.emitted("enable")).toHaveLength(1);
   });
 
+  it("affiche entièrement le libellé du bouton d'ajout", () => {
+    const wrapper = mount(GroupOrderControls, {
+      props: { isGrouped: true, participants: [{ id: "one", label: "Camille" }], activeParticipantId: "one" },
+    });
+    const addButton = wrapper.findAll("button").find((button) => button.text() === "Ajouter")!;
+
+    expect(addButton.classes()).toContain("whitespace-nowrap");
+    expect(addButton.classes()).toContain("px-3");
+    expect(addButton.classes()).not.toContain("size-9");
+  });
+
   it("permet de nommer, sélectionner, ajouter et supprimer des participants", async () => {
     const participants = [
       { id: "one", label: "Camille" },
