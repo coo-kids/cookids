@@ -80,6 +80,7 @@ export class OrderService {
     }
 
     this.checkProductQuantityMultiples(order, catalog);
+    this.checkProductMinimumQuantities(order, catalog);
     this.checkCategoryQuantityMultiples(order, catalog);
   }
 
@@ -109,6 +110,18 @@ export class OrderService {
       if (product?.quantityMultiple && item.quantity % product.quantityMultiple !== 0) {
         throw new OrderValidationError(
           `« ${product.name} » doit être commandé par multiple de ${product.quantityMultiple}.`,
+        );
+      }
+    }
+  }
+
+  protected checkProductMinimumQuantities(order: Order, catalog: ContentCatalog) {
+    for (const item of order.items) {
+      const product = catalog.products.find((product) => product.id === item.productId);
+
+      if (product?.minimumQuantity && item.quantity < product.minimumQuantity) {
+        throw new OrderValidationError(
+          `« ${product.name} » doit être commandé en quantité minimale de ${product.minimumQuantity}.`,
         );
       }
     }

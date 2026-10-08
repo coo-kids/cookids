@@ -21,6 +21,8 @@ describe("ContentProductSchema", () => {
   it("accepte une quantité minimale configurable", async () => {
     await expect(validate({ ...product, quantityMultiple: 15 }, { type: ContentProductSchema })).resolves.toMatchObject({ quantityMultiple: 15 });
     await expect(validate({ ...product, quantityMultiple: 0 }, { type: ContentProductSchema })).rejects.toThrow();
+    await expect(validate({ ...product, minimumQuantity: 10 }, { type: ContentProductSchema })).resolves.toMatchObject({ minimumQuantity: 10 });
+    await expect(validate({ ...product, minimumQuantity: 0 }, { type: ContentProductSchema })).rejects.toThrow();
   });
 
   it("refuse une valeur non booléenne", async () => {
@@ -102,6 +104,11 @@ describe("ContentProductSchema", () => {
             "type": "boolean",
           },
           "maximumToppings": {
+            "minimum": 1,
+            "multipleOf": 1,
+            "type": "integer",
+          },
+          "minimumQuantity": {
             "minimum": 1,
             "multipleOf": 1,
             "type": "integer",

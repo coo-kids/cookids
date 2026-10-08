@@ -16,7 +16,12 @@ defineEmits<{ changeQuantity: [quantity: number] }>();
         <p class="m-0 shrink-0 font-bold">{{ formatEuro(total) }}</p>
       </div>
       <div class="mt-3 flex justify-end">
-        <QuantitySelector :quantity="quantity" @change="$emit('changeQuantity', $event)" />
+        <QuantitySelector
+          :quantity="quantity"
+          :step="product.quantityMultiple ?? 1"
+          :minimum="product.minimumQuantity"
+          @change="$emit('changeQuantity', $event)"
+        />
       </div>
       <p class="mt-2 text-sm text-[#80685d]">{{ product.unitLabel }}</p>
     </div>

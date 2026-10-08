@@ -23,6 +23,7 @@ function loadItems(): CartItem[] {
       return Boolean(
         product && Number.isInteger(item.quantity) && item.quantity > 0 && item.quantity <= 48 &&
         (!product.quantityMultiple || item.quantity % product.quantityMultiple === 0) &&
+        (!product.minimumQuantity || item.quantity >= product.minimumQuantity) &&
         toppingIds.every((id) => availableIds.has(id)),
       );
     });
@@ -107,6 +108,7 @@ export function useCart() {
     const maximumQuantity = Math.floor(48 / quantityMultiple) * quantityMultiple;
     const nextQuantity = Math.max(0, Math.min(maximumQuantity, quantity));
     if (nextQuantity % quantityMultiple !== 0) return;
+    if (nextQuantity > 0 && product?.minimumQuantity && nextQuantity < product.minimumQuantity) return;
     const itemIndex = items.value.findIndex((item) => cartItemKey(item) === key);
     if (nextQuantity === 0) {
       if (itemIndex >= 0) items.value.splice(itemIndex, 1);

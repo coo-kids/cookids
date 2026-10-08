@@ -90,13 +90,20 @@ describe("useCart", () => {
     expect(localStorage.getItem("cookids:cart")).toBeNull();
   });
 
-  it("ajoute les financiers par groupes de 10 au prix unitaire", () => {
+  it("impose un minimum de 10 financiers puis permet l'ajout à l'unité", () => {
     cart.setQuantity(financierProduct.id, 1);
     expect(cart.quantityFor(financierProduct.id)).toBe(0);
 
     cart.setQuantity(financierProduct.id, 10);
     expect(cart.quantityFor(financierProduct.id)).toBe(10);
     expect(cart.total.value).toBe(5);
+
+    cart.setQuantity(financierProduct.id, 11);
+    expect(cart.quantityFor(financierProduct.id)).toBe(11);
+    expect(cart.total.value).toBe(5.5);
+
+    cart.setQuantity(financierProduct.id, 9);
+    expect(cart.quantityFor(financierProduct.id)).toBe(11);
   });
 
   it("conserve séparément plusieurs compositions et regroupe les boîtes identiques", () => {

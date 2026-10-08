@@ -89,6 +89,7 @@ function categoryComposition(categoryId: string): CategoryComposition | undefine
                 class="flex-row gap-0.5 p-0.5 sm:gap-1.5 sm:p-1"
                 :quantity="item.quantity"
                 :step="item.product.quantityMultiple ?? 1"
+                :minimum="item.product.minimumQuantity"
                 @change="$emit('changeQuantity', item.key, $event)"
               />
               <template v-else>{{ item.quantity }}</template>
