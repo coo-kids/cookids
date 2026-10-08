@@ -4,11 +4,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import AppHeader from "./AppHeader.vue";
 import { useCart } from "../composables/useCart.js";
 import { router } from "../router.js";
+import { useCheckoutDraft } from "../composables/useCheckoutDraft.js";
 
 const cart = useCart();
+const checkoutDraft = useCheckoutDraft();
 
 beforeEach(() => {
   cart.clear();
+  checkoutDraft.clear();
   vi.stubGlobal("scrollTo", vi.fn());
 });
 
@@ -40,6 +43,18 @@ describe("AppHeader", () => {
     expect(cartLink.attributes("href")).toBe("/commande");
     expect(wrapper.find("#cart-drawer").exists()).toBe(false);
     expect(wrapper.text()).toContain("2");
+  });
+
+  it("rouvre le récapitulatif du panier sans effacer les coordonnées", async () => {
+    const details = { firstName: "Camille", email: "camille@example.com", deliveryLocation: "IFSSO_kgDOBOB43g" };
+    checkoutDraft.saveDetails(details);
+    checkoutDraft.saveStep(2);
+    const wrapper = mount(AppHeader, { global: { plugins: [router] } });
+
+    await wrapper.get('a[aria-label="Voir le panier"]').trigger("click");
+
+    expect(checkoutDraft.step.value).toBe(1);
+    expect(checkoutDraft.details.value).toEqual(details);
   });
 
   it("dimensionne les icônes sociales comme celle du panier", () => {

@@ -6,9 +6,11 @@ import { useScrollState } from "../composables/useScrollState.js";
 import { useCart } from "../composables/useCart.js";
 import { siteContent } from "../content/site.js";
 import { RouterLink } from "vue-router";
+import { useCheckoutDraft } from "../composables/useCheckoutDraft.js";
 
 const { isScrolled } = useScrollState();
 const cart = useCart();
+const checkoutDraft = useCheckoutDraft();
 </script>
 
 <template>
@@ -34,7 +36,7 @@ const cart = useCart();
           <PiggyBank :size="21" :stroke-width="2" aria-hidden="true" />
         </RouterLink>
         <div class="relative">
-          <AppButton :as="RouterLink" :to="{ name: 'checkout' }" variant="neutral" size="icon" aria-label="Voir le panier">
+          <AppButton :as="RouterLink" :to="{ name: 'checkout' }" variant="neutral" size="icon" aria-label="Voir le panier" @click="checkoutDraft.saveStep(1)">
             <ShoppingBag :size="21" :stroke-width="2" aria-hidden="true" />
           </AppButton>
           <span v-if="cart.count.value > 0" class="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-cookids-coral font-sans text-xs font-bold text-white" aria-hidden="true">{{ cart.count.value }}</span>

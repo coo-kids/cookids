@@ -37,6 +37,7 @@ async function goToCheckout(): Promise<void> {
     return;
   }
 
+  checkoutDraft.saveStep(1);
   router.push({ name: "checkout" });
 }
 
