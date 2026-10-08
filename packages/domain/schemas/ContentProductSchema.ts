@@ -21,6 +21,7 @@ export const ContentProductSchema = s.object({
   category: s.string().maxLength(80).required(),
   unitLabel: s.string().maxLength(60).required(),
   quantityMultiple: s.number().integer().minimum(1),
+  minimumQuantity: s.number().integer().minimum(1),
   availableToppings: s.array(ContentProductToppingSchema).minItems(1),
   minimumToppings: s.number().integer().minimum(1),
   maximumToppings: s.number().integer().minimum(1),
@@ -31,9 +32,10 @@ export type ContentProductIngredient = s.infer<
   typeof ContentProductIngredientSchema
 >;
 
-export type ContentProduct = Omit<s.infer<typeof ContentProductSchema>, "is_limited_edition" | "quantityMultiple" | "availableToppings" | "minimumToppings" | "maximumToppings"> & {
+export type ContentProduct = Omit<s.infer<typeof ContentProductSchema>, "is_limited_edition" | "quantityMultiple" | "minimumQuantity" | "availableToppings" | "minimumToppings" | "maximumToppings"> & {
   is_limited_edition?: boolean;
   quantityMultiple?: number;
+  minimumQuantity?: number;
   availableToppings?: Array<s.infer<typeof ContentProductToppingSchema>>;
   minimumToppings?: number;
   maximumToppings?: number;

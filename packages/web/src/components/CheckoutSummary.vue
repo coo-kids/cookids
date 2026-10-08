@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { formatEuro } from "@cookids/domain/utils/formatEuro";
 import { categories } from "../content/catalog.js";
-import type { CategoryComposition } from "../composables/useCart.js";
+import type { CategoryComposition, MinimumComposition } from "../composables/useCart.js";
 import type { EnrichedCartItem } from "../types/EnrichedCartItem.js";
 import QuantitySelector from "./QuantitySelector.vue";
 import { computed } from "vue";
@@ -13,11 +13,13 @@ const props = withDefaults(
     editable?: boolean;
     categoryCompositions?: CategoryComposition[];
     grouped?: boolean;
+    minimumCompositions?: MinimumComposition[];
   }>(),
   {
     editable: false,
     categoryCompositions: () => [],
     grouped: false,
+    minimumCompositions: () => [],
   },
 );
 defineEmits<{ changeQuantity: [productId: string, quantity: number] }>();
@@ -43,9 +45,12 @@ function categoryComposition(categoryId: string): CategoryComposition | undefine
 
 <template>
   <div class="min-w-0 max-w-full overflow-hidden rounded-2xl border border-[#eadace] bg-white">
-    <div v-if="grouped && categoryCompositions.length" class="border-b border-[#eadace] bg-[#fff5ec] px-4 py-3 text-sm text-[#695149]">
+    <div v-if="grouped && (categoryCompositions.length || minimumCompositions.length)" class="border-b border-[#eadace] bg-[#fff5ec] px-4 py-3 text-sm text-[#695149]">
       <strong class="text-cookids-ink">Quantités calculées sur toute la commande :</strong>
-      {{ categoryCompositions.map((composition) => `${composition.categoryLabel} ${composition.quantity}/${composition.requiredQuantity}`).join(" · ") }}
+      {{ [
+        ...categoryCompositions.map((composition) => `${composition.categoryLabel} ${composition.quantity}/${composition.requiredQuantity}`),
+        ...minimumCompositions.map((composition) => `${composition.productName} ${composition.quantity}/${composition.requiredQuantity} minimum`),
+      ].join(" · ") }}
     </div>
     <table class="w-full table-fixed border-collapse text-left sm:table-auto">
       <colgroup>
@@ -111,6 +116,7 @@ function categoryComposition(categoryId: string): CategoryComposition | undefine
                 class="flex-row gap-0.5 p-0.5 sm:gap-1.5 sm:p-1"
                 :quantity="item.quantity"
                 :step="item.product.quantityMultiple ?? 1"
+                :minimum="grouped ? undefined : item.product.minimumQuantity"
                 @change="$emit('changeQuantity', item.key, $event)"
               />
               <template v-else>{{ item.quantity }}</template>

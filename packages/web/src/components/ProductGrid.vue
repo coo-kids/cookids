@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { catalog, categories } from "../content/catalog.js";
-import type { CategoryComposition } from "../composables/useCart.js";
+import type { CategoryComposition, MinimumComposition } from "../composables/useCart.js";
 import AppButton from "./AppButton.vue";
 import CategoryCompositionStatus from "./CategoryCompositionStatus.vue";
 import ProductCard from "./ProductCard.vue";
@@ -16,6 +16,7 @@ const props = withDefaults(defineProps<{
   participantLabelsValid?: boolean;
   activeParticipantLabel?: string;
   grouped?: boolean;
+  minimumCompositions?: MinimumComposition[];
 }>(), {
   categoryCompositions: () => [],
   isCompositionValid: true,
@@ -23,6 +24,7 @@ const props = withDefaults(defineProps<{
   hasItems: false,
   participantLabelsValid: true,
   grouped: false,
+  minimumCompositions: () => [],
 });
 defineEmits<{
   changeQuantity: [productId: string, quantity: number];
@@ -48,6 +50,13 @@ function hasInvalidComposition(categoryId: string): boolean {
         <p v-if="grouped" class="mt-4 inline-flex rounded-full bg-[#fff0e5] px-4 py-2 font-sans text-sm font-bold text-cookids-coral">
           Sélection pour {{ activeParticipantLabel?.trim() || "le participant à nommer" }}
         </p>
+        <div v-if="grouped && minimumCompositions.length" class="mt-3 flex flex-wrap gap-2 text-sm">
+          <span
+            v-for="composition in minimumCompositions"
+            :key="composition.productId"
+            :class="['rounded-full px-3 py-1.5 font-sans font-bold', composition.isValid ? 'bg-[#edf7ed] text-[#35683a]' : 'bg-[#fff0e5] text-[#b3261e]']"
+          >{{ composition.productName }} : {{ composition.quantity }}/{{ composition.requiredQuantity }} minimum</span>
+        </div>
       </div>
       <div
         v-for="category in categories.filter((category) => catalog.some((product) => product.category === category.id))"
@@ -80,6 +89,7 @@ function hasInvalidComposition(categoryId: string): boolean {
             :key="product.id"
             :product="product"
             :quantity="quantities[product.id] ?? 0"
+            :enforce-minimum="!grouped"
             @change-quantity="$emit('changeQuantity', product.id, $event)"
           />
         </div>

@@ -108,7 +108,7 @@ class TestCatalogProvider extends CatalogProvider {
           image: "/images/financiers-amandes.jpg",
           category: "autres",
           unitLabel: "1 financier",
-          quantityMultiple: 10,
+          minimumQuantity: 10,
         },
       ],
     };
@@ -251,7 +251,7 @@ describe("OrderService", () => {
     expect(order.total).toBe(12);
   });
 
-  it("impose le conditionnement par 10 des financiers", async () => {
+  it("impose un minimum de 10 financiers puis accepte les unités supplémentaires", async () => {
     const { service } = await createFixture();
 
     await expect(
@@ -260,7 +260,7 @@ describe("OrderService", () => {
           items: [{ productId: "financiers-amandes", quantity: 1 }],
         }),
       ),
-    ).rejects.toThrow("multiple de 10");
+    ).rejects.toThrow("quantité minimale de 10");
 
     const order = await service.create(
       createOrderInput({
@@ -269,6 +269,33 @@ describe("OrderService", () => {
     );
 
     expect(order.total).toBe(5);
+
+    const orderWithExtraUnit = await service.create(
+      createOrderInput({
+        items: [{ productId: "financiers-amandes", quantity: 11 }],
+      }),
+    );
+
+    expect(orderWithExtraUnit.total).toBe(5.5);
+  });
+
+  it("calcule le minimum d'un produit sur tous les participants", async () => {
+    const { service } = await createFixture();
+
+    const order = await service.create(createOrderInput({
+      items: [
+        { productId: "financiers-amandes", quantity: 4, participantLabel: "Camille" },
+        { productId: "financiers-amandes", quantity: 6, participantLabel: "Bureau" },
+      ],
+    }));
+    expect(order.total).toBe(5);
+
+    await expect(service.create(createOrderInput({
+      items: [
+        { productId: "financiers-amandes", quantity: 4, participantLabel: "Camille" },
+        { productId: "financiers-amandes", quantity: 5, participantLabel: "Bureau" },
+      ],
+    }))).rejects.toThrow("quantité minimale de 10");
   });
 
   it("impose le conditionnement défini sur un favori", async () => {

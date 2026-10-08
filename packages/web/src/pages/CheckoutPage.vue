@@ -145,6 +145,7 @@ function handleSuccess(orderResult: OrderResponse): void {
               :items="cart.enrichedItems.value"
               :total="cart.total.value"
               :category-compositions="cart.categoryCompositions.value"
+              :minimum-compositions="cart.minimumCompositions.value"
               :grouped="cart.isGrouped.value"
               editable
               @change-quantity="changeQuantity"
@@ -177,6 +178,7 @@ function handleSuccess(orderResult: OrderResponse): void {
           :items="cart.enrichedItems.value"
           :total="cart.total.value"
           :category-compositions="cart.categoryCompositions.value"
+          :minimum-compositions="cart.minimumCompositions.value"
           :is-composition-valid="cart.isCompositionValid.value"
           :grouped="cart.isGrouped.value"
           :is-loading-preview="isLoaderPreviewVisible"

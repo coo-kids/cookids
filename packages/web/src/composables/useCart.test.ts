@@ -92,13 +92,20 @@ describe("useCart", () => {
     expect(localStorage.getItem("cookids:cart")).toBeNull();
   });
 
-  it("ajoute les financiers par groupes de 10 au prix unitaire", () => {
+  it("impose un minimum de 10 financiers puis permet l'ajout à l'unité", () => {
     cart.setQuantity(financierProduct.id, 1);
     expect(cart.quantityFor(financierProduct.id)).toBe(0);
 
     cart.setQuantity(financierProduct.id, 10);
     expect(cart.quantityFor(financierProduct.id)).toBe(10);
     expect(cart.total.value).toBe(5);
+
+    cart.setQuantity(financierProduct.id, 11);
+    expect(cart.quantityFor(financierProduct.id)).toBe(11);
+    expect(cart.total.value).toBe(5.5);
+
+    cart.setQuantity(financierProduct.id, 9);
+    expect(cart.quantityFor(financierProduct.id)).toBe(11);
   });
 
   it("conserve séparément plusieurs compositions et regroupe les boîtes identiques", () => {
@@ -150,6 +157,30 @@ describe("useCart", () => {
     expect(cart.hasValidParticipantLabels.value).toBe(false);
     cart.updateParticipantLabel(cart.activeParticipantId.value!, "camille");
     expect(cart.hasValidParticipantLabels.value).toBe(false);
+  });
+
+  it("répartit un minimum produit sur plusieurs participants", () => {
+    cart.enableGroupedOrder();
+    const firstParticipantId = cart.activeParticipantId.value!;
+    cart.updateParticipantLabel(firstParticipantId, "Camille");
+    cart.setQuantity(financierProduct.id, 4);
+
+    expect(cart.quantityFor(financierProduct.id)).toBe(4);
+    expect(cart.minimumCompositions.value).toContainEqual({
+      productId: financierProduct.id,
+      productName: financierProduct.name,
+      quantity: 4,
+      requiredQuantity: 10,
+      isValid: false,
+    });
+    expect(cart.isCompositionValid.value).toBe(false);
+
+    cart.addParticipant();
+    cart.updateParticipantLabel(cart.activeParticipantId.value!, "Bureau");
+    cart.setQuantity(financierProduct.id, 6);
+
+    expect(cart.minimumCompositions.value[0]).toMatchObject({ quantity: 10, isValid: true });
+    expect(cart.isCompositionValid.value).toBe(true);
   });
 
 });

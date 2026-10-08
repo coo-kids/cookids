@@ -37,9 +37,15 @@ function loadCart(): StoredCart {
 
   try {
     const stored: unknown = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) ?? "[]");
-    if (Array.isArray(stored)) return { ...emptyCart, items: stored.filter(isValidItem) };
+    if (Array.isArray(stored)) return {
+      ...emptyCart,
+      items: stored.filter((item) => {
+        if (!isValidItem(item)) return false;
+        const minimumQuantity = catalog.find((product) => product.id === item.productId)?.minimumQuantity;
+        return !minimumQuantity || item.quantity >= minimumQuantity;
+      }),
+    };
     if (typeof stored !== "object" || stored === null) return emptyCart;
-
     const candidate = stored as Partial<StoredCart>;
     const participants = Array.isArray(candidate.participants)
       ? candidate.participants.filter((participant): participant is CartParticipant => Boolean(
@@ -51,7 +57,12 @@ function loadCart(): StoredCart {
     const loadedItems = Array.isArray(candidate.items) ? candidate.items.filter(isValidItem) : [];
     const items = mode === "grouped"
       ? loadedItems.filter((item) => item.participantId && participantIds.has(item.participantId))
-      : loadedItems.map(({ participantId: _participantId, ...item }) => item);
+      : loadedItems
+        .filter((item) => {
+          const minimumQuantity = catalog.find((product) => product.id === item.productId)?.minimumQuantity;
+          return !minimumQuantity || item.quantity >= minimumQuantity;
+        })
+        .map(({ participantId: _participantId, ...item }) => item);
     const activeParticipantId = mode === "grouped" && candidate.activeParticipantId && participantIds.has(candidate.activeParticipantId)
       ? candidate.activeParticipantId
       : participants[0]?.id;
@@ -83,6 +94,14 @@ watch([items, mode, participants, activeParticipantId], () => {
 export type CategoryComposition = {
   categoryId: string;
   categoryLabel: string;
+  quantity: number;
+  requiredQuantity: number;
+  isValid: boolean;
+};
+
+export type MinimumComposition = {
+  productId: string;
+  productName: string;
   quantity: number;
   requiredQuantity: number;
   isValid: boolean;
@@ -123,7 +142,24 @@ export function useCart() {
     const requiredQuantity = Math.max(category.quantityMultiple, Math.ceil(quantity / category.quantityMultiple) * category.quantityMultiple);
     return [{ categoryId: category.id, categoryLabel: category.label, quantity, requiredQuantity, isValid: quantity % category.quantityMultiple === 0 }];
   }));
-  const isCompositionValid = computed(() => categoryCompositions.value.every(({ isValid }) => isValid));
+  const minimumCompositions = computed<MinimumComposition[]>(() => catalog.flatMap((product) => {
+    if (!product.minimumQuantity) return [];
+    const quantity = enrichedItems.value.reduce(
+      (sum, item) => sum + (item.productId === product.id ? item.quantity : 0), 0,
+    );
+    if (quantity === 0) return [];
+    return [{
+      productId: product.id,
+      productName: product.name,
+      quantity,
+      requiredQuantity: product.minimumQuantity,
+      isValid: quantity >= product.minimumQuantity,
+    }];
+  }));
+  const isCompositionValid = computed(() =>
+    categoryCompositions.value.every(({ isValid }) => isValid) &&
+    minimumCompositions.value.every(({ isValid }) => isValid),
+  );
 
   function setQuantity(productId: string, quantity: number): void {
     const existing = items.value.find((item) => item.productId === productId && (!isGrouped.value || item.participantId === activeParticipantId.value));
@@ -139,6 +175,7 @@ export function useCart() {
     const maximumQuantity = Math.max(existingItem?.quantity ?? 0, Math.floor(48 / quantityMultiple) * quantityMultiple);
     const nextQuantity = Math.max(0, Math.min(maximumQuantity, quantity));
     if (nextQuantity % quantityMultiple !== 0) return;
+    if (!isGrouped.value && nextQuantity > 0 && product.minimumQuantity && nextQuantity < product.minimumQuantity) return;
     const itemIndex = items.value.findIndex((item) => cartItemKey(item) === key);
     if (nextQuantity === 0) {
       if (itemIndex >= 0) items.value.splice(itemIndex, 1);
@@ -230,7 +267,7 @@ export function useCart() {
   }
 
   return {
-    count, enrichedItems, activeItems, total, categoryCompositions, isCompositionValid, isCartOpen,
+    count, enrichedItems, activeItems, total, categoryCompositions, minimumCompositions, isCompositionValid, isCartOpen,
     mode, isGrouped, participants, activeParticipantId, activeParticipant, hasValidParticipantLabels,
     setQuantity, setItemQuantity, addCustomizedProduct, quantityFor, enableGroupedOrder, disableGroupedOrder,
     addParticipant, updateParticipantLabel, removeParticipant, clear,

@@ -38,4 +38,22 @@ describe("ProductCard", () => {
     expect(wrapper.text()).not.toContain(`${formatEuro(1)} l’unité`);
     expect(wrapper.getComponent(QuantitySelector).props("step")).toBe(15);
   });
+
+  it("affiche la quantité minimale et conserve un pas unitaire", () => {
+    const wrapper = mount(ProductCard, {
+      props: { product: { ...product, minimumQuantity: 10 }, quantity: 0 },
+    });
+
+    expect(wrapper.get("h3").text()).toBe("Cookie (minimum 10)");
+    expect(wrapper.getComponent(QuantitySelector).props("step")).toBe(1);
+    expect(wrapper.getComponent(QuantitySelector).props("minimum")).toBe(10);
+  });
+
+  it("laisse chaque participant ajouter à l'unité en commande groupée", () => {
+    const wrapper = mount(ProductCard, {
+      props: { product: { ...product, minimumQuantity: 10 }, quantity: 0, enforceMinimum: false },
+    });
+
+    expect(wrapper.getComponent(QuantitySelector).props("minimum")).toBeUndefined();
+  });
 });

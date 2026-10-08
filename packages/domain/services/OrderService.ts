@@ -82,6 +82,7 @@ export class OrderService {
     }
 
     this.checkProductQuantityMultiples(order, catalog);
+    this.checkProductMinimumQuantities(order, catalog);
     this.checkCategoryQuantityMultiples(order, catalog);
   }
 
@@ -119,6 +120,21 @@ export class OrderService {
       if (product?.quantityMultiple && item.quantity % product.quantityMultiple !== 0) {
         throw new OrderValidationError(
           `« ${product.name} » doit être commandé par multiple de ${product.quantityMultiple}.`,
+        );
+      }
+    }
+  }
+
+  protected checkProductMinimumQuantities(order: Order, catalog: ContentCatalog) {
+    for (const product of catalog.products) {
+      if (!product.minimumQuantity) continue;
+      const quantity = order.items.reduce(
+        (total, item) => total + (item.productId === product.id ? item.quantity : 0), 0,
+      );
+
+      if (quantity > 0 && quantity < product.minimumQuantity) {
+        throw new OrderValidationError(
+          `« ${product.name} » doit être commandé en quantité minimale de ${product.minimumQuantity}.`,
         );
       }
     }

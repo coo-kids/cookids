@@ -6,7 +6,7 @@ import type { EnrichedCartItem } from "../types/EnrichedCartItem.js";
 import type { OrderResponse } from "../types/OrderResponse.js";
 import AppButton from "./AppButton.vue";
 import CheckoutSummary from "./CheckoutSummary.vue";
-import type { CategoryComposition } from "../composables/useCart.js";
+import type { CategoryComposition, MinimumComposition } from "../composables/useCart.js";
 
 const props = withDefaults(defineProps<{
   details: CheckoutDetails;
@@ -16,10 +16,12 @@ const props = withDefaults(defineProps<{
   isCompositionValid?: boolean;
   isLoadingPreview?: boolean;
   grouped?: boolean;
+  minimumCompositions?: MinimumComposition[];
 }>(), {
   categoryCompositions: () => [],
   isCompositionValid: true,
   grouped: false,
+  minimumCompositions: () => [],
 });
 const emit = defineEmits<{ back: []; success: [order: OrderResponse] }>();
 
@@ -85,7 +87,7 @@ async function submitOrder(): Promise<void> {
 
     <section aria-labelledby="order-summary-title">
       <h2 id="order-summary-title" class="text-[1.7rem]">Votre commande</h2>
-      <CheckoutSummary :items="items" :total="total" :category-compositions="categoryCompositions" :grouped="grouped" />
+      <CheckoutSummary :items="items" :total="total" :category-compositions="categoryCompositions" :minimum-compositions="minimumCompositions" :grouped="grouped" />
     </section>
 
     <section class="mt-10" aria-labelledby="customer-summary-title">

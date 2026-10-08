@@ -57,6 +57,7 @@ async function goToCheckout(): Promise<void> {
   <ProductGrid
     :quantities="quantities"
     :category-compositions="cart.categoryCompositions.value"
+    :minimum-compositions="cart.minimumCompositions.value"
     :is-composition-valid="cart.isCompositionValid.value"
     :show-composition-errors="showCompositionErrors"
     :has-items="cart.count.value > 0"
