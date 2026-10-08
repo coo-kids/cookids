@@ -36,4 +36,18 @@ describe("QuantitySelector", () => {
     await wrapper.setProps({ quantity: 45 });
     expect(plus.attributes("disabled")).toBeDefined();
   });
+
+  it("atteint d'abord le minimum puis évolue à l'unité", async () => {
+    const wrapper = mount(QuantitySelector, { props: { quantity: 0, minimum: 10 } });
+
+    await wrapper.get('[aria-label="Ajouter 10 unités"]').trigger("click");
+    await wrapper.setProps({ quantity: 10 });
+    await wrapper.get('[aria-label="Ajouter une unité"]').trigger("click");
+    await wrapper.setProps({ quantity: 11 });
+    await wrapper.get('[aria-label="Retirer une unité"]').trigger("click");
+    await wrapper.setProps({ quantity: 10 });
+    await wrapper.get('[aria-label="Retirer 10 unités"]').trigger("click");
+
+    expect(wrapper.emitted("change")).toEqual([[10], [11], [10], [0]]);
+  });
 });

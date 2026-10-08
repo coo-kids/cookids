@@ -83,6 +83,11 @@ describe("Product", () => {
             "multipleOf": 1,
             "type": "integer",
           },
+          "minimumQuantity": {
+            "minimum": 1,
+            "multipleOf": 1,
+            "type": "integer",
+          },
           "minimumToppings": {
             "minimum": 1,
             "multipleOf": 1,

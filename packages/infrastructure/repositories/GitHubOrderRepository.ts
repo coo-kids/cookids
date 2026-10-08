@@ -175,11 +175,19 @@ export class GitHubOrderRepository extends OrderRepository {
 
   /** Met en forme le détail de la commande pour le corps Markdown de l'issue. */
   protected formatBody(order: Order): string {
-    const rows = order.items.map((item) => `| ${item.productName}${item.toppingLabels?.length ? `<br>Toppings : ${item.toppingLabels.join(", ")}` : ""} | ${item.quantity} | ${item.unitLabel} | ${item.unitPrice.toFixed(2)} € | ${item.total.toFixed(2)} € |`).join("\n");
+    const formatRows = (items: Order["items"]) => items.map((item) => `| ${item.productName}${item.toppingLabels?.length ? `<br>Toppings : ${item.toppingLabels.join(", ")}` : ""} | ${item.quantity} | ${item.unitLabel} | ${item.unitPrice.toFixed(2)} € | ${item.total.toFixed(2)} € |`).join("\n");
+    const participantLabels = [...new Set(order.items.map((item) => item.participantLabel).filter((label): label is string => Boolean(label)))];
+    const orderDetails = participantLabels.length > 0
+      ? participantLabels.map((label) => {
+        const participantItems = order.items.filter((item) => item.participantLabel === label);
+        const participantTotal = participantItems.reduce((total, item) => total + item.total, 0);
+        return `### ${label.replace(/([\\`*_{}\[\]()#+.!|>-])/g, "\\$1")}\n\n| Produit | Quantité | Unité | Prix unitaire | Sous-total |\n| --- | ---: | --- | ---: | ---: |\n${formatRows(participantItems)}\n\n**Sous-total : ${participantTotal.toFixed(2)} €**`;
+      }).join("\n\n")
+      : `| Produit | Quantité | Unité | Prix unitaire | Sous-total |\n| --- | ---: | --- | ---: | ---: |\n${formatRows(order.items)}`;
     const deliveryComment = order.deliveryComment
       ? `\n\n## Livraison\n\n**Commentaire :** ${order.deliveryComment}`
       : "";
 
-    return `## Commande\n\n| Produit | Quantité | Unité | Prix unitaire | Sous-total |\n| --- | ---: | --- | ---: | ---: |\n${rows}\n\n**Total : ${order.total.toFixed(2)} €**${deliveryComment}`;
+    return `## Commande\n\n${orderDetails}\n\n**Total : ${order.total.toFixed(2)} €**${deliveryComment}`;
   }
 }

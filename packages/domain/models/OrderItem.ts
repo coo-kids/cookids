@@ -1,4 +1,5 @@
-import { CollectionOf, Groups, Integer, Maximum, Minimum, Property, Required } from "@tsed/schema";
+import { OnDeserialize } from "@tsed/json-mapper";
+import { CollectionOf, Groups, Integer, MaxLength, Maximum, Minimum, MinLength, Property, Required } from "@tsed/schema";
 import type { Product } from "@cookids/domain/models/Product.js";
 
 export class OrderItem {
@@ -26,7 +27,7 @@ export class OrderItem {
   @Required()
   @Integer()
   @Minimum(1)
-  @Maximum(48)
+  @Maximum(480)
   quantity!: number;
 
   @Property()
@@ -37,6 +38,12 @@ export class OrderItem {
   @CollectionOf(String)
   @Groups("!create")
   toppingLabels?: string[];
+
+  @Property()
+  @MinLength(1)
+  @MaxLength(80)
+  @OnDeserialize((value?: string) => value?.trim())
+  participantLabel?: string;
 
   @Property()
   @Required()

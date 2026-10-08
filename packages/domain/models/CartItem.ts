@@ -15,4 +15,7 @@ export class CartItem {
   @Property()
   @CollectionOf(String)
   toppingIds?: string[];
+
+  @Property()
+  participantId?: string;
 }

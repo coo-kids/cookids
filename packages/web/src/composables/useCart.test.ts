@@ -82,21 +82,30 @@ describe("useCart", () => {
     const product = classicProduct;
 
     cart.setQuantity(product.id, 2);
-    expect(JSON.parse(localStorage.getItem("cookids:cart") ?? "[]")).toEqual([
-      { productId: product.id, quantity: 2 },
-    ]);
+    expect(JSON.parse(localStorage.getItem("cookids:cart") ?? "[]")).toEqual({
+      items: [{ productId: product.id, quantity: 2 }],
+      mode: "individual",
+      participants: [],
+    });
 
     cart.clear();
     expect(localStorage.getItem("cookids:cart")).toBeNull();
   });
 
-  it("ajoute les financiers par groupes de 10 au prix unitaire", () => {
+  it("impose un minimum de 10 financiers puis permet l'ajout à l'unité", () => {
     cart.setQuantity(financierProduct.id, 1);
     expect(cart.quantityFor(financierProduct.id)).toBe(0);
 
     cart.setQuantity(financierProduct.id, 10);
     expect(cart.quantityFor(financierProduct.id)).toBe(10);
     expect(cart.total.value).toBe(5);
+
+    cart.setQuantity(financierProduct.id, 11);
+    expect(cart.quantityFor(financierProduct.id)).toBe(11);
+    expect(cart.total.value).toBe(5.5);
+
+    cart.setQuantity(financierProduct.id, 9);
+    expect(cart.quantityFor(financierProduct.id)).toBe(11);
   });
 
   it("conserve séparément plusieurs compositions et regroupe les boîtes identiques", () => {
@@ -112,6 +121,66 @@ describe("useCart", () => {
     ]);
     expect(cart.count.value).toBe(36);
     expect(cart.total.value).toBe(54);
+  });
+
+  it("répartit une commande entre participants puis fusionne le panier en mode individuel", () => {
+    cart.setQuantity(classicProduct.id, 5);
+    cart.enableGroupedOrder();
+    const firstParticipantId = cart.activeParticipantId.value!;
+    cart.updateParticipantLabel(firstParticipantId, "Camille");
+
+    cart.addParticipant();
+    const secondParticipantId = cart.activeParticipantId.value!;
+    cart.updateParticipantLabel(secondParticipantId, "Bureau");
+    cart.setQuantity(classicProduct.id, 7);
+
+    expect(cart.enrichedItems.value.map(({ participantLabel, quantity }) => ({ participantLabel, quantity }))).toEqual([
+      { participantLabel: "Camille", quantity: 5 },
+      { participantLabel: "Bureau", quantity: 7 },
+    ]);
+    expect(cart.categoryCompositions.value[0]).toMatchObject({ quantity: 12, isValid: true });
+    expect(cart.hasValidParticipantLabels.value).toBe(true);
+
+    cart.disableGroupedOrder();
+
+    expect(cart.isGrouped.value).toBe(false);
+    expect(cart.quantityFor(classicProduct.id)).toBe(12);
+    expect(cart.enrichedItems.value).toHaveLength(1);
+  });
+
+  it("exige un libellé pour tous les participants", () => {
+    cart.enableGroupedOrder();
+    expect(cart.hasValidParticipantLabels.value).toBe(false);
+    cart.updateParticipantLabel(cart.activeParticipantId.value!, "Camille");
+    expect(cart.hasValidParticipantLabels.value).toBe(true);
+    cart.addParticipant();
+    expect(cart.hasValidParticipantLabels.value).toBe(false);
+    cart.updateParticipantLabel(cart.activeParticipantId.value!, "camille");
+    expect(cart.hasValidParticipantLabels.value).toBe(false);
+  });
+
+  it("répartit un minimum produit sur plusieurs participants", () => {
+    cart.enableGroupedOrder();
+    const firstParticipantId = cart.activeParticipantId.value!;
+    cart.updateParticipantLabel(firstParticipantId, "Camille");
+    cart.setQuantity(financierProduct.id, 4);
+
+    expect(cart.quantityFor(financierProduct.id)).toBe(4);
+    expect(cart.minimumCompositions.value).toContainEqual({
+      productId: financierProduct.id,
+      productName: financierProduct.name,
+      quantity: 4,
+      requiredQuantity: 10,
+      isValid: false,
+    });
+    expect(cart.isCompositionValid.value).toBe(false);
+
+    cart.addParticipant();
+    cart.updateParticipantLabel(cart.activeParticipantId.value!, "Bureau");
+    cart.setQuantity(financierProduct.id, 6);
+
+    expect(cart.minimumCompositions.value[0]).toMatchObject({ quantity: 10, isValid: true });
+    expect(cart.isCompositionValid.value).toBe(true);
   });
 
 });

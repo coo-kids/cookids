@@ -100,6 +100,25 @@ describe("OrderReview", () => {
     expect(wrapper.findAll("button").every((button) => button.attributes("disabled") !== undefined)).toBe(true);
   });
 
+  it("transmet le participant pour une commande groupée", async () => {
+    const fetchMock = vi.fn((_url: string, _init?: RequestInit) => new Promise<Response>(() => {}));
+    vi.stubGlobal("fetch", fetchMock);
+    const wrapper = mount(OrderReview, {
+      props: {
+        details,
+        items: [{ ...items[0], participantLabel: "Camille" }],
+        total: 7,
+        grouped: true,
+      },
+    });
+    wrappers.push(wrapper);
+
+    await wrapper.findAll("button").find((button) => button.text() === "Valider la commande")!.trigger("click");
+
+    const request = fetchMock.mock.calls[0]?.[1] as RequestInit;
+    expect(JSON.parse(request.body as string).items[0]).toMatchObject({ participantLabel: "Camille" });
+  });
+
   it("affiche aussi l'aperçu du loader plein écran et revient en haut", () => {
     const wrapper = mountReview(true);
     const overlay = document.querySelector('[role="status"]')!;

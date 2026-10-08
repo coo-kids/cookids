@@ -3,7 +3,7 @@ import type { Component } from "vue";
 
 withDefaults(defineProps<{
   variant?: "primary" | "neutral" | "dark";
-  size?: "default" | "icon" | "small";
+  size?: "default" | "compact" | "icon" | "small";
   type?: "button" | "submit" | "reset";
   as?: "button" | "a" | Component;
 }>(), {
@@ -21,6 +21,7 @@ const variants = {
 
 const sizes = {
   default: "min-h-11 rounded-full px-5 py-2.5",
+  compact: "min-h-9 rounded-full px-3 py-2",
   small: "size-9 rounded-full p-0",
   icon: "size-11 rounded-full p-0"
 };

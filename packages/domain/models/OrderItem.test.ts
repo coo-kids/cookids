@@ -9,6 +9,11 @@ describe("OrderItem", () => {
     expect(compile(OrderItem, { groups: ["response"] })).toMatchInlineSnapshot(`
       {
         "properties": {
+          "participantLabel": {
+            "maxLength": 80,
+            "minLength": 1,
+            "type": "string",
+          },
           "productId": {
             "minLength": 1,
             "type": "string",
@@ -18,7 +23,7 @@ describe("OrderItem", () => {
             "type": "string",
           },
           "quantity": {
-            "maximum": 48,
+            "maximum": 480,
             "minimum": 1,
             "multipleOf": 1,
             "type": "integer",

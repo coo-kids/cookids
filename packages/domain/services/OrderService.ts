@@ -67,6 +67,8 @@ export class OrderService {
   protected async resolveProducts(order: Order) {
     const catalog = await this.catalogProvider.getCatalog();
 
+    this.checkParticipantLabels(order);
+
     for (const item of order.items) {
       const product = catalog.products.find((product) => product.id === item.productId);
 
@@ -80,7 +82,16 @@ export class OrderService {
     }
 
     this.checkProductQuantityMultiples(order, catalog);
+    this.checkProductMinimumQuantities(order, catalog);
     this.checkCategoryQuantityMultiples(order, catalog);
+  }
+
+  protected checkParticipantLabels(order: Order) {
+    const hasGroupedItem = order.items.some((item) => item.participantLabel !== undefined);
+
+    if (hasGroupedItem && order.items.some((item) => !item.participantLabel?.trim())) {
+      throw new OrderValidationError("Chaque article d'une commande groupée doit être associé à un participant.");
+    }
   }
 
   protected checkToppings(item: Order["items"][number], product: ContentCatalog["products"][number]) {
@@ -109,6 +120,21 @@ export class OrderService {
       if (product?.quantityMultiple && item.quantity % product.quantityMultiple !== 0) {
         throw new OrderValidationError(
           `« ${product.name} » doit être commandé par multiple de ${product.quantityMultiple}.`,
+        );
+      }
+    }
+  }
+
+  protected checkProductMinimumQuantities(order: Order, catalog: ContentCatalog) {
+    for (const product of catalog.products) {
+      if (!product.minimumQuantity) continue;
+      const quantity = order.items.reduce(
+        (total, item) => total + (item.productId === product.id ? item.quantity : 0), 0,
+      );
+
+      if (quantity > 0 && quantity < product.minimumQuantity) {
+        throw new OrderValidationError(
+          `« ${product.name} » doit être commandé en quantité minimale de ${product.minimumQuantity}.`,
         );
       }
     }

@@ -8,6 +8,9 @@ describe("CartItem", () => {
     expect(compile(CartItem)).toMatchInlineSnapshot(`
       {
         "properties": {
+          "participantId": {
+            "type": "string",
+          },
           "productId": {
             "minLength": 1,
             "type": "string",

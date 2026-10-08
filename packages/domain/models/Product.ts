@@ -58,6 +58,11 @@ export class Product {
   @Minimum(1)
   quantityMultiple?: number;
 
+  @Property()
+  @Integer()
+  @Minimum(1)
+  minimumQuantity?: number;
+
   @Property(() => ProductTopping)
   availableToppings?: ProductTopping[];
 

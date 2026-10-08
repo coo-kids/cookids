@@ -54,7 +54,7 @@ describe("handleOrderRequest", () => {
     {
       customer: { firstName: "Camille", email: "camille@example.com" },
       deliveryLocation: "IFSSO_kgDOBOB43A",
-      items: [{ productId: "cookie-cafe-noix", quantity: 49 }]
+      items: [{ productId: "cookie-cafe-noix", quantity: 481 }]
     }
   ])("retourne une erreur pour un payload invalide", async (payload) => {
     const response = await handleOrderRequest(new Request("https://cookids.test/api/orders", {

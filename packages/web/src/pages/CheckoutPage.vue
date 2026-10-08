@@ -36,7 +36,7 @@ function goToStep(step: 1 | 2 | 3): void {
 }
 
 function showOrderForm(): void {
-  if (!cart.isCompositionValid.value) return;
+  if (!cart.isCompositionValid.value || !cart.hasValidParticipantLabels.value) return;
   currentStep.value = 2;
   checkoutDraft.saveStep(2);
 }
@@ -145,12 +145,14 @@ function handleSuccess(orderResult: OrderResponse): void {
               :items="cart.enrichedItems.value"
               :total="cart.total.value"
               :category-compositions="cart.categoryCompositions.value"
+              :minimum-compositions="cart.minimumCompositions.value"
+              :grouped="cart.isGrouped.value"
               editable
               @change-quantity="changeQuantity"
             />
             <div class="mt-8 flex w-full flex-col gap-3 sm:flex-row">
               <AppButton class="flex-1" :as="RouterLink" :to="{ name: 'home', hash: '#catalogue' }" variant="neutral">Continuer mes achats</AppButton>
-              <AppButton class="flex-1" :disabled="!cart.isCompositionValid.value" @click="showOrderForm">Valider mon panier</AppButton>
+              <AppButton class="flex-1" :disabled="!cart.isCompositionValid.value || !cart.hasValidParticipantLabels.value" @click="showOrderForm">Valider mon panier</AppButton>
             </div>
             <div class="mt-4 flex justify-center">
               <ClearCartButton @confirm="clearCart" />
@@ -176,7 +178,9 @@ function handleSuccess(orderResult: OrderResponse): void {
           :items="cart.enrichedItems.value"
           :total="cart.total.value"
           :category-compositions="cart.categoryCompositions.value"
+          :minimum-compositions="cart.minimumCompositions.value"
           :is-composition-valid="cart.isCompositionValid.value"
+          :grouped="cart.isGrouped.value"
           :is-loading-preview="isLoaderPreviewVisible"
           @back="goToStep(2)"
           @success="handleSuccess"

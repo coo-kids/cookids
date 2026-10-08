@@ -51,4 +51,24 @@ describe("GmailMailService", () => {
       status: "new"
     })).rejects.toThrow("Gmail configuration is missing.");
   });
+
+  it("présente les commandes groupées par participant", async () => {
+    const { GmailMailService } = await import("./GmailMailService.js");
+    await new GmailMailService().sendOrderConfirmation({
+      id: 43,
+      createdAt: new Date(),
+      customer: { firstName: "Camille", email: "camille@example.com" },
+      deliveryLocation: "rosa-parks",
+      items: [
+        Object.assign(new OrderItem(), { productId: "cookie", productName: "Cookie", unitPrice: 1, unitLabel: "1 cookie", quantity: 5, participantLabel: "Camille" }),
+        Object.assign(new OrderItem(), { productId: "cookie", productName: "Cookie", unitPrice: 1, unitLabel: "1 cookie", quantity: 7, participantLabel: "Bureau" }),
+      ],
+      total: 12,
+      status: "new",
+    });
+
+    const html = sendMail.mock.calls[0]?.[0].html;
+    expect(html).toContain("Camille — 5.00 €");
+    expect(html).toContain("Bureau — 7.00 €");
+  });
 });

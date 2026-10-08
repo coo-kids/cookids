@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { formatEuro } from "@cookids/domain/utils/formatEuro";
 import { categories } from "../content/catalog.js";
-import type { CategoryComposition } from "../composables/useCart.js";
+import type { CategoryComposition, MinimumComposition } from "../composables/useCart.js";
 import type { EnrichedCartItem } from "../types/EnrichedCartItem.js";
 import QuantitySelector from "./QuantitySelector.vue";
+import { computed } from "vue";
 
 const props = withDefaults(
   defineProps<{
@@ -11,16 +12,30 @@ const props = withDefaults(
     total: number;
     editable?: boolean;
     categoryCompositions?: CategoryComposition[];
+    grouped?: boolean;
+    minimumCompositions?: MinimumComposition[];
   }>(),
   {
     editable: false,
     categoryCompositions: () => [],
+    grouped: false,
+    minimumCompositions: () => [],
   },
 );
 defineEmits<{ changeQuantity: [productId: string, quantity: number] }>();
 
-function itemsForCategory(categoryId: string): EnrichedCartItem[] {
-  return props.items.filter((item) => item.product.category === categoryId);
+const itemGroups = computed(() => {
+  if (!props.grouped) return [{ label: undefined, items: props.items }];
+  const groups = new Map<string, EnrichedCartItem[]>();
+  for (const item of props.items) {
+    const label = item.participantLabel ?? "Participant";
+    groups.set(label, [...(groups.get(label) ?? []), item]);
+  }
+  return [...groups].map(([label, items]) => ({ label, items }));
+});
+
+function itemsForCategory(items: EnrichedCartItem[], categoryId: string): EnrichedCartItem[] {
+  return items.filter((item) => item.product.category === categoryId);
 }
 
 function categoryComposition(categoryId: string): CategoryComposition | undefined {
@@ -30,6 +45,13 @@ function categoryComposition(categoryId: string): CategoryComposition | undefine
 
 <template>
   <div class="min-w-0 max-w-full overflow-hidden rounded-2xl border border-[#eadace] bg-white">
+    <div v-if="grouped && (categoryCompositions.length || minimumCompositions.length)" class="border-b border-[#eadace] bg-[#fff5ec] px-4 py-3 text-sm text-[#695149]">
+      <strong class="text-cookids-ink">Quantités calculées sur toute la commande :</strong>
+      {{ [
+        ...categoryCompositions.map((composition) => `${composition.categoryLabel} ${composition.quantity}/${composition.requiredQuantity}`),
+        ...minimumCompositions.map((composition) => `${composition.productName} ${composition.quantity}/${composition.requiredQuantity} minimum`),
+      ].join(" · ") }}
+    </div>
     <table class="w-full table-fixed border-collapse text-left sm:table-auto">
       <colgroup>
         <col />
@@ -46,12 +68,17 @@ function categoryComposition(categoryId: string): CategoryComposition | undefine
         </tr>
       </thead>
       <tbody>
-        <template v-for="category in categories.filter((category) => itemsForCategory(category.id).length)" :key="category.id">
+        <template v-for="group in itemGroups" :key="group.label ?? 'individual'">
+          <tr v-if="group.label" class="border-t-2 border-[#d9c6b8] bg-[#f6e6d8]">
+            <th class="px-4 py-3 text-left font-sans text-base font-bold text-cookids-ink" colspan="2" scope="rowgroup">{{ group.label }}</th>
+            <td class="px-4 py-3 text-right font-sans font-bold text-cookids-coral">{{ formatEuro(group.items.reduce((sum, item) => sum + item.total, 0)) }}</td>
+          </tr>
+        <template v-for="category in categories.filter((category) => itemsForCategory(group.items, category.id).length)" :key="`${group.label}-${category.id}`">
           <tr class="border-t border-[#eadace] bg-[#fffaf4]">
             <th class="px-4 py-2.5 text-left font-sans text-sm font-bold" colspan="3" scope="rowgroup">
               <span>{{ category.label }}</span>
               <span
-                v-if="categoryComposition(category.id)"
+                v-if="!grouped && categoryComposition(category.id)"
                 :class="[
                   'ml-2',
                   categoryComposition(category.id)?.isValid ? 'text-[#695149]' : 'text-[#b3261e]',
@@ -63,7 +90,7 @@ function categoryComposition(categoryId: string): CategoryComposition | undefine
             </th>
           </tr>
           <tr
-            v-for="item in itemsForCategory(category.id)"
+            v-for="item in itemsForCategory(group.items, category.id)"
             :key="item.key"
             class="border-t border-[#f0dfd1]"
           >
@@ -89,6 +116,7 @@ function categoryComposition(categoryId: string): CategoryComposition | undefine
                 class="flex-row gap-0.5 p-0.5 sm:gap-1.5 sm:p-1"
                 :quantity="item.quantity"
                 :step="item.product.quantityMultiple ?? 1"
+                :minimum="grouped ? undefined : item.product.minimumQuantity"
                 @change="$emit('changeQuantity', item.key, $event)"
               />
               <template v-else>{{ item.quantity }}</template>
@@ -97,6 +125,7 @@ function categoryComposition(categoryId: string): CategoryComposition | undefine
               {{ formatEuro(item.total) }}
             </td>
           </tr>
+        </template>
         </template>
       </tbody>
       <tfoot class="border-t-2 border-[#eadace] bg-[#fffaf4]">

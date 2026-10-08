@@ -272,7 +272,7 @@ products:
 
   - id: financiers-amandes
     name: Financiers aux amandes
-    description: Moelleux aux amandes et à la vanille, vendus par 10.
+    description: Moelleux aux amandes et à la vanille, avec un minimum de 10 pièces.
     ingredients:
       - label: Blancs d'œuf plein air
         is_allergen: true
@@ -290,11 +290,11 @@ products:
     image: /images/products/financiers-amandes.jpg
     category: autres
     unitLabel: 1 financier
-    quantityMultiple: 10
+    minimumQuantity: 10
 
   - id: amaretti-pistache
     name: Amaretti à la pistache
-    description: Amaretti à la pistache, vendus par 10
+    description: Amaretti à la pistache, avec un minimum de 10 pièces.
     ingredients:
       - label: Poudre d'amande
         is_allergen: true
@@ -314,11 +314,11 @@ products:
     image: /images/products/amaretti-pistache.jpg
     category: autres
     unitLabel: 1 amaretti
-    quantityMultiple: 10
+    minimumQuantity: 10
 
   - id: biscuits-halloween
     name: Biscuits à la vanille Halloween
-    description: Biscuits à la vanille Halloween, vendus par 10
+    description: Biscuits à la vanille Halloween, avec un minimum de 15 pièces.
     ingredients:
       - label: Farine de blé bio
         is_allergen: true
@@ -334,4 +334,4 @@ products:
     image: /images/products/biscuits-halloween.jpg
     category: autres
     unitLabel: 1 biscuit
-    quantityMultiple: 15
+    minimumQuantity: 15
