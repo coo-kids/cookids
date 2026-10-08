@@ -156,6 +156,31 @@ describe("GitHubOrderRepository", () => {
     );
   });
 
+  it("regroupe le détail de l'issue par participant avec les sous-totaux", async () => {
+    const { GitHubOrderRepository } = await import("./GitHubOrderRepository.js");
+    const repository = await DITest.invoke<GitHubOrderRepositoryType>(GitHubOrderRepository, [
+      { token: CatalogProvider, use: catalogProvider },
+    ]);
+
+    await repository.save({
+      createdAt: new Date(),
+      customer: { firstName: "Camille", email: "camille@example.com" },
+      deliveryLocation: "rosa-parks-option-id",
+      items: [
+        Object.assign(new OrderItem(), { productId: "cookie", productName: "Cookie", unitPrice: 1, unitLabel: "1 cookie", quantity: 5, participantLabel: "Camille" }),
+        Object.assign(new OrderItem(), { productId: "special", productName: "Spécial", unitPrice: 1, unitLabel: "1 cookie", quantity: 7, participantLabel: "Bureau" }),
+      ],
+      total: 12,
+      status: "new",
+    });
+
+    const body = issueCreate.mock.calls[0]?.[0].body;
+    expect(body).toContain("### Camille");
+    expect(body).toContain("**Sous-total : 5.00 €**");
+    expect(body).toContain("### Bureau");
+    expect(body).toContain("**Sous-total : 7.00 €**");
+  });
+
   it.each([
     { quantities: [12, 24, 15, 12, 10], expected: 63 },
     { quantities: [0, 0, 15, 12, 10], expected: 27 },

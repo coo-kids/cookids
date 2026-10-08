@@ -67,6 +67,8 @@ export class OrderService {
   protected async resolveProducts(order: Order) {
     const catalog = await this.catalogProvider.getCatalog();
 
+    this.checkParticipantLabels(order);
+
     for (const item of order.items) {
       const product = catalog.products.find((product) => product.id === item.productId);
 
@@ -81,6 +83,14 @@ export class OrderService {
 
     this.checkProductQuantityMultiples(order, catalog);
     this.checkCategoryQuantityMultiples(order, catalog);
+  }
+
+  protected checkParticipantLabels(order: Order) {
+    const hasGroupedItem = order.items.some((item) => item.participantLabel !== undefined);
+
+    if (hasGroupedItem && order.items.some((item) => !item.participantLabel?.trim())) {
+      throw new OrderValidationError("Chaque article d'une commande groupée doit être associé à un participant.");
+    }
   }
 
   protected checkToppings(item: Order["items"][number], product: ContentCatalog["products"][number]) {

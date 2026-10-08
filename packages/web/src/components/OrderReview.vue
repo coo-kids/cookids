@@ -15,9 +15,11 @@ const props = withDefaults(defineProps<{
   categoryCompositions?: CategoryComposition[];
   isCompositionValid?: boolean;
   isLoadingPreview?: boolean;
+  grouped?: boolean;
 }>(), {
   categoryCompositions: () => [],
   isCompositionValid: true,
+  grouped: false,
 });
 const emit = defineEmits<{ back: []; success: [order: OrderResponse] }>();
 
@@ -57,7 +59,7 @@ async function submitOrder(): Promise<void> {
           ? new Date(`${props.details.targetDeliveryDate}T00:00:00.000Z`).toISOString()
           : undefined,
         deliveryComment: props.details.deliveryComment,
-        items: props.items.map(({ productId, quantity, toppingIds }) => ({ productId, quantity, toppingIds }))
+        items: props.items.map(({ productId, quantity, toppingIds, participantLabel }) => ({ productId, quantity, toppingIds, participantLabel }))
       })
     });
     const payload = await response.json();
@@ -83,7 +85,7 @@ async function submitOrder(): Promise<void> {
 
     <section aria-labelledby="order-summary-title">
       <h2 id="order-summary-title" class="text-[1.7rem]">Votre commande</h2>
-      <CheckoutSummary :items="items" :total="total" :category-compositions="categoryCompositions" />
+      <CheckoutSummary :items="items" :total="total" :category-compositions="categoryCompositions" :grouped="grouped" />
     </section>
 
     <section class="mt-10" aria-labelledby="customer-summary-title">

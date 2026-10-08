@@ -38,6 +38,11 @@ describe("Order", () => {
           },
           "OrderItemResponse": {
             "properties": {
+              "participantLabel": {
+                "maxLength": 80,
+                "minLength": 1,
+                "type": "string",
+              },
               "productId": {
                 "minLength": 1,
                 "type": "string",
@@ -47,7 +52,7 @@ describe("Order", () => {
                 "type": "string",
               },
               "quantity": {
-                "maximum": 48,
+                "maximum": 480,
                 "minimum": 1,
                 "multipleOf": 1,
                 "type": "integer",

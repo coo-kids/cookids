@@ -82,9 +82,11 @@ describe("useCart", () => {
     const product = classicProduct;
 
     cart.setQuantity(product.id, 2);
-    expect(JSON.parse(localStorage.getItem("cookids:cart") ?? "[]")).toEqual([
-      { productId: product.id, quantity: 2 },
-    ]);
+    expect(JSON.parse(localStorage.getItem("cookids:cart") ?? "[]")).toEqual({
+      items: [{ productId: product.id, quantity: 2 }],
+      mode: "individual",
+      participants: [],
+    });
 
     cart.clear();
     expect(localStorage.getItem("cookids:cart")).toBeNull();
@@ -112,6 +114,42 @@ describe("useCart", () => {
     ]);
     expect(cart.count.value).toBe(36);
     expect(cart.total.value).toBe(54);
+  });
+
+  it("répartit une commande entre participants puis fusionne le panier en mode individuel", () => {
+    cart.setQuantity(classicProduct.id, 5);
+    cart.enableGroupedOrder();
+    const firstParticipantId = cart.activeParticipantId.value!;
+    cart.updateParticipantLabel(firstParticipantId, "Camille");
+
+    cart.addParticipant();
+    const secondParticipantId = cart.activeParticipantId.value!;
+    cart.updateParticipantLabel(secondParticipantId, "Bureau");
+    cart.setQuantity(classicProduct.id, 7);
+
+    expect(cart.enrichedItems.value.map(({ participantLabel, quantity }) => ({ participantLabel, quantity }))).toEqual([
+      { participantLabel: "Camille", quantity: 5 },
+      { participantLabel: "Bureau", quantity: 7 },
+    ]);
+    expect(cart.categoryCompositions.value[0]).toMatchObject({ quantity: 12, isValid: true });
+    expect(cart.hasValidParticipantLabels.value).toBe(true);
+
+    cart.disableGroupedOrder();
+
+    expect(cart.isGrouped.value).toBe(false);
+    expect(cart.quantityFor(classicProduct.id)).toBe(12);
+    expect(cart.enrichedItems.value).toHaveLength(1);
+  });
+
+  it("exige un libellé pour tous les participants", () => {
+    cart.enableGroupedOrder();
+    expect(cart.hasValidParticipantLabels.value).toBe(false);
+    cart.updateParticipantLabel(cart.activeParticipantId.value!, "Camille");
+    expect(cart.hasValidParticipantLabels.value).toBe(true);
+    cart.addParticipant();
+    expect(cart.hasValidParticipantLabels.value).toBe(false);
+    cart.updateParticipantLabel(cart.activeParticipantId.value!, "camille");
+    expect(cart.hasValidParticipantLabels.value).toBe(false);
   });
 
 });

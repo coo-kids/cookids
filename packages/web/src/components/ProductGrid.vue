@@ -13,11 +13,16 @@ const props = withDefaults(defineProps<{
   isCompositionValid?: boolean;
   showCompositionErrors?: boolean;
   hasItems?: boolean;
+  participantLabelsValid?: boolean;
+  activeParticipantLabel?: string;
+  grouped?: boolean;
 }>(), {
   categoryCompositions: () => [],
   isCompositionValid: true,
   showCompositionErrors: false,
   hasItems: false,
+  participantLabelsValid: true,
+  grouped: false,
 });
 defineEmits<{
   changeQuantity: [productId: string, quantity: number];
@@ -34,12 +39,15 @@ function hasInvalidComposition(categoryId: string): boolean {
 </script>
 
 <template>
-  <section id="catalogue" class="bg-white py-[4.5rem]" aria-labelledby="catalogue-title">
+  <section id="catalogue-products" class="bg-white py-[4.5rem]" aria-labelledby="catalogue-title">
     <div class="mx-auto w-[calc(100%-2rem)] max-w-[1180px]">
       <div class="mb-8">
         <p class="m-0 font-sans text-[.78rem] font-bold uppercase tracking-[.14em] text-[#b85131]">Le catalogue</p>
         <h2 id="catalogue-title" class="my-2 text-[clamp(2.1rem,5vw,3.8rem)] leading-none tracking-[-.055em] md:whitespace-nowrap">Les gourmandises du moment</h2>
         <p class="max-w-[580px] leading-[1.5]">Les cookies pèsent entre 40 et 42 g crus. Ils sont vendus à l'unité.</p>
+        <p v-if="grouped" class="mt-4 inline-flex rounded-full bg-[#fff0e5] px-4 py-2 font-sans text-sm font-bold text-cookids-coral">
+          Sélection pour {{ activeParticipantLabel?.trim() || "le participant à nommer" }}
+        </p>
       </div>
       <div
         v-for="category in categories.filter((category) => catalog.some((product) => product.category === category.id))"
@@ -77,8 +85,9 @@ function hasInvalidComposition(categoryId: string): boolean {
         </div>
       </div>
       <div class="mt-10 flex justify-center">
-        <AppButton @click="$emit('goToCheckout')">Commander</AppButton>
+        <AppButton :disabled="!participantLabelsValid" @click="$emit('goToCheckout')">Commander</AppButton>
       </div>
+      <p v-if="!participantLabelsValid" class="mt-3 text-center font-sans text-sm font-bold text-[#b3261e]" role="alert">Renseignez un libellé différent pour chaque participant avant de continuer.</p>
       <div v-if="hasItems" class="mt-3 flex justify-center">
         <ClearCartButton @confirm="$emit('clearCart')" />
       </div>

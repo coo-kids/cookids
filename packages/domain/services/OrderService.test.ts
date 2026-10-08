@@ -148,6 +148,7 @@ function createOrderInput(
       productId: string;
       quantity: number;
       toppingIds?: string[];
+      participantLabel?: string;
     }>;
     targetDeliveryDate?: Date;
   } = {},
@@ -188,6 +189,30 @@ describe("OrderService", () => {
     expect(order.items).toHaveLength(2);
     expect(repository.orders).toHaveLength(1);
     expect(mailService.orders).toHaveLength(1);
+  });
+
+  it("accepte une commande groupée complète et conserve les participants", async () => {
+    const { service } = await createFixture();
+    const order = await service.create(createOrderInput({
+      items: [
+        { productId: "cookie-cafe-noix", quantity: 5, participantLabel: "Camille" },
+        { productId: "cookie-chocolat-noir", quantity: 7, participantLabel: "Bureau" },
+      ],
+    }));
+
+    expect(order.items.map(({ participantLabel }) => participantLabel)).toEqual(["Camille", "Bureau"]);
+    expect(order.total).toBe(12);
+  });
+
+  it("rejette une commande partiellement associée à des participants", async () => {
+    const { service } = await createFixture();
+
+    await expect(service.create(createOrderInput({
+      items: [
+        { productId: "cookie-cafe-noix", quantity: 5, participantLabel: "Camille" },
+        { productId: "cookie-chocolat-noir", quantity: 7 },
+      ],
+    }))).rejects.toThrow("associé à un participant");
   });
 
   it("rejette un produit inexistant", async () => {

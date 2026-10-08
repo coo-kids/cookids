@@ -27,4 +27,22 @@ describe("CheckoutSummary", () => {
     expect(wrapper.get("tbody").text()).toContain("12");
   });
 
+  it("affiche les participants et leurs sous-totaux", () => {
+    const wrapper = mount(CheckoutSummary, {
+      props: {
+        items: [
+          { ...item, key: "camille-cookie", quantity: 5, total: 5, participantLabel: "Camille" },
+          { ...item, key: "bureau-cookie", quantity: 7, total: 7, participantLabel: "Bureau" },
+        ],
+        total: 12,
+        grouped: true,
+      },
+    });
+
+    expect(wrapper.text()).toContain("Camille");
+    expect(wrapper.text()).toContain("Bureau");
+    expect(wrapper.text()).toContain(formatEuro(5));
+    expect(wrapper.text()).toContain(formatEuro(7));
+  });
+
 });

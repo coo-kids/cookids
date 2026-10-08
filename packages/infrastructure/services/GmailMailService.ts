@@ -7,12 +7,19 @@ import type { Order } from "@cookids/domain/models/Order.js";
 export class GmailMailService extends MailService {
   async sendOrderConfirmation(order: Order): Promise<void> {
     const { appPassword, user } = this.getSettings();
-    const rows = order.items
-      .map(
+    const formatRows = (items: Order["items"]) => items.map(
         (item) =>
           `<tr><td>${item.productName}${item.toppingLabels?.length ? `<br><small>Toppings : ${item.toppingLabels.join(", ")}</small>` : ""}</td><td>${item.quantity}</td><td>${item.unitLabel}</td><td>${item.total.toFixed(2)} €</td></tr>`,
       )
       .join("");
+    const participantLabels = [...new Set(order.items.map((item) => item.participantLabel).filter((label): label is string => Boolean(label)))];
+    const rows = participantLabels.length > 0
+      ? participantLabels.map((label) => {
+        const participantItems = order.items.filter((item) => item.participantLabel === label);
+        const participantTotal = participantItems.reduce((total, item) => total + item.total, 0);
+        return `<tr><th colspan="4" style="text-align:left;padding-top:16px">${this.escapeHtml(label)} — ${participantTotal.toFixed(2)} €</th></tr>${formatRows(participantItems)}`;
+      }).join("")
+      : formatRows(order.items);
 
     await nodemailer
       .createTransport({
@@ -25,6 +32,16 @@ export class GmailMailService extends MailService {
         subject: `Confirmation de votre commande #${order.id}`,
         html: `<h1>Merci pour votre commande</h1><p>Votre numéro de suivi est <strong>#${order.id}</strong>.</p><table><thead><tr><th>Produit</th><th>Quantité</th><th>Unité</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table><p><strong>Total : ${order.total.toFixed(2)} €</strong></p><h2>Comment régler votre commande ?</h2><p>Pour payer votre commande, vous avez plusieurs possibilités :</p><ul><li><strong>Wero :</strong> 06 02 31 12 68</li><li><strong>PayPal :</strong> sylinelee@hotmail.fr — sélectionnez « Entre proches »</li><li><strong>Espèces</strong></li><li><strong>Virement bancaire :</strong> veuillez répondre à cet email pour me demander mon RIB.</li></ul><p>Merci pour votre confiance et votre gourmandise !</p>`,
       });
+  }
+
+  protected escapeHtml(value: string): string {
+    return value.replace(/[&<>"']/g, (character) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    })[character] ?? character);
   }
 
   protected getSettings() {
