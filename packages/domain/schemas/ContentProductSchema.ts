@@ -25,15 +25,22 @@ export const ContentProductSchema = s.object({
   availableToppings: s.array(ContentProductToppingSchema).minItems(1),
   minimumToppings: s.number().integer().minimum(1),
   maximumToppings: s.number().integer().minimum(1),
-  is_limited_edition: s.boolean(),
+  glutenFree: s.boolean(),
 });
 
 export type ContentProductIngredient = s.infer<
   typeof ContentProductIngredientSchema
 >;
 
-export type ContentProduct = Omit<s.infer<typeof ContentProductSchema>, "is_limited_edition" | "quantityMultiple" | "minimumQuantity" | "availableToppings" | "minimumToppings" | "maximumToppings"> & {
-  is_limited_edition?: boolean;
+export type ContentProduct = Omit<
+  s.infer<typeof ContentProductSchema>,
+  | "quantityMultiple"
+  | "minimumQuantity"
+  | "availableToppings"
+  | "minimumToppings"
+  | "maximumToppings"
+> & {
+  glutenFree?: boolean;
   quantityMultiple?: number;
   minimumQuantity?: number;
   availableToppings?: Array<s.infer<typeof ContentProductToppingSchema>>;

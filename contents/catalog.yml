@@ -13,8 +13,6 @@ categories:
     countsAsCookies: true
 
 products:
-  # Ajouter is_limited_edition: true à un produit pour afficher le bandeau.
-  # Si le champ est absent ou vaut false, aucun bandeau n'est affiché.
   - id: custom-cookie-box
     name: Ma boîte personnalisée
     description: La recette de notre cookie chocolat, sans le chocolat habituel et avec les toppings de votre choix. Composez une boîte de 12 cookies identiques avec 1 à 3 toppings.
@@ -334,6 +332,8 @@ products:
         is_allergen: true
       - label: Compote de pomme
         is_allergen: false
+      - label: Purée d'amande complète
+        is_allergen: true
       - label: Chocolat noir
         is_allergen: false
       - label: Raisins secs
