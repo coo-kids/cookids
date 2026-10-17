@@ -67,6 +67,7 @@ class TestCatalogProvider extends CatalogProvider {
             { id: "cafe", label: "Café", is_allergen: false },
             { id: "coco", label: "Coco", is_allergen: true },
           ],
+          glutenFree: false,
         },
         {
           id: "cookie-cafe-noix",
@@ -77,6 +78,7 @@ class TestCatalogProvider extends CatalogProvider {
           image: "/images/cookie-cafe-noix.jpg",
           category: "cookies",
           unitLabel: "1 unité",
+          glutenFree: false,
         },
         {
           id: "cookie-chocolat-noir",
@@ -87,6 +89,7 @@ class TestCatalogProvider extends CatalogProvider {
           image: "/images/cookie-chocolat-noir.jpg",
           category: "cookies",
           unitLabel: "1 unité",
+          glutenFree: false,
         },
         {
           id: "cookie-triple-noisette",
@@ -98,6 +101,7 @@ class TestCatalogProvider extends CatalogProvider {
           category: "boxed-favorites",
           unitLabel: "1 cookie",
           quantityMultiple: 15,
+          glutenFree: false,
         },
         {
           id: "financiers-amandes",
@@ -109,6 +113,7 @@ class TestCatalogProvider extends CatalogProvider {
           category: "autres",
           unitLabel: "1 financier",
           minimumQuantity: 10,
+          glutenFree: false,
         },
       ],
     };
@@ -193,26 +198,46 @@ describe("OrderService", () => {
 
   it("accepte une commande groupée complète et conserve les participants", async () => {
     const { service } = await createFixture();
-    const order = await service.create(createOrderInput({
-      items: [
-        { productId: "cookie-cafe-noix", quantity: 5, participantLabel: "Camille" },
-        { productId: "cookie-chocolat-noir", quantity: 7, participantLabel: "Bureau" },
-      ],
-    }));
+    const order = await service.create(
+      createOrderInput({
+        items: [
+          {
+            productId: "cookie-cafe-noix",
+            quantity: 5,
+            participantLabel: "Camille",
+          },
+          {
+            productId: "cookie-chocolat-noir",
+            quantity: 7,
+            participantLabel: "Bureau",
+          },
+        ],
+      }),
+    );
 
-    expect(order.items.map(({ participantLabel }) => participantLabel)).toEqual(["Camille", "Bureau"]);
+    expect(order.items.map(({ participantLabel }) => participantLabel)).toEqual(
+      ["Camille", "Bureau"],
+    );
     expect(order.total).toBe(12);
   });
 
   it("rejette une commande partiellement associée à des participants", async () => {
     const { service } = await createFixture();
 
-    await expect(service.create(createOrderInput({
-      items: [
-        { productId: "cookie-cafe-noix", quantity: 5, participantLabel: "Camille" },
-        { productId: "cookie-chocolat-noir", quantity: 7 },
-      ],
-    }))).rejects.toThrow("associé à un participant");
+    await expect(
+      service.create(
+        createOrderInput({
+          items: [
+            {
+              productId: "cookie-cafe-noix",
+              quantity: 5,
+              participantLabel: "Camille",
+            },
+            { productId: "cookie-chocolat-noir", quantity: 7 },
+          ],
+        }),
+      ),
+    ).rejects.toThrow("associé à un participant");
   });
 
   it("rejette un produit inexistant", async () => {
@@ -282,20 +307,42 @@ describe("OrderService", () => {
   it("calcule le minimum d'un produit sur tous les participants", async () => {
     const { service } = await createFixture();
 
-    const order = await service.create(createOrderInput({
-      items: [
-        { productId: "financiers-amandes", quantity: 4, participantLabel: "Camille" },
-        { productId: "financiers-amandes", quantity: 6, participantLabel: "Bureau" },
-      ],
-    }));
+    const order = await service.create(
+      createOrderInput({
+        items: [
+          {
+            productId: "financiers-amandes",
+            quantity: 4,
+            participantLabel: "Camille",
+          },
+          {
+            productId: "financiers-amandes",
+            quantity: 6,
+            participantLabel: "Bureau",
+          },
+        ],
+      }),
+    );
     expect(order.total).toBe(5);
 
-    await expect(service.create(createOrderInput({
-      items: [
-        { productId: "financiers-amandes", quantity: 4, participantLabel: "Camille" },
-        { productId: "financiers-amandes", quantity: 5, participantLabel: "Bureau" },
-      ],
-    }))).rejects.toThrow("quantité minimale de 10");
+    await expect(
+      service.create(
+        createOrderInput({
+          items: [
+            {
+              productId: "financiers-amandes",
+              quantity: 4,
+              participantLabel: "Camille",
+            },
+            {
+              productId: "financiers-amandes",
+              quantity: 5,
+              participantLabel: "Bureau",
+            },
+          ],
+        }),
+      ),
+    ).rejects.toThrow("quantité minimale de 10");
   });
 
   it("impose le conditionnement défini sur un favori", async () => {

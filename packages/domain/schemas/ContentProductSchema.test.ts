@@ -5,28 +5,65 @@ import { ContentProductSchema } from "./ContentProductSchema.js";
 
 describe("ContentProductSchema", () => {
   const product = {
-    id: "cookie", name: "Cookie", description: "Un cookie",
-    ingredients: [], price: 1, image: "/cookie.jpg",
-    category: "cookies", unitLabel: "1 unité",
+    id: "cookie",
+    name: "Cookie",
+    description: "Un cookie",
+    ingredients: [],
+    price: 1,
+    image: "/cookie.jpg",
+    category: "cookies",
+    unitLabel: "1 unité",
   };
 
-  it.each([true, false])("accepte is_limited_edition=%s", async (is_limited_edition) => {
-    await expect(validate({ ...product, is_limited_edition }, { type: ContentProductSchema })).resolves.toMatchObject({ is_limited_edition });
+  it.each([true, false])("accepte glutenFree=%s", async (glutenFree) => {
+    await expect(
+      validate({ ...product, glutenFree }, { type: ContentProductSchema }),
+    ).resolves.toMatchObject({ glutenFree });
+  });
+
+  it("refuse une valeur non booléenne pour glutenFree", async () => {
+    await expect(
+      validate({ ...product, glutenFree: {} }, { type: ContentProductSchema }),
+    ).rejects.toThrow();
   });
 
   it("accepte un produit sans le champ optionnel", async () => {
-    await expect(validate(product, { type: ContentProductSchema })).resolves.toMatchObject(product);
+    await expect(
+      validate(product, { type: ContentProductSchema }),
+    ).resolves.toMatchObject(product);
   });
 
   it("accepte une quantité minimale configurable", async () => {
-    await expect(validate({ ...product, quantityMultiple: 15 }, { type: ContentProductSchema })).resolves.toMatchObject({ quantityMultiple: 15 });
-    await expect(validate({ ...product, quantityMultiple: 0 }, { type: ContentProductSchema })).rejects.toThrow();
-    await expect(validate({ ...product, minimumQuantity: 10 }, { type: ContentProductSchema })).resolves.toMatchObject({ minimumQuantity: 10 });
-    await expect(validate({ ...product, minimumQuantity: 0 }, { type: ContentProductSchema })).rejects.toThrow();
+    await expect(
+      validate(
+        { ...product, quantityMultiple: 15 },
+        { type: ContentProductSchema },
+      ),
+    ).resolves.toMatchObject({ quantityMultiple: 15 });
+    await expect(
+      validate(
+        { ...product, quantityMultiple: 0 },
+        { type: ContentProductSchema },
+      ),
+    ).rejects.toThrow();
+    await expect(
+      validate(
+        { ...product, minimumQuantity: 10 },
+        { type: ContentProductSchema },
+      ),
+    ).resolves.toMatchObject({ minimumQuantity: 10 });
+    await expect(
+      validate(
+        { ...product, minimumQuantity: 0 },
+        { type: ContentProductSchema },
+      ),
+    ).rejects.toThrow();
   });
 
   it("refuse une valeur non booléenne", async () => {
-    await expect(validate({ ...product, is_limited_edition: {} }, { type: ContentProductSchema })).rejects.toThrow();
+    await expect(
+      validate({ ...product, glutenFree: {} }, { type: ContentProductSchema }),
+    ).rejects.toThrow();
   });
 
   it("compile son schéma Ts.ED", () => {
@@ -70,6 +107,9 @@ describe("ContentProductSchema", () => {
             "minLength": 1,
             "type": "string",
           },
+          "glutenFree": {
+            "type": "boolean",
+          },
           "id": {
             "maxLength": 80,
             "minLength": 1,
@@ -99,9 +139,6 @@ describe("ContentProductSchema", () => {
               "type": "object",
             },
             "type": "array",
-          },
-          "is_limited_edition": {
-            "type": "boolean",
           },
           "maximumToppings": {
             "minimum": 1,

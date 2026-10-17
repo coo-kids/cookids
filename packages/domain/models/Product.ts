@@ -18,7 +18,7 @@ export class ProductTopping extends ProductIngredient {
 
 export class Product {
   @Property()
-  is_limited_edition?: boolean;
+  glutenFree?: boolean;
 
   @Property()
   @Required()

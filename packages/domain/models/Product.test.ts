@@ -61,6 +61,9 @@ describe("Product", () => {
             "minLength": 1,
             "type": "string",
           },
+          "glutenFree": {
+            "type": "boolean",
+          },
           "id": {
             "minLength": 1,
             "type": "string",
@@ -74,9 +77,6 @@ describe("Product", () => {
               "$ref": "#/definitions/ProductIngredient",
             },
             "type": "array",
-          },
-          "is_limited_edition": {
-            "type": "boolean",
           },
           "maximumToppings": {
             "minimum": 1,

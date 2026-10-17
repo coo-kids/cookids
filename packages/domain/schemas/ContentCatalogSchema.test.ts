@@ -74,6 +74,9 @@ describe("ContentCatalogSchema", () => {
                   "minLength": 1,
                   "type": "string",
                 },
+                "glutenFree": {
+                  "type": "boolean",
+                },
                 "id": {
                   "maxLength": 80,
                   "minLength": 1,
@@ -103,9 +106,6 @@ describe("ContentCatalogSchema", () => {
                     "type": "object",
                   },
                   "type": "array",
-                },
-                "is_limited_edition": {
-                  "type": "boolean",
                 },
                 "maximumToppings": {
                   "minimum": 1,
