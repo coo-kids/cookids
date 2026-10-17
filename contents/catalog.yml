@@ -295,6 +295,83 @@ products:
     category: cookies
     unitLabel: 1 cookie
 
+  - id: cookie-avoine-coco-choco-blanc
+    name: Cookie avoine, noix de coco et chocolat blanc
+    description: Cookie avoine, coco et chocolat blanc
+    ingredients:
+      - label: Farine bio
+        is_allergen: true
+      - label: Beurre demi-sel
+        is_allergen: false
+      - label: Flocon d'avoine
+        is_allergen: true
+      - label: Chocolat blanc
+        is_allergen: false
+      - label: Cassonnade
+        is_allergen: false
+      - label: Œuf plein air
+        is_allergen: true
+      - label: Huile de coco
+        is_allergen: false
+      - label: Sucre blanc
+        is_allergen: false
+      - label: Noix de coco
+        is_allergen: true
+      - label: Levure chimique
+        is_allergen: false
+    price: 1.00
+    image: /images/products/cookie-avoine-coco-choco-blanc.jpg
+    category: cookies
+    unitLabel: 1 cookie
+
+  - id: cookie-sans-gluten-fruits-sec-choco
+    name: Cookie fruits secs, chocolat noir
+    description: Cookie fruits secs, chocolat noir
+    ingredients:
+      - label: Flocons d'avoine sans gluten
+        is_allergen: false
+      - label: Amandes
+        is_allergen: true
+      - label: Compote de pomme
+        is_allergen: false
+      - label: Chocolat noir
+        is_allergen: false
+      - label: Raisins secs
+        is_allergen: false
+      - label: Canneberges
+        is_allergen: false
+      - label: Graines de courge
+        is_allergen: false
+      - label: Graines de lin
+        is_allergen: false
+    price: 1.00
+    image: /images/products/cookie-sans-gluten-fruits-sec-choco.jpg
+    category: cookies
+    unitLabel: 1 cookie
+    glutenFree: true
+
+  - id: cookie-sans-gluten-beurre-cacahuete-choco-noir
+    name: Cookie beurre de cacahuète, chocolat noir
+    description: Cookie beurre de cacahuète, chocolat noir
+    ingredients:
+      - label: Flocons d'avoine sans gluten
+        is_allergen: false
+      - label: Compote de pomme
+        is_allergen: false
+      - label: Beurre de cacahuète
+        is_allergen: true
+      - label: Chocolat noir
+        is_allergen: false
+      - label: Noix de pécan
+        is_allergen: true
+      - label: Miel
+        is_allergen: false
+    price: 1.00
+    image: /images/products/cookie-sans-gluten-beurre-cacahuete-choco-noir.jpg
+    category: cookies
+    unitLabel: 1 cookie
+    glutenFree: true
+
   - id: financiers-amandes
     name: Financiers aux amandes
     description: Moelleux aux amandes et à la vanille, avec un minimum de 10 pièces.
