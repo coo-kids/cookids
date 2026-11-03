@@ -8,49 +8,49 @@ categories:
     countsAsCookies: true
   - id: autres
     label: Les autres gourmandises
-  - id: custom-cookies
-    label: Cookies sur mesure
-    countsAsCookies: true
+  # - id: custom-cookies
+  #   label: Cookies sur mesure
+  #   countsAsCookies: true
 
 products:
-  - id: custom-cookie-box
-    name: Ma boîte personnalisée
-    description: La recette de notre cookie chocolat, sans le chocolat habituel et avec les toppings de votre choix. Composez une boîte de 12 cookies identiques avec 1 à 3 toppings.
-    ingredients:
-      - label: Farine bio
-        is_allergen: true
-      - label: Beurre doux
-        is_allergen: false
-      - label: Cassonnade
-        is_allergen: false
-      - label: Sucre blanc
-        is_allergen: false
-      - label: Œuf plein air
-        is_allergen: true
-      - label: Levure chimique
-        is_allergen: false
-    price: 1.50
-    image: /images/products/cookie-personnalise.webp
-    category: custom-cookies
-    unitLabel: 1 cookie
-    quantityMultiple: 12
-    minimumToppings: 1
-    maximumToppings: 3
-    availableToppings:
-      - { id: mms, label: "M&M’s", is_allergen: true }
-      - { id: chocolat-noir, label: Chocolat noir, is_allergen: false }
-      - { id: chocolat-lait, label: Chocolat au lait, is_allergen: true }
-      - { id: chocolat-blanc, label: Chocolat blanc, is_allergen: true }
-      - { id: noisettes, label: Noisettes, is_allergen: true }
-      - { id: noix-pecan, label: Noix de pécan, is_allergen: true }
-      - { id: noix, label: Noix, is_allergen: true }
-      - { id: noix-macadamia, label: Noix de macadamia, is_allergen: true }
-      - { id: pistaches, label: Pistaches, is_allergen: true }
-      - { id: cranberries, label: Cranberries, is_allergen: false }
-      - { id: cafe, label: Café, is_allergen: false }
-      - { id: coco, label: Coco, is_allergen: true }
-      - { id: amandes, label: Amandes, is_allergen: true }
-      - { id: raisins-secs, label: Raisins secs, is_allergen: false }
+  # - id: custom-cookie-box
+  #   name: Ma boîte personnalisée
+  #   description: La recette de notre cookie chocolat, sans le chocolat habituel et avec les toppings de votre choix. Composez une boîte de 12 cookies identiques avec 1 à 3 toppings.
+  #   ingredients:
+  #     - label: Farine bio
+  #       is_allergen: true
+  #     - label: Beurre doux
+  #       is_allergen: false
+  #     - label: Cassonnade
+  #       is_allergen: false
+  #     - label: Sucre blanc
+  #       is_allergen: false
+  #     - label: Œuf plein air
+  #       is_allergen: true
+  #     - label: Levure chimique
+  #       is_allergen: false
+  #   price: 1.50
+  #   image: /images/products/cookie-personnalise.webp
+  #   category: custom-cookies
+  #   unitLabel: 1 cookie
+  #   quantityMultiple: 12
+  #   minimumToppings: 1
+  #   maximumToppings: 3
+  #   availableToppings:
+  #     - { id: mms, label: "M&M’s", is_allergen: true }
+  #     - { id: chocolat-noir, label: Chocolat noir, is_allergen: false }
+  #     - { id: chocolat-lait, label: Chocolat au lait, is_allergen: true }
+  #     - { id: chocolat-blanc, label: Chocolat blanc, is_allergen: true }
+  #     - { id: noisettes, label: Noisettes, is_allergen: true }
+  #     - { id: noix-pecan, label: Noix de pécan, is_allergen: true }
+  #     - { id: noix, label: Noix, is_allergen: true }
+  #     - { id: noix-macadamia, label: Noix de macadamia, is_allergen: true }
+  #     - { id: pistaches, label: Pistaches, is_allergen: true }
+  #     - { id: cranberries, label: Cranberries, is_allergen: false }
+  #     - { id: cafe, label: Café, is_allergen: false }
+  #     - { id: coco, label: Coco, is_allergen: true }
+  #     - { id: amandes, label: Amandes, is_allergen: true }
+  #     - { id: raisins-secs, label: Raisins secs, is_allergen: false }
 
   # - id: cookie-cafe-noix
   #   name: Cookie café & noix
@@ -79,32 +79,32 @@ products:
   #   category: cookies
   #   unitLabel: 1 cookie
 
-  - id: cookie-pistache-cranberries
-    name: Cookie pistache & cranberries
-    description: Pistaches, cranberries et pâte de pistache.
-    ingredients:
-      - label: Farine bio
-        is_allergen: true
-      - label: Beurre salé
-        is_allergen: false
-      - label: Cassonnade
-        is_allergen: false
-      - label: Sucre blanc
-        is_allergen: false
-      - label: Œuf plein air
-        is_allergen: true
-      - label: Pistaches
-        is_allergen: true
-      - label: Cranberries
-        is_allergen: false
-      - label: Pâte de pistache maison
-        is_allergen: true
-      - label: Levure chimique
-        is_allergen: false
-    price: 1.00
-    image: /images/products/cookie-pistache-cranberries.jpg
-    category: cookies
-    unitLabel: 1 cookie
+  # - id: cookie-pistache-cranberries
+  #   name: Cookie pistache & cranberries
+  #   description: Pistaches, cranberries et pâte de pistache.
+  #   ingredients:
+  #     - label: Farine bio
+  #       is_allergen: true
+  #     - label: Beurre salé
+  #       is_allergen: false
+  #     - label: Cassonnade
+  #       is_allergen: false
+  #     - label: Sucre blanc
+  #       is_allergen: false
+  #     - label: Œuf plein air
+  #       is_allergen: true
+  #     - label: Pistaches
+  #       is_allergen: true
+  #     - label: Cranberries
+  #       is_allergen: false
+  #     - label: Pâte de pistache maison
+  #       is_allergen: true
+  #     - label: Levure chimique
+  #       is_allergen: false
+  #   price: 1.00
+  #   image: /images/products/cookie-pistache-cranberries.jpg
+  #   category: cookies
+  #   unitLabel: 1 cookie
 
   - id: cookie-pecan-chocolat
     name: Cookie pécan & chocolat
@@ -372,6 +372,63 @@ products:
     unitLabel: 1 cookie
     glutenFree: true
 
+  - id: cookie-courge
+    name: Cookie courge, chocolat
+    description: Cookie courge, chocolat
+    ingredients:
+      - label: Farine bio
+        is_allergen: true
+      - label: Courge butternut
+        is_allergen: false
+      - label: Chocolat noir
+        is_allergen: false
+      - label: Beurre de cacahuète
+        is_allergen: true
+      - label: Vergeoise
+        is_allergen: false
+      - label: Œuf plein air
+        is_allergen: true
+      - label: Graines de courge
+        is_allergen: true
+      - label: Sucre en poudre
+        is_allergen: false
+      - label: Epices pour pain d'épice
+        is_allergen: true
+      - label: Levure chimique
+        is_allergen: false
+    price: 1.00
+    image: /images/products/cookie-courge.jpg
+    category: cookies
+    unitLabel: 1 cookie
+
+  - id: cookie-amande-choco
+    name: Cookie amande, chocolat
+    description: Cookie amande, chocolat
+    ingredients:
+      - label: Amande
+        is_allergen: true
+      - label: Chocolat noir
+        is_allergen: false
+      - label: Œuf plein air
+        is_allergen: true
+      - label: Miel français
+        is_allergen: false
+      - label: Huile de coco
+        is_allergen: false
+      - label: Extrait de vanille
+        is_allergen: false
+      - label: Noix de coco
+        is_allergen: false
+      - label: Bicarbonate de soude
+        is_allergen: false
+      - label: Sel
+        is_allergen: false
+    price: 1.00
+    image: /images/products/cookie-amandes-choco.jpg
+    category: cookies
+    unitLabel: 1 cookie
+    glutenFree: true
+
   - id: financiers-amandes
     name: Financiers aux amandes
     description: Moelleux aux amandes et à la vanille, avec un minimum de 10 pièces.
@@ -418,22 +475,22 @@ products:
     unitLabel: 1 amaretti
     minimumQuantity: 10
 
-  - id: biscuits-halloween
-    name: Biscuits à la vanille Halloween
-    description: Biscuits à la vanille Halloween, avec un minimum de 15 pièces.
-    ingredients:
-      - label: Farine de blé bio
-        is_allergen: true
-      - label: Beurre doux
-        is_allergen: false
-      - label: Cassonnade
-        is_allergen: false
-      - label: Gousse de vanille
-        is_allergen: false
-      - label: Sel
-        is_allergen: false
-    price: 0.40
-    image: /images/products/biscuits-halloween.jpg
-    category: autres
-    unitLabel: 1 biscuit
-    minimumQuantity: 15
+  # - id: biscuits-halloween
+  #   name: Biscuits à la vanille Halloween
+  #   description: Biscuits à la vanille Halloween, avec un minimum de 15 pièces.
+  #   ingredients:
+  #     - label: Farine de blé bio
+  #       is_allergen: true
+  #     - label: Beurre doux
+  #       is_allergen: false
+  #     - label: Cassonnade
+  #       is_allergen: false
+  #     - label: Gousse de vanille
+  #       is_allergen: false
+  #     - label: Sel
+  #       is_allergen: false
+  #   price: 0.40
+  #   image: /images/products/biscuits-halloween.jpg
+  #   category: autres
+  #   unitLabel: 1 biscuit
+  #   minimumQuantity: 15
