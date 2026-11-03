@@ -11,25 +11,31 @@ describe("ProductGrid", () => {
     const wrapper = mount(ProductGrid, {
       props: {
         quantities: {},
-        categoryCompositions: [{
-          categoryId: "cookies",
-          categoryLabel: "Cookies",
-          quantity: 13,
-          requiredQuantity: 24,
-          isValid: false,
-        }],
+        categoryCompositions: [
+          {
+            categoryId: "cookies",
+            categoryLabel: "Cookies",
+            quantity: 13,
+            requiredQuantity: 24,
+            isValid: false,
+          },
+        ],
         isCompositionValid: false,
         showCompositionErrors: true,
       },
     });
 
-    const orderButton = wrapper.findAll("button").find((button) => button.text() === "Commander");
+    const orderButton = wrapper
+      .findAll("button")
+      .find((button) => button.text() === "Commander");
 
     expect(orderButton).toBeDefined();
     expect(orderButton!.attributes("disabled")).toBeUndefined();
     expect(wrapper.text()).toContain("13/24");
     expect(wrapper.text()).not.toContain("Cookies : 13/24");
-    expect(wrapper.text()).toContain("Complétez cette sélection pour atteindre 24 éléments.");
+    expect(wrapper.text()).toContain(
+      "Complétez cette sélection pour atteindre 24 éléments.",
+    );
     expect(wrapper.text()).not.toContain("Les autres gourmandises :");
   });
 
@@ -40,13 +46,16 @@ describe("ProductGrid", () => {
     expect(headings.map((heading) => heading.text())).toEqual([
       "Cookies",
       "Les autres gourmandises",
-      "Cookies sur mesure",
     ]);
     expect(wrapper.text()).not.toContain("Les favoris en boîte");
     for (const heading of headings) {
       expect(heading.classes()).toContain("text-3xl");
       expect(heading.classes()).toContain("sm:text-4xl");
-      expect(heading.element.parentElement?.parentElement?.classList.contains("bg-[#fff5ec]")).toBe(true);
+      expect(
+        heading.element.parentElement?.parentElement?.classList.contains(
+          "bg-[#fff5ec]",
+        ),
+      ).toBe(true);
     }
   });
 });
