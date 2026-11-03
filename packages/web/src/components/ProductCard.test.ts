@@ -24,7 +24,7 @@ describe("ProductCard", () => {
         props: { product: { ...product, glutenFree }, quantity: 0 },
       });
 
-      expect(wrapper.text().includes("Sans gluten")).toBe(glutenFree === true);
+      expect(wrapper.text().includes("Sans gluten*")).toBe(glutenFree === true);
       expect(wrapper.get("img").attributes("alt")).toBe(product.name);
     },
   );
@@ -71,4 +71,17 @@ describe("ProductCard", () => {
       wrapper.getComponent(QuantitySelector).props("minimum"),
     ).toBeUndefined();
   });
+
+  it.each([true, false, undefined])(
+    "affiche le bandeau stock limité uniquement pour true (%s)",
+    (limitedStock) => {
+      const wrapper = mount(ProductCard, {
+        props: { product: { ...product, limitedStock }, quantity: 0 },
+      });
+
+      expect(wrapper.text().includes("Stock limité**")).toBe(
+        limitedStock === true,
+      );
+    },
+  );
 });

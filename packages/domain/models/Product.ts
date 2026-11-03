@@ -75,4 +75,7 @@ export class Product {
   @Integer()
   @Minimum(1)
   maximumToppings?: number;
+
+  @Property()
+  limitedStock?: boolean;
 }

@@ -78,6 +78,9 @@ describe("Product", () => {
             },
             "type": "array",
           },
+          "limitedStock": {
+            "type": "boolean",
+          },
           "maximumToppings": {
             "minimum": 1,
             "multipleOf": 1,

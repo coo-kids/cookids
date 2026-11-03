@@ -400,6 +400,7 @@ products:
     image: /images/products/cookie-courge.jpg
     category: cookies
     unitLabel: 1 cookie
+    limitedStock: true
 
   - id: cookie-amande-choco
     name: Cookie amande, chocolat

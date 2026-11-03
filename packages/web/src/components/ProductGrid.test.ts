@@ -37,6 +37,9 @@ describe("ProductGrid", () => {
       "Complétez cette sélection pour atteindre 24 éléments.",
     );
     expect(wrapper.text()).not.toContain("Les autres gourmandises :");
+    expect(wrapper.text()).toContain(
+      "*Attention, peut contenir des traces de farine de blé car je manipule cette farine pour les autres cookies.",
+    );
   });
 
   it("met visuellement en avant les catégories du catalogue", () => {

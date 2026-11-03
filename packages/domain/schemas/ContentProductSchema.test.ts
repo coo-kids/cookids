@@ -66,6 +66,21 @@ describe("ContentProductSchema", () => {
     ).rejects.toThrow();
   });
 
+  it.each([true, false])("accepte limitedStock=%s", async (limitedStock) => {
+    await expect(
+      validate({ ...product, limitedStock }, { type: ContentProductSchema }),
+    ).resolves.toMatchObject({ limitedStock });
+  });
+
+  it("refuse une valeur non booléenne pour limitedStock", async () => {
+    await expect(
+      validate(
+        { ...product, limitedStock: {} },
+        { type: ContentProductSchema },
+      ),
+    ).rejects.toThrow();
+  });
+
   it("compile son schéma Ts.ED", () => {
     expect(compile(ContentProductSchema)).toMatchInlineSnapshot(`
       {
@@ -139,6 +154,9 @@ describe("ContentProductSchema", () => {
               "type": "object",
             },
             "type": "array",
+          },
+          "limitedStock": {
+            "type": "boolean",
           },
           "maximumToppings": {
             "minimum": 1,
