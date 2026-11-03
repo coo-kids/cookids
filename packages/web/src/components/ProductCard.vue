@@ -29,6 +29,12 @@ defineEmits<{ changeQuantity: [quantity: number] }>();
         class="pointer-events-none absolute right-[-3.5rem] top-10 w-60 rotate-45 bg-[#dce9d5] py-2 text-center font-sans text-sm font-bold text-[#31533b] shadow-md"
         >🌾 Sans gluten*</span
       >
+      <span
+        v-if="product.limitedStock === true"
+        class="pointer-events-none absolute left-[-3.5rem] top-10 w-60 -rotate-45 bg-[#facc15] py-2 text-center font-sans text-sm font-bold text-cookids-ink shadow-md"
+      >
+        Stock limité**
+      </span>
     </div>
 
     <div class="flex flex-1 flex-col p-[1.2rem]">

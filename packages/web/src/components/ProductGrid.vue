@@ -172,6 +172,10 @@ function hasInvalidComposition(categoryId: string): boolean {
         *Attention, peut contenir des traces de farine de blé car je manipule
         cette farine pour les autres cookies.
       </p>
+      <p class="mt-4 text-sm text-gray-500">
+        **S'il n'y a plus assez de stocks, vous en serez informé.e et je vous
+        demanderai de choisir un autre type de cookie en remplacement.
+      </p>
       <div class="mt-10 flex justify-center">
         <AppButton
           :disabled="!participantLabelsValid"

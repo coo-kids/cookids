@@ -68,6 +68,7 @@ class TestCatalogProvider extends CatalogProvider {
             { id: "coco", label: "Coco", is_allergen: true },
           ],
           glutenFree: false,
+          limitedStock: false,
         },
         {
           id: "cookie-cafe-noix",
@@ -79,6 +80,7 @@ class TestCatalogProvider extends CatalogProvider {
           category: "cookies",
           unitLabel: "1 unité",
           glutenFree: false,
+          limitedStock: false,
         },
         {
           id: "cookie-chocolat-noir",
@@ -90,6 +92,7 @@ class TestCatalogProvider extends CatalogProvider {
           category: "cookies",
           unitLabel: "1 unité",
           glutenFree: false,
+          limitedStock: false,
         },
         {
           id: "cookie-triple-noisette",
@@ -102,6 +105,7 @@ class TestCatalogProvider extends CatalogProvider {
           unitLabel: "1 cookie",
           quantityMultiple: 15,
           glutenFree: false,
+          limitedStock: false,
         },
         {
           id: "financiers-amandes",
@@ -114,6 +118,7 @@ class TestCatalogProvider extends CatalogProvider {
           unitLabel: "1 financier",
           minimumQuantity: 10,
           glutenFree: false,
+          limitedStock: false,
         },
       ],
     };

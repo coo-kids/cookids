@@ -26,6 +26,7 @@ export const ContentProductSchema = s.object({
   minimumToppings: s.number().integer().minimum(1),
   maximumToppings: s.number().integer().minimum(1),
   glutenFree: s.boolean(),
+  limitedStock: s.boolean(),
 });
 
 export type ContentProductIngredient = s.infer<
@@ -46,4 +47,5 @@ export type ContentProduct = Omit<
   availableToppings?: Array<s.infer<typeof ContentProductToppingSchema>>;
   minimumToppings?: number;
   maximumToppings?: number;
+  limitedStock?: boolean;
 };
