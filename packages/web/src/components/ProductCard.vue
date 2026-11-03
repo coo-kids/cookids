@@ -27,7 +27,7 @@ defineEmits<{ changeQuantity: [quantity: number] }>();
       <span
         v-if="product.glutenFree === true"
         class="pointer-events-none absolute right-[-3.5rem] top-10 w-60 rotate-45 bg-[#dce9d5] py-2 text-center font-sans text-sm font-bold text-[#31533b] shadow-md"
-        >🌾 Sans gluten</span
+        >🌾 Sans gluten*</span
       >
     </div>
 
