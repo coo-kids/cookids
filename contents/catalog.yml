@@ -495,3 +495,94 @@ products:
   #   category: autres
   #   unitLabel: 1 biscuit
   #   minimumQuantity: 15
+
+  - id: biscuits-vanille-noel
+    name: Biscuits à la vanille Noël
+    description: Biscuits à la vanille Noël, avec un minimum de 15 pièces.
+    ingredients:
+      - label: Farine de blé bio
+        is_allergen: true
+      - label: Beurre doux
+        is_allergen: false
+      - label: Cassonnade
+        is_allergen: false
+      - label: Gousse de vanille
+        is_allergen: false
+      - label: Sel
+        is_allergen: false
+    price: 0.40
+    image: /images/products/biscuits-vanille-noel.jpg
+    category: autres
+    unitLabel: 1 biscuit
+    minimumQuantity: 15
+
+  - id: biscuits-vanille-fleurs
+    name: Biscuits à la vanille Fleurs
+    description: Biscuits à la vanille Fleurs, avec un minimum de 15 pièces.
+    ingredients:
+      - label: Farine de blé bio
+        is_allergen: true
+      - label: Beurre doux
+        is_allergen: false
+      - label: Cassonnade
+        is_allergen: false
+      - label: Gousse de vanille
+        is_allergen: false
+      - label: Sel
+        is_allergen: false
+    price: 0.40
+    image: /images/products/biscuits-vanille-fleur.jpg
+    category: autres
+    unitLabel: 1 biscuit
+    minimumQuantity: 15
+
+  - id: biscuits-noel
+    name: Biscuits de Noël
+    description: Biscuits de Noël, avec un minimum de 15 pièces.
+    ingredients:
+      - label: Farine de blé bio
+        is_allergen: true
+      - label: Beurre doux
+        is_allergen: false
+      - label: Cassonnade
+        is_allergen: false
+      - label: Gousse de vanille
+        is_allergen: false
+      - label: Confiture de fraise
+        is_allergen: false
+      - label: Cannelle
+        is_allergen: false
+      - label: Lemon Curd maison
+        is_allergen: false
+      - label: Amande
+        is_allergen: true
+      - label: Sel
+        is_allergen: false
+    price: 0.40
+    image: /images/products/biscuits-noel.jpg
+    category: autres
+    unitLabel: 1 biscuit
+    minimumQuantity: 15
+
+  - id: pot-cookies
+    name: Préparation pour 15 cookies pécan & chocolat
+    description: Préparation pour 15 cookies noix de pécan & chocolat
+    ingredients:
+      - label: Farine de blé bio
+        is_allergen: true
+      - label: Cassonnade
+        is_allergen: false
+      - label: Chocolat noir
+        is_allergen: false
+      - label: Noix de pécan
+        is_allergen: true
+      - label: Levure chimique
+        is_allergen: false
+      - label: Fleur de sel
+        is_allergen: false
+      - label: Bicarbonate de soude
+        is_allergen: false
+    price: 8.0
+    image: /images/products/pot-cookies.jpg
+    category: autres
+    unitLabel: 1 pot
