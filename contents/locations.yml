@@ -17,3 +17,6 @@ locations:
   - id: IFSSO_kgDOBOB44A
     label: Montreuil - Croix de Chavaux
     fixedDeliveryDates: []
+  - id: IFSSO_kgDOBUOfGw
+    label: Neuilly-sur-Marne, fête des calinous
+    fixedDeliveryDates: ["2026-12-18"]
